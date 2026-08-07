@@ -131,8 +131,8 @@ function expectLauncherPrefixBeforeMode(args: string[], mode: 'http' | 'persiste
 }
 
 async function assertSslFlag(sslSetting: string | undefined, expectedValue: string) {
-  currentSettings = { CLAUDE_MEM_CHROMA_MODE: 'remote' };
-  if (sslSetting !== undefined) currentSettings.CLAUDE_MEM_CHROMA_SSL = sslSetting;
+  currentSettings = { KIMI_MEM_CHROMA_MODE: 'remote' };
+  if (sslSetting !== undefined) currentSettings.KIMI_MEM_CHROMA_SSL = sslSetting;
 
   await mgr.callTool('chroma_list_collections', {});
 
@@ -154,21 +154,21 @@ describe('ChromaMcpManager SSL flag regression (#1286)', () => {
     mgr = ChromaMcpManager.getInstance();
   });
 
-  it('emits --ssl false when CLAUDE_MEM_CHROMA_SSL=false', async () => {
+  it('emits --ssl false when KIMI_MEM_CHROMA_SSL=false', async () => {
     await assertSslFlag('false', 'false');
   });
 
-  it('emits --ssl true when CLAUDE_MEM_CHROMA_SSL=true', async () => {
+  it('emits --ssl true when KIMI_MEM_CHROMA_SSL=true', async () => {
     await assertSslFlag('true', 'true');
   });
 
-  it('defaults --ssl false when CLAUDE_MEM_CHROMA_SSL is not set', async () => {
+  it('defaults --ssl false when KIMI_MEM_CHROMA_SSL is not set', async () => {
     await assertSslFlag(undefined, 'false');
   });
 
   it('omits --ssl entirely in local mode', async () => {
     currentSettings = {
-      CLAUDE_MEM_CHROMA_MODE: 'local',
+      KIMI_MEM_CHROMA_MODE: 'local',
     };
 
     await mgr.callTool('chroma_list_collections', {});

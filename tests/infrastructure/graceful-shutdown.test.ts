@@ -14,14 +14,14 @@ import type {
 // ── Data-dir isolation (Phase 6, worker-restart plan) ──────────────────────
 // performGracefulShutdown writes/deletes the worker PID file and runs the
 // supervisor shutdown cascade against paths.supervisorRegistry() — both of
-// which must resolve into a temp dir, never the real ~/.claude-mem. paths.ts
+// which must resolve into a temp dir, never the real ~/.kimi-mem. paths.ts
 // freezes DATA_DIR at first evaluation (env wins), and ESM hoists static
 // imports above any env assignment, so the env var is set FIRST and the code
 // under test is loaded with dynamic imports below. (`import type` above is
 // erased at compile time and loads nothing.)
-const TEST_DATA_DIR = mkdtempSync(path.join(tmpdir(), 'claude-mem-shutdown-test-'));
-const PREVIOUS_DATA_DIR = process.env.CLAUDE_MEM_DATA_DIR;
-process.env.CLAUDE_MEM_DATA_DIR = TEST_DATA_DIR;
+const TEST_DATA_DIR = mkdtempSync(path.join(tmpdir(), 'kimi-mem-shutdown-test-'));
+const PREVIOUS_DATA_DIR = process.env.KIMI_MEM_DATA_DIR;
+process.env.KIMI_MEM_DATA_DIR = TEST_DATA_DIR;
 
 const {
   performGracefulShutdown,
@@ -34,7 +34,7 @@ const { getSupervisor } = await import('../../src/supervisor/index.js');
 
 // If an earlier test file already evaluated paths.ts, the module cache wins
 // and DATA_DIR stays frozen on that earlier value — the preload tripwire's
-// per-run temp dir (tests/preload.ts), never the real ~/.claude-mem. Derive
+// per-run temp dir (tests/preload.ts), never the real ~/.kimi-mem. Derive
 // the asserted paths from the SAME frozen module the code under test uses.
 const DATA_DIR = paths.dataDir();
 const PID_FILE = paths.workerPid();
@@ -65,9 +65,9 @@ describe('GracefulShutdown', () => {
 
   afterAll(() => {
     if (PREVIOUS_DATA_DIR === undefined) {
-      delete process.env.CLAUDE_MEM_DATA_DIR;
+      delete process.env.KIMI_MEM_DATA_DIR;
     } else {
-      process.env.CLAUDE_MEM_DATA_DIR = PREVIOUS_DATA_DIR;
+      process.env.KIMI_MEM_DATA_DIR = PREVIOUS_DATA_DIR;
     }
     if (DATA_DIR === TEST_DATA_DIR) {
       // paths.ts froze on our per-file dir (this file evaluated it first):
@@ -80,8 +80,8 @@ describe('GracefulShutdown', () => {
     }
   });
 
-  it('resolves the PID file and supervisor registry into a temp dir, never the real ~/.claude-mem', () => {
-    const realDataDir = path.join(homedir(), '.claude-mem');
+  it('resolves the PID file and supervisor registry into a temp dir, never the real ~/.kimi-mem', () => {
+    const realDataDir = path.join(homedir(), '.kimi-mem');
     expect(DATA_DIR).not.toBe(realDataDir);
     expect(PID_FILE.startsWith(realDataDir + path.sep)).toBe(false);
     expect(paths.supervisorRegistry().startsWith(realDataDir + path.sep)).toBe(false);
@@ -94,7 +94,7 @@ describe('GracefulShutdown', () => {
     // above, that registry resolves into a temp dir (empty), so the cascade
     // no longer SIGTERMs the developer's real worker/chroma-mcp or waits on
     // their exit. The historic 5s overrun came from the test exercising the
-    // REAL ~/.claude-mem/supervisor.json before isolation.
+    // REAL ~/.kimi-mem/supervisor.json before isolation.
     it('should call shutdown steps in correct order', async () => {
       const callOrder: string[] = [];
 

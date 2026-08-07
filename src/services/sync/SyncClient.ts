@@ -21,7 +21,7 @@
 // for the timer — the free poll for the active device.
 //
 // ADVISORY WEBSOCKET (plan Phase 4 task 2 — the speed layer): when enabled
-// (CLAUDE_MEM_CLOUD_SYNC_WS, default on) the client also holds one Bun-native
+// (KIMI_MEM_CLOUD_SYNC_WS, default on) the client also holds one Bun-native
 // WebSocket to {hub}/v1/sync/ws (Bun extension: auth headers ride the
 // constructor — no ws npm package). The socket is STRICTLY advisory (prime
 // directive #2): nothing durable rides it. A {type:'op'} frame whose ops are
@@ -132,13 +132,13 @@ export type SyncWebSocketConstructor = new (
 ) => SyncSocketLike;
 
 export interface SyncClientOptions {
-  /** Sync hub base URL (CLAUDE_MEM_CLOUD_SYNC_HUB_URL). */
+  /** Sync hub base URL (KIMI_MEM_CLOUD_SYNC_HUB_URL). */
   hubUrl: string;
   token: string;
   userId: string;
   /** MUST be the CloudSync-resolved device id (single identity source). */
   deviceId: string;
-  /** Human-readable Hub device label (CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME). */
+  /** Human-readable Hub device label (KIMI_MEM_CLOUD_SYNC_DEVICE_NAME). */
   deviceName?: string;
   /** Injectable for tests; defaults to globalThis.fetch. */
   fetchImpl?: typeof fetch;
@@ -168,7 +168,7 @@ export interface SyncClientOptions {
   /** Injectable clock (tests). */
   now?: () => number;
   /**
-   * Advisory WebSocket gate (CLAUDE_MEM_CLOUD_SYNC_WS ≠ 'false'). Defaults to
+   * Advisory WebSocket gate (KIMI_MEM_CLOUD_SYNC_WS ≠ 'false'). Defaults to
    * enabled; forced off when no WebSocket implementation is available. The
    * socket is strictly optional — disabled ⇒ exact Phase 3 behavior.
    */
@@ -253,7 +253,7 @@ export class SyncClient {
   constructor(apply: SyncApply, options: SyncClientOptions) {
     const hubUrl = (options.hubUrl ?? '').trim().replace(/\/+$/, '');
     if (!hubUrl) {
-      throw new Error('SyncClient requires a non-empty hubUrl (CLAUDE_MEM_CLOUD_SYNC_HUB_URL)');
+      throw new Error('SyncClient requires a non-empty hubUrl (KIMI_MEM_CLOUD_SYNC_HUB_URL)');
     }
     if (!options.deviceId) {
       // Same fail-closed posture as CloudSync/SyncApply: pulling without an

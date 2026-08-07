@@ -1,5 +1,5 @@
 {
-  "name": "thedotmack",
+  "name": "YD-233",
   "owner": {
     "name": "Alex Newman"
   },
@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "claude-mem",
+      "name": "kimi-mem",
       "version": "13.13.1",
       "source": "./plugin",
       "description": "Persistent memory system for Claude Code - context compression across sessions"

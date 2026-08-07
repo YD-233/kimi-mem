@@ -10,14 +10,14 @@ import {
 
 describe('HealthMonitor', () => {
   const originalFetch = global.fetch;
-  const originalWorkerHost = process.env.CLAUDE_MEM_WORKER_HOST;
+  const originalWorkerHost = process.env.KIMI_MEM_WORKER_HOST;
 
   afterEach(() => {
     global.fetch = originalFetch;
     if (originalWorkerHost === undefined) {
-      delete process.env.CLAUDE_MEM_WORKER_HOST;
+      delete process.env.KIMI_MEM_WORKER_HOST;
     } else {
-      process.env.CLAUDE_MEM_WORKER_HOST = originalWorkerHost;
+      process.env.KIMI_MEM_WORKER_HOST = originalWorkerHost;
     }
   });
 
@@ -67,7 +67,7 @@ describe('HealthMonitor', () => {
     });
 
     it('should honor configured worker host when probing port occupancy', async () => {
-      process.env.CLAUDE_MEM_WORKER_HOST = '127.0.0.2';
+      process.env.KIMI_MEM_WORKER_HOST = '127.0.0.2';
       const closeMock = mock((cb: Function) => cb());
       const listenMock = mock(() => {});
       const createServerMock = mock(() => ({
@@ -239,7 +239,7 @@ describe('HealthMonitor', () => {
     });
 
     it('should honor configured worker host when polling health', async () => {
-      process.env.CLAUDE_MEM_WORKER_HOST = 'localhost';
+      process.env.KIMI_MEM_WORKER_HOST = 'localhost';
       const fetchMock = mock(() => Promise.resolve({
         ok: true,
         status: 200,

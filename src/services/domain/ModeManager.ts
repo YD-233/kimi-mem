@@ -17,7 +17,7 @@ export class ModeManager {
     const packageRoot = getPackageRoot();
     
     const possiblePaths = [
-      ...(process.env.CLAUDE_MEM_MODES_DIR ? [process.env.CLAUDE_MEM_MODES_DIR] : []),
+      ...(process.env.KIMI_MEM_MODES_DIR ? [process.env.KIMI_MEM_MODES_DIR] : []),
       join(paths.dataDir(), 'modes'),        // User-created modes (durable across plugin upgrades)
       join(packageRoot, 'modes'),           // Production (plugin/modes)
       join(packageRoot, '..', 'plugin', 'modes'), // Development (src/../plugin/modes)

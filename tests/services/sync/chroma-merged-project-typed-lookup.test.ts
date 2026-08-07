@@ -50,7 +50,7 @@ afterAll(() => {
 
 describe('ChromaSync merged project hydration', () => {
   it('patches session-summary documents for summary-only adoption', async () => {
-    await new ChromaSync('claude-mem').updateMergedIntoProject(
+    await new ChromaSync('kimi-mem').updateMergedIntoProject(
       [{ docType: 'session_summary', sqliteId: 7 }],
       'parent'
     );
@@ -73,7 +73,7 @@ describe('ChromaSync merged project hydration', () => {
   });
 
   it('does not update a prompt document with a colliding sqlite ID', async () => {
-    await new ChromaSync('claude-mem').updateMergedIntoProject(
+    await new ChromaSync('kimi-mem').updateMergedIntoProject(
       [{ docType: 'session_summary', sqliteId: 7 }],
       'parent'
     );
@@ -84,7 +84,7 @@ describe('ChromaSync merged project hydration', () => {
   });
 
   it('patches observation documents with an observation-typed lookup', async () => {
-    await new ChromaSync('claude-mem').updateMergedIntoProject(
+    await new ChromaSync('kimi-mem').updateMergedIntoProject(
       [{ docType: 'observation', sqliteId: 9 }],
       'parent'
     );

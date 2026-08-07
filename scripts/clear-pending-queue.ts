@@ -9,8 +9,8 @@ interface CountRow { count: number }
 interface StatusRow { status: string; count: number }
 
 function resolveDbPath(): string {
-  const dataDir = process.env.CLAUDE_MEM_DATA_DIR || join(homedir(), '.claude-mem');
-  return join(dataDir, 'claude-mem.db');
+  const dataDir = process.env.KIMI_MEM_DATA_DIR || join(homedir(), '.kimi-mem');
+  return join(dataDir, 'kimi-mem.db');
 }
 
 async function prompt(question: string): Promise<string> {
@@ -34,7 +34,7 @@ async function main() {
 
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-Claude-Mem Queue Clearer
+Kimi-Mem Queue Clearer
 
 Clear orphaned messages from the pending_messages SQLite table.
 
@@ -54,7 +54,7 @@ Examples:
   bun scripts/clear-pending-queue.ts --all --force
 
 Notes:
-  Operates directly on ~/.claude-mem/claude-mem.db (or \$CLAUDE_MEM_DATA_DIR).
+  Operates directly on ~/.kimi-mem/kimi-mem.db (or \$KIMI_MEM_DATA_DIR).
   Uses SQLite WAL mode so it is safe to run while the worker is running.
 `);
     process.exit(0);
@@ -64,8 +64,8 @@ Notes:
   const clearAll = args.includes('--all');
 
   console.log(clearAll
-    ? '\n=== Claude-Mem Queue Clearer (ALL) ===\n'
-    : '\n=== Claude-Mem Queue Clearer (Processing) ===\n');
+    ? '\n=== Kimi-Mem Queue Clearer (ALL) ===\n'
+    : '\n=== Kimi-Mem Queue Clearer (Processing) ===\n');
 
   const dbPath = resolveDbPath();
   if (!existsSync(dbPath)) {

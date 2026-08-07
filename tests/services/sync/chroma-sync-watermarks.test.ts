@@ -135,7 +135,7 @@ describe('ChromaSync watermark gap persistence', () => {
   const project = `watermark-gap-${Date.now()}`;
 
   beforeEach(() => {
-    process.env.CLAUDE_MEM_DATA_DIR = mkdtempSync(join(tmpdir(), 'claude-mem-watermarks-'));
+    process.env.KIMI_MEM_DATA_DIR = mkdtempSync(join(tmpdir(), 'kimi-mem-watermarks-'));
     existingObservationIds = new Set<number>();
     addDocumentCalls.length = 0;
     ChromaSyncState.replace(project, { observations: 0, summaries: 0, prompts: 0, pending: {} });

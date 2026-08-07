@@ -4,13 +4,13 @@ Read this only after the user opts into alerts.
 
 ## How matching works
 
-claude-mem reads these settings from its data-directory `settings.json`:
+kimi-mem reads these settings from its data-directory `settings.json`:
 
-- `CLAUDE_MEM_TELEGRAM_ENABLED`
-- `CLAUDE_MEM_TELEGRAM_BOT_TOKEN`
-- `CLAUDE_MEM_TELEGRAM_CHAT_ID`
-- `CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES`
-- `CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS`
+- `KIMI_MEM_TELEGRAM_ENABLED`
+- `KIMI_MEM_TELEGRAM_BOT_TOKEN`
+- `KIMI_MEM_TELEGRAM_CHAT_ID`
+- `KIMI_MEM_TELEGRAM_TRIGGER_TYPES`
+- `KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS`
 
 An observation sends when its single type matches any configured trigger type **or** one of its concepts matches any configured trigger concept. No trigger list means no messages.
 

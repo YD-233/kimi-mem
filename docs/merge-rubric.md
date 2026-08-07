@@ -1,6 +1,6 @@
 # The Merge Rubric
 
-Rules for deciding whether a bug-fix PR gets merged into claude-mem. A PR must pass
+Rules for deciding whether a bug-fix PR gets merged into kimi-mem. A PR must pass
 **every** section. One failure anywhere is a rejection — no partial credit, no
 "but the rest of it is good." If half the diff qualifies, the fix should be
 resubmitted as only that half.

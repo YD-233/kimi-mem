@@ -4,8 +4,8 @@ The worker is the local HTTP runtime used by hooks, the viewer, MCP search, and
 background observation generation. It is built into `plugin/scripts/worker-service.cjs`
 and managed by Bun.
 
-The port comes from `CLAUDE_MEM_WORKER_PORT`; if unset, the default is
-`37700 + (uid % 100)`. The host comes from `CLAUDE_MEM_WORKER_HOST` and defaults
+The port comes from `KIMI_MEM_WORKER_PORT`; if unset, the default is
+`37700 + (uid % 100)`. The host comes from `KIMI_MEM_WORKER_HOST` and defaults
 to `127.0.0.1`.
 
 ## Request Flow

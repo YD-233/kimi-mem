@@ -11,7 +11,7 @@ export function createAuth(database: Database) {
   ensureDir(DATA_DIR);
   return betterAuth({
     database,
-    baseURL: process.env.BETTER_AUTH_URL ?? process.env.CLAUDE_MEM_SERVER_URL ?? SettingsDefaultsManager.get('CLAUDE_MEM_SERVER_URL'),
+    baseURL: process.env.BETTER_AUTH_URL ?? process.env.KIMI_MEM_SERVER_URL ?? SettingsDefaultsManager.get('KIMI_MEM_SERVER_URL'),
     basePath: '/api/auth',
     plugins: [
       apiKey(),

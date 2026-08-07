@@ -35,13 +35,13 @@ function readTimeoutEnv(
 }
 
 const HEALTH_CHECK_TIMEOUT_MS = readTimeoutEnv(
-  'CLAUDE_MEM_HEALTH_TIMEOUT_MS',
+  'KIMI_MEM_HEALTH_TIMEOUT_MS',
   getTimeout(HOOK_TIMEOUTS.HEALTH_CHECK),
   { min: 500, max: 300000 }
 );
 
 const HOOK_READINESS_TIMEOUT_MS = readTimeoutEnv(
-  'CLAUDE_MEM_HOOK_READINESS_TIMEOUT_MS',
+  'KIMI_MEM_HOOK_READINESS_TIMEOUT_MS',
   getTimeout(HOOK_TIMEOUTS.HOOK_READINESS_WAIT),
   { min: 0, max: 300000 }
 );
@@ -70,7 +70,7 @@ let cachedSettings: SettingsDefaults | null = null;
 let cachedApiRequestTimeoutMs: number | null = null;
 
 function getWorkerSettingsPath(): string {
-  return path.join(SettingsDefaultsManager.get('CLAUDE_MEM_DATA_DIR'), 'settings.json');
+  return path.join(SettingsDefaultsManager.get('KIMI_MEM_DATA_DIR'), 'settings.json');
 }
 
 function getWorkerSettings(): SettingsDefaults {
@@ -129,7 +129,7 @@ export function getWorkerPort(): number {
   }
 
   const settings = getWorkerSettings();
-  cachedPort = parseInt(settings.CLAUDE_MEM_WORKER_PORT, 10);
+  cachedPort = parseInt(settings.KIMI_MEM_WORKER_PORT, 10);
   return cachedPort;
 }
 
@@ -139,7 +139,7 @@ export function getWorkerHost(): string {
   }
 
   const settings = getWorkerSettings();
-  cachedHost = settings.CLAUDE_MEM_WORKER_HOST;
+  cachedHost = settings.KIMI_MEM_WORKER_HOST;
   return cachedHost;
 }
 
@@ -149,7 +149,7 @@ export function getWorkerApiRequestTimeoutMs(): number {
   }
 
   cachedApiRequestTimeoutMs = readSettingsBackedTimeout(
-    'CLAUDE_MEM_API_TIMEOUT_MS',
+    'KIMI_MEM_API_TIMEOUT_MS',
     getTimeout(HOOK_TIMEOUTS.API_REQUEST),
     API_REQUEST_TIMEOUT_BOUNDS
   );
@@ -246,7 +246,7 @@ export function compareVersionsDescending(a: string, b: string): number {
 }
 
 export function cacheWorkerScriptCandidates(
-  cacheRoot: string = path.join(path.dirname(path.dirname(MARKETPLACE_ROOT)), 'cache', 'thedotmack', 'claude-mem')
+  cacheRoot: string = path.join(path.dirname(path.dirname(MARKETPLACE_ROOT)), 'cache', 'YD-233', 'kimi-mem')
 ): WorkerScriptCandidate[] {
   try {
     return readdirSync(cacheRoot)
@@ -300,10 +300,10 @@ function readPackageVersion(packageJsonPath: string): string | null {
  * local testing.
  */
 export function resolveWorkerScript(): WorkerScriptCandidate | null {
-  const override = process.env.CLAUDE_MEM_WORKER_SCRIPT_PATH?.trim();
+  const override = process.env.KIMI_MEM_WORKER_SCRIPT_PATH?.trim();
   if (override) {
     if (existsSync(override)) return { scriptPath: override, version: null };
-    logger.debug('SYSTEM', 'Ignoring missing CLAUDE_MEM_WORKER_SCRIPT_PATH override', { override });
+    logger.debug('SYSTEM', 'Ignoring missing KIMI_MEM_WORKER_SCRIPT_PATH override', { override });
   }
 
   const candidates: WorkerScriptCandidate[] = [
@@ -503,7 +503,7 @@ export async function ensureWorkerRunning(): Promise<boolean> {
     // resolver, is then the only spawner.
     const stalePidInfo = readOwnedWorkerPidInfo();
     if (stalePidInfo === null || stalePidInfo.port !== getWorkerPort()) {
-      logger.error('SYSTEM', 'Stale worker is serving the port but the PID file does not identify it; kill the claude-mem worker process manually', {
+      logger.error('SYSTEM', 'Stale worker is serving the port but the PID file does not identify it; kill the kimi-mem worker process manually', {
         port: getWorkerPort(),
         pidFilePid: stalePidInfo?.pid ?? null,
         pidFilePort: stalePidInfo?.port ?? null,
@@ -679,7 +679,7 @@ function writeHookFailureStateAtomic(state: HookFailureState): void {
 function getFailLoudThreshold(): number {
   try {
     const settings = loadFromFileOnce();
-    const raw = settings.CLAUDE_MEM_HOOK_FAIL_LOUD_THRESHOLD;
+    const raw = settings.KIMI_MEM_HOOK_FAIL_LOUD_THRESHOLD;
     const parsed = parseInt(raw, 10);
     if (Number.isFinite(parsed) && parsed >= 1) return parsed;
   } catch {
@@ -748,7 +748,7 @@ export async function recordWorkerUnreachable(): Promise<number> {
     // via the bypass channel + exits 2. Previously this raw process.stderr.write
     // was swallowed by hookCommand's blanket no-op, so the user/model never saw it.
     emitBlockingError(
-      `claude-mem worker unreachable for ${next.consecutiveFailures} consecutive hooks.`
+      `kimi-mem worker unreachable for ${next.consecutiveFailures} consecutive hooks.`
     );
   }
   return next.consecutiveFailures;
@@ -760,7 +760,7 @@ function resetWorkerFailureCounter(): void {
   writeHookFailureStateAtomic({ consecutiveFailures: 0, lastFailureAt: 0 });
 }
 
-const WORKER_FALLBACK_BRAND: unique symbol = Symbol.for('claude-mem/worker-fallback');
+const WORKER_FALLBACK_BRAND: unique symbol = Symbol.for('kimi-mem/worker-fallback');
 
 export type WorkerFallback =
   | { continue: true; [WORKER_FALLBACK_BRAND]: true }

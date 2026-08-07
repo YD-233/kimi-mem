@@ -27,14 +27,14 @@ describe('Tag Stripping Utilities', () => {
         expect(result).toBe('public content  more public');
       });
 
-      it('should strip single <claude-mem-context> tag', () => {
-        const input = 'public content <claude-mem-context>injected context</claude-mem-context> more public';
+      it('should strip single <kimi-mem-context> tag', () => {
+        const input = 'public content <kimi-mem-context>injected context</kimi-mem-context> more public';
         const result = stripMemoryTags(input);
         expect(result).toBe('public content  more public');
       });
 
       it('should strip both tag types in mixed content', () => {
-        const input = '<private>secret</private> public <claude-mem-context>context</claude-mem-context> end';
+        const input = '<private>secret</private> public <kimi-mem-context>context</kimi-mem-context> end';
         const result = stripMemoryTags(input);
         expect(result).toBe('public  end');
       });
@@ -53,8 +53,8 @@ describe('Tag Stripping Utilities', () => {
         expect(result).toBe('middle  end');
       });
 
-      it('should strip multiple <claude-mem-context> blocks', () => {
-        const input = '<claude-mem-context>ctx1</claude-mem-context><claude-mem-context>ctx2</claude-mem-context> content';
+      it('should strip multiple <kimi-mem-context> blocks', () => {
+        const input = '<kimi-mem-context>ctx1</kimi-mem-context><kimi-mem-context>ctx2</kimi-mem-context> content';
         const result = stripMemoryTags(input);
         expect(result).toBe('content');
       });
@@ -62,12 +62,12 @@ describe('Tag Stripping Utilities', () => {
       it('should handle many interleaved tags', () => {
         let input = 'start';
         for (let i = 0; i < 10; i++) {
-          input += ` <private>p${i}</private> <claude-mem-context>c${i}</claude-mem-context>`;
+          input += ` <private>p${i}</private> <kimi-mem-context>c${i}</kimi-mem-context>`;
         }
         input += ' end';
         const result = stripMemoryTags(input);
         expect(result).not.toContain('<private>');
-        expect(result).not.toContain('<claude-mem-context>');
+        expect(result).not.toContain('<kimi-mem-context>');
         expect(result).toContain('start');
         expect(result).toContain('end');
       });
@@ -81,7 +81,7 @@ describe('Tag Stripping Utilities', () => {
       });
 
       it('should return empty string for entirely context-tagged prompt', () => {
-        const input = '<claude-mem-context>all is context</claude-mem-context>';
+        const input = '<kimi-mem-context>all is context</kimi-mem-context>';
         const result = stripMemoryTags(input);
         expect(result).toBe('');
       });
@@ -98,7 +98,7 @@ describe('Tag Stripping Utilities', () => {
       });
 
       it('should handle whitespace-only after stripping', () => {
-        const input = '<private>content</private>   <claude-mem-context>more</claude-mem-context>';
+        const input = '<private>content</private>   <kimi-mem-context>more</kimi-mem-context>';
         const result = stripMemoryTags(input);
         expect(result).toBe('');
       });
@@ -137,13 +137,13 @@ end`;
         expect(result).toBe('public\n\nend');
       });
 
-      it('should strip multiline content within <claude-mem-context> tags', () => {
+      it('should strip multiline content within <kimi-mem-context> tags', () => {
         const input = `start
-<claude-mem-context>
+<kimi-mem-context>
 # Recent Activity
 - Item 1
 - Item 2
-</claude-mem-context>
+</kimi-mem-context>
 finish`;
         const result = stripMemoryTags(input);
         expect(result).toBe('start\n\nfinish');
@@ -191,9 +191,9 @@ finish`;
         expect(parsed.content).toBe(' public');
       });
 
-      it('should strip claude-mem-context tags from JSON', () => {
+      it('should strip kimi-mem-context tags from JSON', () => {
         const jsonContent = JSON.stringify({
-          data: '<claude-mem-context>injected</claude-mem-context> real data'
+          data: '<kimi-mem-context>injected</kimi-mem-context> real data'
         });
         const result = stripMemoryTags(jsonContent);
         const parsed = JSON.parse(result);
@@ -212,7 +212,7 @@ finish`;
 
       it('should handle tool_response with tags', () => {
         const toolResponse = {
-          output: 'result <claude-mem-context>context data</claude-mem-context>',
+          output: 'result <kimi-mem-context>context data</kimi-mem-context>',
           status: 'success'
         };
         const result = stripMemoryTags(JSON.stringify(toolResponse));
@@ -331,7 +331,7 @@ after`;
     });
 
     it('should strip <system-reminder> mixed with other tag types', () => {
-      const input = '<system-reminder>reminder</system-reminder> public <private>secret</private> <claude-mem-context>ctx</claude-mem-context> end';
+      const input = '<system-reminder>reminder</system-reminder> public <private>secret</private> <kimi-mem-context>ctx</kimi-mem-context> end';
       const result = stripMemoryTags(input);
       expect(result).toBe('public   end');
     });
@@ -356,10 +356,10 @@ after`;
 <system-reminder>
 Contents of /path/to/CLAUDE.md:
 
-<claude-mem-context>
+<kimi-mem-context>
 # Recent Activity
 - Item 1
-</claude-mem-context>
+</kimi-mem-context>
 </system-reminder>
 after`;
       const result = stripMemoryTags(input);
@@ -367,7 +367,7 @@ after`;
     });
 
     it('should strip realistic tool result with nested CLAUDE.md content', () => {
-      const input = `Here is the file content.\n\n<system-reminder>\nContents of /project/src/CLAUDE.md:\n\n<claude-mem-context>\n# Recent Activity\n\n### Dec 14, 2025\n| ID | Time | Title |\n|-----|------|-------|\n| #123 | 11:30 PM | Some observation |\n</claude-mem-context>\n</system-reminder>`;
+      const input = `Here is the file content.\n\n<system-reminder>\nContents of /project/src/CLAUDE.md:\n\n<kimi-mem-context>\n# Recent Activity\n\n### Dec 14, 2025\n| ID | Time | Title |\n|-----|------|-------|\n| #123 | 11:30 PM | Some observation |\n</kimi-mem-context>\n</system-reminder>`;
       const result = stripMemoryTags(input);
       expect(result).toBe('Here is the file content.');
     });

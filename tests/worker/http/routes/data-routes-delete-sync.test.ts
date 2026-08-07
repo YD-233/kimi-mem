@@ -20,11 +20,11 @@ describe('DataRoutes synchronized delete APIs', () => {
     db = new Database(':memory:');
     store = new SessionStore(db);
     sync = new CloudSync(db, {
-      CLAUDE_MEM_CLOUD_SYNC_TOKEN: 'test-token',
-      CLAUDE_MEM_CLOUD_SYNC_USER_ID: 'test-user',
-      CLAUDE_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: 'device-delete-routes',
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME: 'test',
+      KIMI_MEM_CLOUD_SYNC_TOKEN: 'test-token',
+      KIMI_MEM_CLOUD_SYNC_USER_ID: 'test-user',
+      KIMI_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
+      KIMI_MEM_CLOUD_SYNC_DEVICE_ID: 'device-delete-routes',
+      KIMI_MEM_CLOUD_SYNC_DEVICE_NAME: 'test',
     }, {
       settingsPath: join(tempDir, 'settings.json'),
       fetchImpl: mock(async () => new Response('{}', { status: 500 })) as typeof fetch,

@@ -2,11 +2,11 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/thedotmack/claude-mem">
+  <a href="https://github.com/YD-233/kimi-mem">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-dark-mode.webp">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp" alt="Claude-Mem" width="400">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-dark-mode.webp">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp" alt="Kimi-Mem" width="400">
     </picture>
   </a>
   <br>
@@ -70,9 +70,9 @@
 <p align="center">
   <a href="https://trendshift.io/repositories/15496" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg" alt="thedotmack/claude-mem | Trendshift" width="250" height="55"/>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg" alt="YD-233/kimi-mem | Trendshift" width="250" height="55"/>
     </picture>
   </a>
 </p>
@@ -82,30 +82,30 @@
 <table align="center">
   <tr>
     <td align="center">
-      <a href="https://github.com/thedotmack/claude-mem">
+      <a href="https://github.com/YD-233/kimi-mem">
         <picture>
           <img
-            src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/cm-preview.gif"
-            alt="Claude-Mem Preview"
+            src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/cm-preview.gif"
+            alt="Kimi-Mem Preview"
             width="500"
           >
         </picture>
       </a>
     </td>
     <td align="center">
-      <a href="https://www.star-history.com/#thedotmack/claude-mem&Date">
+      <a href="https://www.star-history.com/#YD-233/kimi-mem&Date">
         <picture>
           <source
             media="(prefers-color-scheme: dark)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&theme=dark&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&theme=dark&legend=top-left"
           />
           <source
             media="(prefers-color-scheme: light)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
           />
           <img
             alt="Star History Chart"
-            src="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            src="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
             width="500"
           />
         </picture>
@@ -125,7 +125,7 @@
 </p>
 
 <p align="center">
-  Claude-Mem, araç kullanım gözlemlerini otomatik olarak yakalayarak, anlamsal özetler oluşturarak ve bunları gelecekteki oturumlarda kullanılabilir hale getirerek bağlamı oturumlar arası sorunsuzca korur. Bu, Claude'un oturumlar sona erse veya yeniden bağlansa bile projeler hakkındaki bilgi sürekliliğini korumasını sağlar.
+  Kimi-Mem, araç kullanım gözlemlerini otomatik olarak yakalayarak, anlamsal özetler oluşturarak ve bunları gelecekteki oturumlarda kullanılabilir hale getirerek bağlamı oturumlar arası sorunsuzca korur. Bu, Claude'un oturumlar sona erse veya yeniden bağlansa bile projeler hakkındaki bilgi sürekliliğini korumasını sağlar.
 </p>
 
 ---
@@ -135,42 +135,42 @@
 Tek bir komutla kurun:
 
 ```bash
-npx claude-mem install
+npx kimi-mem install
 ```
 
 Ya da OpenCode için kurun:
 
 ```bash
-npx claude-mem install --ide opencode
+npx kimi-mem install --ide opencode
 ```
 
-Ya da Antigravity CLI için kurun ([kurulum kılavuzu](https://docs.claude-mem.ai/antigravity-cli/setup)):
+Ya da Antigravity CLI için kurun ([kurulum kılavuzu](https://docs.kimi-mem.ai/antigravity-cli/setup)):
 
 ```bash
-npx claude-mem install --ide antigravity
+npx kimi-mem install --ide antigravity
 ```
 
 Ya da Claude Code içindeki plugin pazaryerinden kurun:
 
 ```bash
-/plugin marketplace add thedotmack/claude-mem
+/plugin marketplace add YD-233/kimi-mem
 
-/plugin install claude-mem
+/plugin install kimi-mem
 ```
 
 Claude Code'u yeniden başlatın. Önceki oturumlardaki bağlam otomatik olarak yeni oturumlarda görünecektir.
 
-> **Not:** Claude-Mem npm'de de yayımlanmıştır, ancak `npm install -g claude-mem` yalnızca **SDK/kütüphaneyi** kurar — plugin hook'larını kaydetmez veya worker servisini kurmaz. Her zaman `npx claude-mem install` veya yukarıdaki `/plugin` komutlarıyla kurun.
+> **Not:** Kimi-Mem npm'de de yayımlanmıştır, ancak `npm install -g kimi-mem` yalnızca **SDK/kütüphaneyi** kurar — plugin hook'larını kaydetmez veya worker servisini kurmaz. Her zaman `npx kimi-mem install` veya yukarıdaki `/plugin` komutlarıyla kurun.
 
 ### 🦞 OpenClaw Gateway
 
-Claude-mem'i tek bir komutla [OpenClaw](https://openclaw.ai) gateway'lerine kalıcı bellek eklentisi olarak kurun:
+Kimi-Mem'i tek bir komutla [OpenClaw](https://openclaw.ai) gateway'lerine kalıcı bellek eklentisi olarak kurun:
 
 ```bash
 curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 ```
 
-Kurulum programı bağımlılıkları, plugin kurulumunu, AI sağlayıcı yapılandırmasını, worker başlatmayı ve Telegram, Discord, Slack ve daha fazlasına isteğe bağlı gerçek zamanlı gözlem akışlarını yönetir. Detaylar için [OpenClaw Entegrasyon Kılavuzu](https://docs.claude-mem.ai/openclaw-integration) bölümüne bakın.
+Kurulum programı bağımlılıkları, plugin kurulumunu, AI sağlayıcı yapılandırmasını, worker başlatmayı ve Telegram, Discord, Slack ve daha fazlasına isteğe bağlı gerçek zamanlı gözlem akışlarını yönetir. Detaylar için [OpenClaw Entegrasyon Kılavuzu](https://docs.kimi-mem.ai/openclaw-integration) bölümüne bakın.
 
 **Temel Özellikler:**
 
@@ -188,35 +188,35 @@ Kurulum programı bağımlılıkları, plugin kurulumunu, AI sağlayıcı yapıl
 
 ## Documentation
 
-📚 **[Tam Dokümantasyonu Görüntüle](https://docs.claude-mem.ai/)** - Resmi web sitesinde göz atın
+📚 **[Tam Dokümantasyonu Görüntüle](https://docs.kimi-mem.ai/)** - Resmi web sitesinde göz atın
 
 ### Başlarken
 
-- **[Kurulum Kılavuzu](https://docs.claude-mem.ai/installation)** - Hızlı başlangıç ve gelişmiş kurulum
-- **[Kullanım Kılavuzu](https://docs.claude-mem.ai/usage/getting-started)** - Claude-Mem otomatik olarak nasıl çalışır
-- **[Arama Araçları](https://docs.claude-mem.ai/usage/search-tools)** - Doğal dil ile proje geçmişinizi sorgulayın
+- **[Kurulum Kılavuzu](https://docs.kimi-mem.ai/installation)** - Hızlı başlangıç ve gelişmiş kurulum
+- **[Kullanım Kılavuzu](https://docs.kimi-mem.ai/usage/getting-started)** - Kimi-Mem otomatik olarak nasıl çalışır
+- **[Arama Araçları](https://docs.kimi-mem.ai/usage/search-tools)** - Doğal dil ile proje geçmişinizi sorgulayın
 
 ### En İyi Uygulamalar
 
-- **[Bağlam Mühendisliği](https://docs.claude-mem.ai/context-engineering)** - AI ajan bağlam optimizasyon ilkeleri
-- **[Aşamalı Açıklama](https://docs.claude-mem.ai/progressive-disclosure)** - Claude-Mem'in bağlam hazırlama stratejisinin ardındaki felsefe
+- **[Bağlam Mühendisliği](https://docs.kimi-mem.ai/context-engineering)** - AI ajan bağlam optimizasyon ilkeleri
+- **[Aşamalı Açıklama](https://docs.kimi-mem.ai/progressive-disclosure)** - Kimi-Mem'in bağlam hazırlama stratejisinin ardındaki felsefe
 
 ### Mimari
 
-- **[Genel Bakış](https://docs.claude-mem.ai/architecture/overview)** - Sistem bileşenleri ve veri akışı
-- **[Mimari Evrimi](https://docs.claude-mem.ai/architecture-evolution)** - v3'ten v5'e yolculuk
-- **[Hooks Mimarisi](https://docs.claude-mem.ai/hooks-architecture)** - Claude-Mem yaşam döngüsü hook'larını nasıl kullanır
-- **[Hooks Referansı](https://docs.claude-mem.ai/architecture/hooks)** - 7 hook betiği açıklandı
-- **[Worker Servisi](https://docs.claude-mem.ai/architecture/worker-service)** - HTTP API ve Bun yönetimi
-- **[Veritabanı](https://docs.claude-mem.ai/architecture/database)** - SQLite şeması ve FTS5 arama
-- **[Arama Mimarisi](https://docs.claude-mem.ai/architecture/search-architecture)** - Chroma vektör veritabanı ile hibrit arama
+- **[Genel Bakış](https://docs.kimi-mem.ai/architecture/overview)** - Sistem bileşenleri ve veri akışı
+- **[Mimari Evrimi](https://docs.kimi-mem.ai/architecture-evolution)** - v3'ten v5'e yolculuk
+- **[Hooks Mimarisi](https://docs.kimi-mem.ai/hooks-architecture)** - Kimi-Mem yaşam döngüsü hook'larını nasıl kullanır
+- **[Hooks Referansı](https://docs.kimi-mem.ai/architecture/hooks)** - 7 hook betiği açıklandı
+- **[Worker Servisi](https://docs.kimi-mem.ai/architecture/worker-service)** - HTTP API ve Bun yönetimi
+- **[Veritabanı](https://docs.kimi-mem.ai/architecture/database)** - SQLite şeması ve FTS5 arama
+- **[Arama Mimarisi](https://docs.kimi-mem.ai/architecture/search-architecture)** - Chroma vektör veritabanı ile hibrit arama
 
 ### Yapılandırma ve Geliştirme
 
-- **[Yapılandırma](https://docs.claude-mem.ai/configuration)** - Ortam değişkenleri ve ayarlar
-- **[Geliştirme](https://docs.claude-mem.ai/development)** - Derleme, test etme, katkıda bulunma
-- **[Sürüm Dalları](https://docs.claude-mem.ai/branches)** - Stable, core-dev ve community-edge dal akışı
-- **[Sorun Giderme](https://docs.claude-mem.ai/troubleshooting)** - Yaygın sorunlar ve çözümler
+- **[Yapılandırma](https://docs.kimi-mem.ai/configuration)** - Ortam değişkenleri ve ayarlar
+- **[Geliştirme](https://docs.kimi-mem.ai/development)** - Derleme, test etme, katkıda bulunma
+- **[Sürüm Dalları](https://docs.kimi-mem.ai/branches)** - Stable, core-dev ve community-edge dal akışı
+- **[Sorun Giderme](https://docs.kimi-mem.ai/troubleshooting)** - Yaygın sorunlar ve çözümler
 
 ---
 
@@ -231,13 +231,13 @@ Kurulum programı bağımlılıkları, plugin kurulumunu, AI sağlayıcı yapıl
 5. **mem-search Becerisi** - Aşamalı açıklama ile doğal dil sorguları
 6. **Chroma Vektör Veritabanı** - Akıllı bağlam erişimi için hibrit anlamsal + anahtar kelime arama
 
-Detaylar için [Mimari Genel Bakış](https://docs.claude-mem.ai/architecture/overview) bölümüne bakın.
+Detaylar için [Mimari Genel Bakış](https://docs.kimi-mem.ai/architecture/overview) bölümüne bakın.
 
 ---
 
 ## MCP Search Tools
 
-Claude-Mem, token açısından verimli bir **3 katmanlı iş akışı düzeni**ni takip eden **4 MCP aracı** aracılığıyla akıllı bellek araması sağlar:
+Kimi-Mem, token açısından verimli bir **3 katmanlı iş akışı düzeni**ni takip eden **4 MCP aracı** aracılığıyla akıllı bellek araması sağlar:
 
 **3 Katmanlı İş Akışı:**
 
@@ -270,7 +270,7 @@ search(query="authentication bug", type="bugfix", limit=10)
 get_observations(ids=[123, 456])
 ```
 
-Detaylı örnekler için [Arama Araçları Kılavuzu](https://docs.claude-mem.ai/usage/search-tools) bölümüne bakın.
+Detaylı örnekler için [Arama Araçları Kılavuzu](https://docs.kimi-mem.ai/usage/search-tools) bölümüne bakın.
 
 ---
 
@@ -279,7 +279,7 @@ Detaylı örnekler için [Arama Araçları Kılavuzu](https://docs.claude-mem.ai
 Kararlı sürümler `main` dalından yayımlanır ve npm'e gönderilir. `core-dev` ve
 `community-edge`, erken güvenilirlik düzeltmeleri ve topluluk entegrasyonları için
 kaynaktan çalıştırılan dallardır. Dal akışı ve kararlı olmayan çalıştırma talimatları
-için **[Sürüm Dalları](https://docs.claude-mem.ai/branches)** bölümüne bakın.
+için **[Sürüm Dalları](https://docs.kimi-mem.ai/branches)** bölümüne bakın.
 
 ---
 
@@ -306,13 +306,13 @@ Node.js ve npm'in kurulu olduğundan ve PATH'inize eklendiğinden emin olun. htt
 
 ## Configuration
 
-Ayarlar `~/.claude-mem/settings.json` dosyasında yönetilir (ilk çalıştırmada varsayılanlarla otomatik oluşturulur). AI modelini, worker portunu, veri dizinini, log seviyesini ve bağlam enjeksiyon ayarlarını yapılandırın.
+Ayarlar `~/.kimi-mem/settings.json` dosyasında yönetilir (ilk çalıştırmada varsayılanlarla otomatik oluşturulur). AI modelini, worker portunu, veri dizinini, log seviyesini ve bağlam enjeksiyon ayarlarını yapılandırın.
 
-Tüm mevcut ayarlar ve örnekler için **[Yapılandırma Kılavuzu](https://docs.claude-mem.ai/configuration)** bölümüne bakın.
+Tüm mevcut ayarlar ve örnekler için **[Yapılandırma Kılavuzu](https://docs.kimi-mem.ai/configuration)** bölümüne bakın.
 
 ### Mod ve Dil Yapılandırması
 
-Claude-Mem, `CLAUDE_MEM_MODE` ayarı aracılığıyla birden fazla iş akışı modunu ve dili destekler.
+Kimi-Mem, `KIMI_MEM_MODE` ayarı aracılığıyla birden fazla iş akışı modunu ve dili destekler.
 
 Bu seçenek şunları kontrol eder:
 - İş akışı davranışını (örn. code, chill, investigation)
@@ -320,18 +320,18 @@ Bu seçenek şunları kontrol eder:
 
 #### Nasıl Yapılandırılır
 
-`~/.claude-mem/settings.json` konumundaki ayarlar dosyanızı düzenleyin:
+`~/.kimi-mem/settings.json` konumundaki ayarlar dosyanızı düzenleyin:
 
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--zh"
+  "KIMI_MEM_MODE": "code--zh"
 }
 ```
 
 Modlar `plugin/modes/` içinde tanımlanır. Mevcut tüm modları yerel olarak görmek için:
 
 ```bash
-ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
+ls ~/.claude/plugins/marketplaces/YD-233/plugin/modes/
 ```
 
 #### Mevcut Modlar
@@ -353,7 +353,7 @@ Yeni mod yapılandırmasını uygulamak için Claude Code'u yeniden başlatın.
 
 ## Development
 
-Derleme talimatları, test etme ve katkı iş akışı için **[Geliştirme Kılavuzu](https://docs.claude-mem.ai/development)** bölümüne bakın.
+Derleme talimatları, test etme ve katkı iş akışı için **[Geliştirme Kılavuzu](https://docs.kimi-mem.ai/development)** bölümüne bakın.
 
 ---
 
@@ -361,7 +361,7 @@ Derleme talimatları, test etme ve katkı iş akışı için **[Geliştirme Kıl
 
 Sorunlarla karşılaşırsanız, sorunu Claude'a açıklayın ve troubleshoot becerisi otomatik olarak teşhis edip düzeltmeleri sağlayacaktır.
 
-Yaygın sorunlar ve çözümler için **[Sorun Giderme Kılavuzu](https://docs.claude-mem.ai/troubleshooting)** bölümüne bakın.
+Yaygın sorunlar ve çözümler için **[Sorun Giderme Kılavuzu](https://docs.kimi-mem.ai/troubleshooting)** bölümüne bakın.
 
 ---
 
@@ -370,7 +370,7 @@ Yaygın sorunlar ve çözümler için **[Sorun Giderme Kılavuzu](https://docs.c
 Otomatik oluşturucu ile kapsamlı hata raporları oluşturun:
 
 ```bash
-cd ~/.claude/plugins/marketplaces/thedotmack
+cd ~/.claude/plugins/marketplaces/YD-233
 npm run bug-report
 ```
 
@@ -384,18 +384,18 @@ Katkılar memnuniyetle karşılanır! Lütfen:
 4. Dokümantasyonu güncelleyin
 5. Pull Request gönderin
 
-Claude-Mem üç daldan yayımlanır: `main` (kararlı), `core-dev` ve
+Kimi-Mem üç daldan yayımlanır: `main` (kararlı), `core-dev` ve
 `community-edge`. Yalnızca `main` npm'e yayımlanır; diğerleri kaynaktan
 çalıştırılır. Strateji ve yerel çalıştırma talimatları için
-[Sürüm Dalları](https://docs.claude-mem.ai/branches) bölümüne bakın.
+[Sürüm Dalları](https://docs.kimi-mem.ai/branches) bölümüne bakın.
 
-Katkı iş akışı için [Geliştirme Kılavuzu](https://docs.claude-mem.ai/development) bölümüne bakın.
+Katkı iş akışı için [Geliştirme Kılavuzu](https://docs.kimi-mem.ai/development) bölümüne bakın.
 
 ---
 
 ## License
 
-Claude-Mem, Apache License 2.0 lisansı altında lisanslanmıştır.
+Kimi-Mem, Apache License 2.0 lisansı altında lisanslanmıştır.
 
 Apache-2.0'ı seçtik çünkü kalıcı ajan belleğinin geliştirici araçlarına, yerel
 ajanlara, MCP sunucularına, kurumsal sistemlere, robotik yığınlarına ve üretim
@@ -412,8 +412,8 @@ açık/ticari sınır için [docs/license.md](docs/license.md) ve
 ## Support
 
 - **Dokümantasyon**: [docs/](docs/)
-- **Sorunlar**: [GitHub Issues](https://github.com/thedotmack/claude-mem/issues)
-- **Depo**: [github.com/thedotmack/claude-mem](https://github.com/thedotmack/claude-mem)
+- **Sorunlar**: [GitHub Issues](https://github.com/YD-233/kimi-mem/issues)
+- **Depo**: [github.com/YD-233/kimi-mem](https://github.com/YD-233/kimi-mem)
 - **Resmi X Hesabı**: [@Claude_Memory](https://x.com/Claude_Memory)
 - **Resmi Discord**: [Discord'a Katıl](https://discord.com/invite/J4wttp9vDu)
 - **Yazar**: Alex Newman ([@thedotmack](https://github.com/thedotmack))
@@ -426,6 +426,6 @@ açık/ticari sınır için [docs/license.md](docs/license.md) ve
 
 ### CMEM Ne Demek?
 
-CMEM, 3. bir taraf tarafından oluşturulan ancak Claude-Mem'in yaratıcısı (Alex Newman, @thedotmack) tarafından resmi olarak benimsenen bir token'dır. Bu token, büyüme için bir topluluk katalizörü ve CMEM'i en çok ihtiyaç duyan geliştiricilere ve bilgi çalışanlarına ulaştırmak için bir araç olarak işlev görür.
+CMEM, 3. bir taraf tarafından oluşturulan ancak Kimi-Mem'in yaratıcısı (Alex Newman, @thedotmack) tarafından resmi olarak benimsenen bir token'dır. Bu token, büyüme için bir topluluk katalizörü ve CMEM'i en çok ihtiyaç duyan geliştiricilere ve bilgi çalışanlarına ulaştırmak için bir araç olarak işlev görür.
 
 Resmi BASE CA: 0x76b1967eec0ccaeb001bbbb2b40dc4badba31ba3

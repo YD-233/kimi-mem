@@ -11,7 +11,7 @@ const realSettingsSnapshot = { ...realSettingsDefaultsManager };
 const realHookSettingsSnapshot = { ...realHookSettings };
 const realWorkerUtilsSnapshot = { ...realWorkerUtils };
 const realRuntimeSelectorSnapshot = { ...realRuntimeSelector };
-const originalInternalEnv = process.env.CLAUDE_MEM_INTERNAL;
+const originalInternalEnv = process.env.KIMI_MEM_INTERNAL;
 
 const serverBetaCalls: {
   startSession: unknown[];
@@ -26,25 +26,25 @@ let workerFallbackCalled = false;
 mock.module('../../../src/shared/SettingsDefaultsManager.js', () => ({
   SettingsDefaultsManager: {
     get: (key: string) => {
-      if (key === 'CLAUDE_MEM_DATA_DIR') return join(homedir(), '.claude-mem');
+      if (key === 'KIMI_MEM_DATA_DIR') return join(homedir(), '.kimi-mem');
       return '';
     },
     getInt: () => 0,
     loadFromFile: () => ({
-      CLAUDE_MEM_EXCLUDED_PROJECTS: '',
-      CLAUDE_MEM_RUNTIME: 'server',
-      CLAUDE_MEM_SEMANTIC_INJECT: 'true',
-      CLAUDE_MEM_SEMANTIC_INJECT_LIMIT: '7',
+      KIMI_MEM_EXCLUDED_PROJECTS: '',
+      KIMI_MEM_RUNTIME: 'server',
+      KIMI_MEM_SEMANTIC_INJECT: 'true',
+      KIMI_MEM_SEMANTIC_INJECT_LIMIT: '7',
     }),
   },
 }));
 
 mock.module('../../../src/shared/hook-settings.js', () => ({
   loadFromFileOnce: () => ({
-    CLAUDE_MEM_EXCLUDED_PROJECTS: '',
-    CLAUDE_MEM_RUNTIME: 'server',
-    CLAUDE_MEM_SEMANTIC_INJECT: 'true',
-    CLAUDE_MEM_SEMANTIC_INJECT_LIMIT: '7',
+    KIMI_MEM_EXCLUDED_PROJECTS: '',
+    KIMI_MEM_RUNTIME: 'server',
+    KIMI_MEM_SEMANTIC_INJECT: 'true',
+    KIMI_MEM_SEMANTIC_INJECT_LIMIT: '7',
   }),
 }));
 
@@ -83,7 +83,7 @@ import { logger } from '../../../src/utils/logger.js';
 let loggerSpies: ReturnType<typeof spyOn>[] = [];
 
 beforeEach(() => {
-  delete process.env.CLAUDE_MEM_INTERNAL;
+  delete process.env.KIMI_MEM_INTERNAL;
   workerFallbackCalled = false;
   serverBetaCalls.startSession.length = 0;
   serverBetaCalls.contextObservations.length = 0;
@@ -99,9 +99,9 @@ beforeEach(() => {
 
 afterAll(() => {
   if (originalInternalEnv === undefined) {
-    delete process.env.CLAUDE_MEM_INTERNAL;
+    delete process.env.KIMI_MEM_INTERNAL;
   } else {
-    process.env.CLAUDE_MEM_INTERNAL = originalInternalEnv;
+    process.env.KIMI_MEM_INTERNAL = originalInternalEnv;
   }
   loggerSpies.forEach(spy => spy.mockRestore());
   mock.module('../../../src/shared/SettingsDefaultsManager.js', () => realSettingsSnapshot);
@@ -113,7 +113,7 @@ afterAll(() => {
 describe('sessionInitHandler server semantic injection', () => {
   it('starts the server session and skips worker semantic injection in server mode', async () => {
     const env = { ...process.env };
-    delete env.CLAUDE_MEM_INTERNAL;
+    delete env.KIMI_MEM_INTERNAL;
     const prompt = 'Please restore platform-aware context for this Cursor session.';
     const script = `
       const serverCalls = { startSession: [], contextObservations: [] };
@@ -121,10 +121,10 @@ describe('sessionInitHandler server semantic injection', () => {
       const { sessionInitHandler, setSessionInitDependenciesForTesting } = await import('./src/cli/handlers/session-init.ts');
       setSessionInitDependenciesForTesting({
         loadFromFileOnce: () => ({
-          CLAUDE_MEM_EXCLUDED_PROJECTS: '',
-          CLAUDE_MEM_RUNTIME: 'server',
-          CLAUDE_MEM_SEMANTIC_INJECT: 'true',
-          CLAUDE_MEM_SEMANTIC_INJECT_LIMIT: '7',
+          KIMI_MEM_EXCLUDED_PROJECTS: '',
+          KIMI_MEM_RUNTIME: 'server',
+          KIMI_MEM_SEMANTIC_INJECT: 'true',
+          KIMI_MEM_SEMANTIC_INJECT_LIMIT: '7',
         }),
         resolveRuntimeContext: () => ({
           runtime: 'server',

@@ -155,7 +155,7 @@ Three subagents completed 2026-07-17 (live Cloudflare docs via raw `<url>index.m
 ## Phase 5: Guardrails + monitoring (first-class, not afterthought)
 
 **Tasks:**
-1. Watchdog: scheduled Worker (cron, hourly) querying the GraphQL Analytics API for the DO namespace — duration GB-s (expected ≈ 0; the hibernation-defeat detector), rows read/written (the runaway detector), request count (~messages/20). Thresholds from the validated workload model; alert via the existing Discord webhook rails (`scripts/discord-release-notify.js` pattern, creds in `~/Scripts/claude-mem/.env`).
+1. Watchdog: scheduled Worker (cron, hourly) querying the GraphQL Analytics API for the DO namespace — duration GB-s (expected ≈ 0; the hibernation-defeat detector), rows read/written (the runaway detector), request count (~messages/20). Thresholds from the validated workload model; alert via the existing Discord webhook rails (`scripts/discord-release-notify.js` pattern, creds in `~/Scripts/kimi-mem/.env`).
 2. Kill switch: KV flag checked by the front Worker — tripped ⇒ refuse WS upgrades + `X-Sync-Mode: poll` on HTTP responses; clients fall back to Phase 3 polling (product stays complete, ~$0.03/user/mo indefinitely).
 3. Canary: one synthetic user, two fake devices, trickle writes 24/7; its DO's duration metric is a known constant — a hibernation regression shows within hours, not on the invoice.
 4. CI: the ESLint block + `grep -rn "setTimeout\|setInterval\|\.accept()\|fetch(\|connect(" workers/sync-hub/src/do/` as a required check; weekly invoice-glance scheduled agent (Discord ping only on delta).
@@ -167,7 +167,7 @@ Three subagents completed 2026-07-17 (live Cloudflare docs via raw `<url>index.m
 ## Phase 6: Final verification + horizon
 
 1. Full-matrix e2e: fresh device bootstrap (`since=0`), week-offline catch-up, concurrent two-device writes, all four mutation types, epoch reset, kill-switch degradation — all on `wrangler dev` + two real worker daemons.
-2. Anti-pattern sweep: the Phase 0.4 greps across `workers/`; `bun test` full suite; `npm run build-and-sync`; confirm the marketplace rsync excludes `workers/` (inspect `~/.claude/plugins/marketplaces/thedotmack/` after sync).
+2. Anti-pattern sweep: the Phase 0.4 greps across `workers/`; `bun test` full suite; `npm run build-and-sync`; confirm the marketplace rsync excludes `workers/` (inspect `~/.claude/plugins/marketplaces/YD-233/` after sync).
 3. Documentation: update `docs/public/` cloud-sync pages (Mintlify auto-deploys from main).
 4. Horizon (explicitly out of scope, recorded so nobody re-litigates): dashboard as a `/changes` client; E2E encryption (bodies become opaque blobs — the hub never parses `body` except mutation envelopes); team corpora (corpus-keyed DO, per-member `last_ack_seq`); Electric read-path adoption ONLY if Postgres ever lands server-side.
 
@@ -176,5 +176,5 @@ Three subagents completed 2026-07-17 (live Cloudflare docs via raw `<url>index.m
 ## Open decisions for the maintainer
 
 1. **Dead-device history import** (Phase 3.5): accept loss vs. one-time cmem.ai-side import script. Recommendation: import.
-2. **Old lane during rollout**: hard cutover via `CLAUDE_MEM_CLOUD_SYNC_HUB_URL` (recommended — the re-push migration rebuilds the log) vs. temporary dual-push. Dual-push doubles write cost for no correctness gain.
+2. **Old lane during rollout**: hard cutover via `KIMI_MEM_CLOUD_SYNC_HUB_URL` (recommended — the re-push migration rebuilds the log) vs. temporary dual-push. Dual-push doubles write cost for no correctness gain.
 3. **Wrangler config flow**: `migrations` (matches all current example pages) vs. `exports` (the declared successor). Recommendation: `exports` on the fresh scaffold; it's the forward path and this project has no legacy namespaces.

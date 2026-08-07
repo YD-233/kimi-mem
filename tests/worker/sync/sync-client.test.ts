@@ -107,7 +107,7 @@ describe('SyncClient', () => {
   }
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-sync-client-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-sync-client-'));
     db = new Database(':memory:');
     new SessionStore(db);
     apply = new SyncApply(db, { deviceId: SELF });

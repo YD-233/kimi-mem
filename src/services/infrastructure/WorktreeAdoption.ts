@@ -160,7 +160,7 @@ export async function adoptMergedWorktrees(opts: {
     return result;
   }
 
-  const dbPath = path.join(dataDirectory, 'claude-mem.db');
+  const dbPath = path.join(dataDirectory, 'kimi-mem.db');
   if (!existsSync(dbPath)) {
     logger.debug('SYSTEM', 'Worktree adoption skipped (no DB yet)', { dbPath });
     return result;
@@ -311,7 +311,7 @@ export async function adoptMergedWorktrees(opts: {
   }
 
   if (!dryRun && adoptedChromaTargets.length > 0) {
-    const chromaSync = new ChromaSync('claude-mem');
+    const chromaSync = new ChromaSync('kimi-mem');
     try {
       await chromaSync.updateMergedIntoProject(adoptedChromaTargets, parentProject);
       result.chromaUpdates = adoptedChromaTargets.length;
@@ -361,7 +361,7 @@ export async function adoptMergedWorktreesForAllKnownRepos(opts: {
   dryRun?: boolean;
 } = {}): Promise<AdoptionResult[]> {
   const dataDirectory = opts.dataDirectory ?? DEFAULT_DATA_DIR;
-  const dbPath = path.join(dataDirectory, 'claude-mem.db');
+  const dbPath = path.join(dataDirectory, 'kimi-mem.db');
   const results: AdoptionResult[] = [];
 
   if (!existsSync(dbPath)) {

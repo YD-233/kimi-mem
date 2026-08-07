@@ -2,11 +2,11 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/thedotmack/claude-mem">
+  <a href="https://github.com/YD-233/kimi-mem">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-dark-mode.webp">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp" alt="Claude-Mem" width="400">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-dark-mode.webp">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp" alt="Kimi-Mem" width="400">
     </picture>
   </a>
   <br>
@@ -70,9 +70,9 @@
 <p align="center">
   <a href="https://trendshift.io/repositories/15496" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg" alt="thedotmack/claude-mem | Trendshift" width="250" height="55"/>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg" alt="YD-233/kimi-mem | Trendshift" width="250" height="55"/>
     </picture>
   </a>
 </p>
@@ -82,30 +82,30 @@
 <table align="center">
   <tr>
     <td align="center">
-      <a href="https://github.com/thedotmack/claude-mem">
+      <a href="https://github.com/YD-233/kimi-mem">
         <picture>
           <img
-            src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/cm-preview.gif"
-            alt="Claude-Mem Preview"
+            src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/cm-preview.gif"
+            alt="Kimi-Mem Preview"
             width="500"
           >
         </picture>
       </a>
     </td>
     <td align="center">
-      <a href="https://www.star-history.com/#thedotmack/claude-mem&Date">
+      <a href="https://www.star-history.com/#YD-233/kimi-mem&Date">
         <picture>
           <source
             media="(prefers-color-scheme: dark)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&theme=dark&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&theme=dark&legend=top-left"
           />
           <source
             media="(prefers-color-scheme: light)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
           />
           <img
             alt="Star History Chart"
-            src="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            src="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
             width="500"
           />
         </picture>
@@ -125,7 +125,7 @@
 </p>
 
 <p align="center">
-  Claude-Mem duy trì ngữ cảnh liền mạch qua các phiên làm việc bằng cách tự động ghi lại các quan sát về việc sử dụng công cụ, tạo tóm tắt ngữ nghĩa và cung cấp chúng cho các phiên làm việc trong tương lai. Điều này giúp Claude duy trì tính liên tục của kiến thức về các dự án ngay cả sau khi phiên làm việc kết thúc hoặc kết nối lại.
+  Kimi-Mem duy trì ngữ cảnh liền mạch qua các phiên làm việc bằng cách tự động ghi lại các quan sát về việc sử dụng công cụ, tạo tóm tắt ngữ nghĩa và cung cấp chúng cho các phiên làm việc trong tương lai. Điều này giúp Claude duy trì tính liên tục của kiến thức về các dự án ngay cả sau khi phiên làm việc kết thúc hoặc kết nối lại.
 </p>
 
 ---
@@ -135,42 +135,42 @@
 Cài đặt chỉ với một lệnh duy nhất:
 
 ```bash
-npx claude-mem install
+npx kimi-mem install
 ```
 
 Hoặc cài đặt cho OpenCode:
 
 ```bash
-npx claude-mem install --ide opencode
+npx kimi-mem install --ide opencode
 ```
 
-Hoặc cài đặt cho Antigravity CLI ([hướng dẫn cài đặt](https://docs.claude-mem.ai/antigravity-cli/setup)):
+Hoặc cài đặt cho Antigravity CLI ([hướng dẫn cài đặt](https://docs.kimi-mem.ai/antigravity-cli/setup)):
 
 ```bash
-npx claude-mem install --ide antigravity
+npx kimi-mem install --ide antigravity
 ```
 
 Hoặc cài đặt từ chợ plugin ngay trong Claude Code:
 
 ```bash
-/plugin marketplace add thedotmack/claude-mem
+/plugin marketplace add YD-233/kimi-mem
 
-/plugin install claude-mem
+/plugin install kimi-mem
 ```
 
 Khởi động lại Claude Code. Ngữ cảnh từ các phiên trước sẽ tự động xuất hiện trong các phiên mới.
 
-> **Lưu ý:** Claude-Mem cũng được phát hành trên npm, nhưng `npm install -g claude-mem` chỉ cài đặt **SDK/thư viện** — nó không đăng ký các hook của plugin hay thiết lập dịch vụ worker. Hãy luôn cài đặt qua `npx claude-mem install` hoặc các lệnh `/plugin` ở trên.
+> **Lưu ý:** Kimi-Mem cũng được phát hành trên npm, nhưng `npm install -g kimi-mem` chỉ cài đặt **SDK/thư viện** — nó không đăng ký các hook của plugin hay thiết lập dịch vụ worker. Hãy luôn cài đặt qua `npx kimi-mem install` hoặc các lệnh `/plugin` ở trên.
 
 ### 🦞 OpenClaw Gateway
 
-Cài đặt claude-mem như một plugin bộ nhớ liên tục trên các gateway [OpenClaw](https://openclaw.ai) chỉ với một lệnh duy nhất:
+Cài đặt kimi-mem như một plugin bộ nhớ liên tục trên các gateway [OpenClaw](https://openclaw.ai) chỉ với một lệnh duy nhất:
 
 ```bash
 curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 ```
 
-Trình cài đặt xử lý các phần phụ thuộc, thiết lập plugin, cấu hình nhà cung cấp AI, khởi động worker, và tùy chọn gửi luồng quan sát thời gian thực đến Telegram, Discord, Slack, và nhiều hơn nữa. Xem [Hướng Dẫn Tích Hợp OpenClaw](https://docs.claude-mem.ai/openclaw-integration) để biết chi tiết.
+Trình cài đặt xử lý các phần phụ thuộc, thiết lập plugin, cấu hình nhà cung cấp AI, khởi động worker, và tùy chọn gửi luồng quan sát thời gian thực đến Telegram, Discord, Slack, và nhiều hơn nữa. Xem [Hướng Dẫn Tích Hợp OpenClaw](https://docs.kimi-mem.ai/openclaw-integration) để biết chi tiết.
 
 **Tính Năng Chính:**
 
@@ -188,35 +188,35 @@ Trình cài đặt xử lý các phần phụ thuộc, thiết lập plugin, c�
 
 ## Tài Liệu
 
-📚 **[Xem Tài Liệu Đầy Đủ](https://docs.claude-mem.ai/)** - Duyệt trên trang web chính thức
+📚 **[Xem Tài Liệu Đầy Đủ](https://docs.kimi-mem.ai/)** - Duyệt trên trang web chính thức
 
 ### Bắt Đầu
 
-- **[Hướng Dẫn Cài Đặt](https://docs.claude-mem.ai/installation)** - Bắt đầu nhanh & cài đặt nâng cao
-- **[Hướng Dẫn Sử Dụng](https://docs.claude-mem.ai/usage/getting-started)** - Cách Claude-Mem hoạt động tự động
-- **[Công Cụ Tìm Kiếm](https://docs.claude-mem.ai/usage/search-tools)** - Truy vấn lịch sử dự án bằng ngôn ngữ tự nhiên
+- **[Hướng Dẫn Cài Đặt](https://docs.kimi-mem.ai/installation)** - Bắt đầu nhanh & cài đặt nâng cao
+- **[Hướng Dẫn Sử Dụng](https://docs.kimi-mem.ai/usage/getting-started)** - Cách Kimi-Mem hoạt động tự động
+- **[Công Cụ Tìm Kiếm](https://docs.kimi-mem.ai/usage/search-tools)** - Truy vấn lịch sử dự án bằng ngôn ngữ tự nhiên
 
 ### Thực Hành Tốt Nhất
 
-- **[Kỹ Thuật Ngữ Cảnh](https://docs.claude-mem.ai/context-engineering)** - Các nguyên tắc tối ưu hóa ngữ cảnh cho AI agent
-- **[Tiết Lộ Tuần Tự](https://docs.claude-mem.ai/progressive-disclosure)** - Triết lý đằng sau chiến lược chuẩn bị ngữ cảnh của Claude-Mem
+- **[Kỹ Thuật Ngữ Cảnh](https://docs.kimi-mem.ai/context-engineering)** - Các nguyên tắc tối ưu hóa ngữ cảnh cho AI agent
+- **[Tiết Lộ Tuần Tự](https://docs.kimi-mem.ai/progressive-disclosure)** - Triết lý đằng sau chiến lược chuẩn bị ngữ cảnh của Kimi-Mem
 
 ### Kiến Trúc
 
-- **[Tổng Quan](https://docs.claude-mem.ai/architecture/overview)** - Các thành phần hệ thống & luồng dữ liệu
-- **[Phát Triển Kiến Trúc](https://docs.claude-mem.ai/architecture-evolution)** - Hành trình từ v3 đến v5
-- **[Kiến Trúc Hooks](https://docs.claude-mem.ai/hooks-architecture)** - Cách Claude-Mem sử dụng lifecycle hooks
-- **[Tham Chiếu Hooks](https://docs.claude-mem.ai/architecture/hooks)** - Giải thích 7 hook scripts
-- **[Worker Service](https://docs.claude-mem.ai/architecture/worker-service)** - HTTP API & quản lý Bun
-- **[Cơ Sở Dữ Liệu](https://docs.claude-mem.ai/architecture/database)** - Schema SQLite & tìm kiếm FTS5
-- **[Kiến Trúc Tìm Kiếm](https://docs.claude-mem.ai/architecture/search-architecture)** - Tìm kiếm kết hợp với cơ sở dữ liệu vector Chroma
+- **[Tổng Quan](https://docs.kimi-mem.ai/architecture/overview)** - Các thành phần hệ thống & luồng dữ liệu
+- **[Phát Triển Kiến Trúc](https://docs.kimi-mem.ai/architecture-evolution)** - Hành trình từ v3 đến v5
+- **[Kiến Trúc Hooks](https://docs.kimi-mem.ai/hooks-architecture)** - Cách Kimi-Mem sử dụng lifecycle hooks
+- **[Tham Chiếu Hooks](https://docs.kimi-mem.ai/architecture/hooks)** - Giải thích 7 hook scripts
+- **[Worker Service](https://docs.kimi-mem.ai/architecture/worker-service)** - HTTP API & quản lý Bun
+- **[Cơ Sở Dữ Liệu](https://docs.kimi-mem.ai/architecture/database)** - Schema SQLite & tìm kiếm FTS5
+- **[Kiến Trúc Tìm Kiếm](https://docs.kimi-mem.ai/architecture/search-architecture)** - Tìm kiếm kết hợp với cơ sở dữ liệu vector Chroma
 
 ### Cấu Hình & Phát Triển
 
-- **[Cấu Hình](https://docs.claude-mem.ai/configuration)** - Biến môi trường & cài đặt
-- **[Phát Triển](https://docs.claude-mem.ai/development)** - Xây dựng, kiểm thử, đóng góp
-- **[Nhánh Phát Hành](https://docs.claude-mem.ai/branches)** - Luồng các nhánh stable, core-dev, và community-edge
-- **[Khắc Phục Sự Cố](https://docs.claude-mem.ai/troubleshooting)** - Các vấn đề thường gặp & giải pháp
+- **[Cấu Hình](https://docs.kimi-mem.ai/configuration)** - Biến môi trường & cài đặt
+- **[Phát Triển](https://docs.kimi-mem.ai/development)** - Xây dựng, kiểm thử, đóng góp
+- **[Nhánh Phát Hành](https://docs.kimi-mem.ai/branches)** - Luồng các nhánh stable, core-dev, và community-edge
+- **[Khắc Phục Sự Cố](https://docs.kimi-mem.ai/troubleshooting)** - Các vấn đề thường gặp & giải pháp
 
 ---
 
@@ -231,13 +231,13 @@ Trình cài đặt xử lý các phần phụ thuộc, thiết lập plugin, c�
 5. **mem-search Skill** - Truy vấn ngôn ngữ tự nhiên với tiết lộ tuần tự
 6. **Chroma Vector Database** - Tìm kiếm kết hợp ngữ nghĩa + từ khóa để truy xuất ngữ cảnh thông minh
 
-Xem [Tổng Quan Kiến Trúc](https://docs.claude-mem.ai/architecture/overview) để biết chi tiết.
+Xem [Tổng Quan Kiến Trúc](https://docs.kimi-mem.ai/architecture/overview) để biết chi tiết.
 
 ---
 
 ## Công Cụ Tìm Kiếm MCP
 
-Claude-Mem cung cấp tìm kiếm bộ nhớ thông minh thông qua **4 công cụ MCP** theo một **mô hình quy trình 3 lớp** tối ưu về token:
+Kimi-Mem cung cấp tìm kiếm bộ nhớ thông minh thông qua **4 công cụ MCP** theo một **mô hình quy trình 3 lớp** tối ưu về token:
 
 **Quy Trình 3 Lớp:**
 
@@ -270,7 +270,7 @@ search(query="authentication bug", type="bugfix", limit=10)
 get_observations(ids=[123, 456])
 ```
 
-Xem [Hướng Dẫn Công Cụ Tìm Kiếm](https://docs.claude-mem.ai/usage/search-tools) để biết các ví dụ chi tiết.
+Xem [Hướng Dẫn Công Cụ Tìm Kiếm](https://docs.kimi-mem.ai/usage/search-tools) để biết các ví dụ chi tiết.
 
 ---
 
@@ -278,7 +278,7 @@ Xem [Hướng Dẫn Công Cụ Tìm Kiếm](https://docs.claude-mem.ai/usage/sea
 
 Các bản phát hành ổn định được xây dựng từ `main` và phát hành lên npm. `core-dev` và
 `community-edge` là các nhánh chạy trực tiếp từ mã nguồn dành cho các bản sửa lỗi độ tin cậy
-sớm và các tích hợp cộng đồng. Xem **[Nhánh Phát Hành](https://docs.claude-mem.ai/branches)**
+sớm và các tích hợp cộng đồng. Xem **[Nhánh Phát Hành](https://docs.kimi-mem.ai/branches)**
 để biết luồng nhánh và hướng dẫn chạy phiên bản không ổn định.
 
 ---
@@ -306,13 +306,13 @@ Hãy đảm bảo rằng Node.js và npm đã được cài đặt và thêm và
 
 ## Cấu Hình
 
-Cài đặt được quản lý trong `~/.claude-mem/settings.json` (tự động tạo với giá trị mặc định khi chạy lần đầu). Cấu hình mô hình AI, cổng worker, thư mục dữ liệu, mức độ log và cài đặt chèn ngữ cảnh.
+Cài đặt được quản lý trong `~/.kimi-mem/settings.json` (tự động tạo với giá trị mặc định khi chạy lần đầu). Cấu hình mô hình AI, cổng worker, thư mục dữ liệu, mức độ log và cài đặt chèn ngữ cảnh.
 
-Xem **[Hướng Dẫn Cấu Hình](https://docs.claude-mem.ai/configuration)** để biết tất cả các cài đặt và ví dụ có sẵn.
+Xem **[Hướng Dẫn Cấu Hình](https://docs.kimi-mem.ai/configuration)** để biết tất cả các cài đặt và ví dụ có sẵn.
 
 ### Cấu Hình Chế Độ & Ngôn Ngữ
 
-Claude-Mem hỗ trợ nhiều chế độ làm việc và ngôn ngữ thông qua cài đặt `CLAUDE_MEM_MODE`.
+Kimi-Mem hỗ trợ nhiều chế độ làm việc và ngôn ngữ thông qua cài đặt `KIMI_MEM_MODE`.
 
 Tùy chọn này kiểm soát cả:
 - Hành vi quy trình làm việc (ví dụ: code, chill, investigation)
@@ -320,18 +320,18 @@ Tùy chọn này kiểm soát cả:
 
 #### Cách Cấu Hình
 
-Chỉnh sửa tệp cài đặt của bạn tại `~/.claude-mem/settings.json`:
+Chỉnh sửa tệp cài đặt của bạn tại `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--zh"
+  "KIMI_MEM_MODE": "code--zh"
 }
 ```
 
 Các chế độ được định nghĩa trong `plugin/modes/`. Để xem tất cả các chế độ có sẵn cục bộ:
 
 ```bash
-ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
+ls ~/.claude/plugins/marketplaces/YD-233/plugin/modes/
 ```
 
 #### Các Chế Độ Có Sẵn
@@ -353,7 +353,7 @@ Khởi động lại Claude Code để áp dụng cấu hình chế độ mới.
 
 ## Phát Triển
 
-Xem **[Hướng Dẫn Phát Triển](https://docs.claude-mem.ai/development)** để biết hướng dẫn xây dựng, kiểm thử và quy trình đóng góp.
+Xem **[Hướng Dẫn Phát Triển](https://docs.kimi-mem.ai/development)** để biết hướng dẫn xây dựng, kiểm thử và quy trình đóng góp.
 
 ---
 
@@ -361,7 +361,7 @@ Xem **[Hướng Dẫn Phát Triển](https://docs.claude-mem.ai/development)** �
 
 Nếu gặp sự cố, hãy mô tả vấn đề cho Claude và kỹ năng troubleshoot sẽ tự động chẩn đoán và cung cấp các bản sửa lỗi.
 
-Xem **[Hướng Dẫn Khắc Phục Sự Cố](https://docs.claude-mem.ai/troubleshooting)** để biết các vấn đề thường gặp và giải pháp.
+Xem **[Hướng Dẫn Khắc Phục Sự Cố](https://docs.kimi-mem.ai/troubleshooting)** để biết các vấn đề thường gặp và giải pháp.
 
 ---
 
@@ -370,7 +370,7 @@ Xem **[Hướng Dẫn Khắc Phục Sự Cố](https://docs.claude-mem.ai/troubl
 Tạo báo cáo lỗi toàn diện với trình tạo tự động:
 
 ```bash
-cd ~/.claude/plugins/marketplaces/thedotmack
+cd ~/.claude/plugins/marketplaces/YD-233
 npm run bug-report
 ```
 
@@ -384,18 +384,18 @@ Chúng tôi hoan nghênh các đóng góp! Vui lòng:
 4. Cập nhật tài liệu
 5. Gửi Pull Request
 
-Claude-Mem được phát hành từ ba nhánh: `main` (ổn định), `core-dev`, và
+Kimi-Mem được phát hành từ ba nhánh: `main` (ổn định), `core-dev`, và
 `community-edge`. Chỉ `main` được phát hành lên npm; các nhánh còn lại được chạy từ
-mã nguồn. Xem [Nhánh Phát Hành](https://docs.claude-mem.ai/branches) để biết
+mã nguồn. Xem [Nhánh Phát Hành](https://docs.kimi-mem.ai/branches) để biết
 chiến lược và hướng dẫn chạy cục bộ.
 
-Xem [Hướng Dẫn Phát Triển](https://docs.claude-mem.ai/development) để biết quy trình đóng góp.
+Xem [Hướng Dẫn Phát Triển](https://docs.kimi-mem.ai/development) để biết quy trình đóng góp.
 
 ---
 
 ## Giấy Phép
 
-Claude-Mem được cấp phép theo Apache License 2.0.
+Kimi-Mem được cấp phép theo Apache License 2.0.
 
 Chúng tôi chọn Apache-2.0 vì bộ nhớ agentic bền vững nên dễ dàng được tích hợp vào
 các công cụ dành cho nhà phát triển, các agent cục bộ, máy chủ MCP, hệ thống doanh nghiệp,
@@ -412,8 +412,8 @@ mở/thương mại.
 ## Hỗ Trợ
 
 - **Tài Liệu**: [docs/](docs/)
-- **Vấn Đề**: [GitHub Issues](https://github.com/thedotmack/claude-mem/issues)
-- **Repository**: [github.com/thedotmack/claude-mem](https://github.com/thedotmack/claude-mem)
+- **Vấn Đề**: [GitHub Issues](https://github.com/YD-233/kimi-mem/issues)
+- **Repository**: [github.com/YD-233/kimi-mem](https://github.com/YD-233/kimi-mem)
 - **Tài Khoản X Chính Thức**: [@Claude_Memory](https://x.com/Claude_Memory)
 - **Discord Chính Thức**: [Tham gia Discord](https://discord.com/invite/J4wttp9vDu)
 - **Tác Giả**: Alex Newman ([@thedotmack](https://github.com/thedotmack))
@@ -426,6 +426,6 @@ mở/thương mại.
 
 ### Còn CMEM Thì Sao?
 
-CMEM là một token được tạo ra bởi bên thứ ba nhưng được đón nhận chính thức bởi người sáng tạo ra Claude-Mem (Alex Newman, @thedotmack). Token này đóng vai trò là chất xúc tác cộng đồng cho sự phát triển và là phương tiện đưa CMEM đến với các nhà phát triển và người lao động tri thức cần nó nhất.
+CMEM là một token được tạo ra bởi bên thứ ba nhưng được đón nhận chính thức bởi người sáng tạo ra Kimi-Mem (Alex Newman, @thedotmack). Token này đóng vai trò là chất xúc tác cộng đồng cho sự phát triển và là phương tiện đưa CMEM đến với các nhà phát triển và người lao động tri thức cần nó nhất.
 
 Official BASE CA: 0x76b1967eec0ccaeb001bbbb2b40dc4badba31ba3

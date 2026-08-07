@@ -16,9 +16,9 @@ function stripProjectRoot(filePath: string): string {
     }
   }
 
-  const projectIndex = filePath.indexOf('claude-mem/');
+  const projectIndex = filePath.indexOf('kimi-mem/');
   if (projectIndex !== -1) {
-    return filePath.substring(projectIndex + 'claude-mem/'.length);
+    return filePath.substring(projectIndex + 'kimi-mem/'.length);
   }
 
   const parts = filePath.split('/');

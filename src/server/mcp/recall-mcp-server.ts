@@ -40,7 +40,7 @@ const TOOLS: Tool[] = [
   {
     name: 'search',
     description:
-      'Full-text search your claude-mem memory for a project. Returns matching observations (most relevant first).',
+      'Full-text search your kimi-mem memory for a project. Returns matching observations (most relevant first).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -139,7 +139,7 @@ async function dispatchToolCall(
  */
 export function createRecallMcpServer(backend: RecallBackend, version: string): Server {
   const server = new Server(
-    { name: 'claude-mem', version },
+    { name: 'kimi-mem', version },
     { capabilities: { tools: {} } },
   );
 

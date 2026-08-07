@@ -2,11 +2,11 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/thedotmack/claude-mem">
+  <a href="https://github.com/YD-233/kimi-mem">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-dark-mode.webp">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp" alt="Claude-Mem" width="400">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-dark-mode.webp">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp" alt="Kimi-Mem" width="400">
     </picture>
   </a>
   <br>
@@ -70,9 +70,9 @@
 <p align="center">
   <a href="https://trendshift.io/repositories/15496" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg" alt="thedotmack/claude-mem | Trendshift" width="250" height="55"/>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg" alt="YD-233/kimi-mem | Trendshift" width="250" height="55"/>
     </picture>
   </a>
 </p>
@@ -82,30 +82,30 @@
 <table align="center">
   <tr>
     <td align="center">
-      <a href="https://github.com/thedotmack/claude-mem">
+      <a href="https://github.com/YD-233/kimi-mem">
         <picture>
           <img
-            src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/cm-preview.gif"
-            alt="Claude-Mem Preview"
+            src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/cm-preview.gif"
+            alt="Kimi-Mem Preview"
             width="500"
           >
         </picture>
       </a>
     </td>
     <td align="center">
-      <a href="https://www.star-history.com/#thedotmack/claude-mem&Date">
+      <a href="https://www.star-history.com/#YD-233/kimi-mem&Date">
         <picture>
           <source
             media="(prefers-color-scheme: dark)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&theme=dark&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&theme=dark&legend=top-left"
           />
           <source
             media="(prefers-color-scheme: light)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
           />
           <img
             alt="Star History Chart"
-            src="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            src="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
             width="500"
           />
         </picture>
@@ -125,7 +125,7 @@
 </p>
 
 <p align="center">
-  Claude-Mem păstrează contextul fără întrerupere între sesiuni prin capturarea automată a observațiilor de utilizare a instrumentelor, generarea de rezumate semantice și punerea lor la dispoziție în sesiunile viitoare. Aceasta permite lui Claude să mențină continuitatea cunoștințelor despre proiecte chiar și după încheierea sau reconectarea sesiunilor.
+  Kimi-Mem păstrează contextul fără întrerupere între sesiuni prin capturarea automată a observațiilor de utilizare a instrumentelor, generarea de rezumate semantice și punerea lor la dispoziție în sesiunile viitoare. Aceasta permite lui Claude să mențină continuitatea cunoștințelor despre proiecte chiar și după încheierea sau reconectarea sesiunilor.
 </p>
 
 ---
@@ -135,42 +135,42 @@
 Instalați cu o singură comandă:
 
 ```bash
-npx claude-mem install
+npx kimi-mem install
 ```
 
 Sau instalați pentru OpenCode:
 
 ```bash
-npx claude-mem install --ide opencode
+npx kimi-mem install --ide opencode
 ```
 
-Sau instalați pentru Antigravity CLI ([ghid de configurare](https://docs.claude-mem.ai/antigravity-cli/setup)):
+Sau instalați pentru Antigravity CLI ([ghid de configurare](https://docs.kimi-mem.ai/antigravity-cli/setup)):
 
 ```bash
-npx claude-mem install --ide antigravity
+npx kimi-mem install --ide antigravity
 ```
 
 Sau instalați din marketplace-ul de plugin-uri direct din Claude Code:
 
 ```bash
-/plugin marketplace add thedotmack/claude-mem
+/plugin marketplace add YD-233/kimi-mem
 
-/plugin install claude-mem
+/plugin install kimi-mem
 ```
 
 Reporniți Claude Code. Contextul din sesiunile anterioare va apărea automat în sesiunile noi.
 
-> **Notă:** Claude-Mem este publicat și pe npm, dar `npm install -g claude-mem` instalează **doar SDK-ul/biblioteca** — nu înregistrează hook-urile plugin-ului și nu configurează serviciul worker. Instalați întotdeauna prin `npx claude-mem install` sau comenzile `/plugin` de mai sus.
+> **Notă:** Kimi-Mem este publicat și pe npm, dar `npm install -g kimi-mem` instalează **doar SDK-ul/biblioteca** — nu înregistrează hook-urile plugin-ului și nu configurează serviciul worker. Instalați întotdeauna prin `npx kimi-mem install` sau comenzile `/plugin` de mai sus.
 
 ### 🦞 OpenClaw Gateway
 
-Instalați claude-mem ca plugin de memorie persistentă pe gateway-urile [OpenClaw](https://openclaw.ai) cu o singură comandă:
+Instalați kimi-mem ca plugin de memorie persistentă pe gateway-urile [OpenClaw](https://openclaw.ai) cu o singură comandă:
 
 ```bash
 curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 ```
 
-Programul de instalare gestionează dependențele, configurarea plugin-ului, configurarea furnizorului AI, pornirea worker-ului și fluxurile opționale de observații în timp real către Telegram, Discord, Slack și altele. Consultați [Ghidul de Integrare OpenClaw](https://docs.claude-mem.ai/openclaw-integration) pentru detalii.
+Programul de instalare gestionează dependențele, configurarea plugin-ului, configurarea furnizorului AI, pornirea worker-ului și fluxurile opționale de observații în timp real către Telegram, Discord, Slack și altele. Consultați [Ghidul de Integrare OpenClaw](https://docs.kimi-mem.ai/openclaw-integration) pentru detalii.
 
 **Caracteristici Principale:**
 
@@ -188,35 +188,35 @@ Programul de instalare gestionează dependențele, configurarea plugin-ului, con
 
 ## Documentație
 
-📚 **[Vizualizați Documentația Completă](https://docs.claude-mem.ai/)** - Răsfoiți pe site-ul oficial
+📚 **[Vizualizați Documentația Completă](https://docs.kimi-mem.ai/)** - Răsfoiți pe site-ul oficial
 
 ### Introducere
 
-- **[Ghid de Instalare](https://docs.claude-mem.ai/installation)** - Start rapid și instalare avansată
-- **[Ghid de Utilizare](https://docs.claude-mem.ai/usage/getting-started)** - Cum funcționează Claude-Mem automat
-- **[Instrumente de Căutare](https://docs.claude-mem.ai/usage/search-tools)** - Interogați istoricul proiectului cu limbaj natural
+- **[Ghid de Instalare](https://docs.kimi-mem.ai/installation)** - Start rapid și instalare avansată
+- **[Ghid de Utilizare](https://docs.kimi-mem.ai/usage/getting-started)** - Cum funcționează Kimi-Mem automat
+- **[Instrumente de Căutare](https://docs.kimi-mem.ai/usage/search-tools)** - Interogați istoricul proiectului cu limbaj natural
 
 ### Practici Recomandate
 
-- **[Inginerie de Context](https://docs.claude-mem.ai/context-engineering)** - Principii de optimizare a contextului pentru agenți AI
-- **[Dezvăluire Progresivă](https://docs.claude-mem.ai/progressive-disclosure)** - Filosofia din spatele strategiei de pregătire a contextului Claude-Mem
+- **[Inginerie de Context](https://docs.kimi-mem.ai/context-engineering)** - Principii de optimizare a contextului pentru agenți AI
+- **[Dezvăluire Progresivă](https://docs.kimi-mem.ai/progressive-disclosure)** - Filosofia din spatele strategiei de pregătire a contextului Kimi-Mem
 
 ### Arhitectură
 
-- **[Prezentare Generală](https://docs.claude-mem.ai/architecture/overview)** - Componente de sistem și flux de date
-- **[Evoluția Arhitecturii](https://docs.claude-mem.ai/architecture-evolution)** - Parcursul de la v3 la v5
-- **[Arhitectura Hook-urilor](https://docs.claude-mem.ai/hooks-architecture)** - Cum folosește Claude-Mem hook-urile de ciclu de viață
-- **[Referință Hook-uri](https://docs.claude-mem.ai/architecture/hooks)** - 7 scripturi de hook explicate
-- **[Serviciu Worker](https://docs.claude-mem.ai/architecture/worker-service)** - HTTP API și gestionare Bun
-- **[Bază de Date](https://docs.claude-mem.ai/architecture/database)** - Schemă SQLite și căutare FTS5
-- **[Arhitectura Căutării](https://docs.claude-mem.ai/architecture/search-architecture)** - Căutare hibridă cu baza de date vectorială Chroma
+- **[Prezentare Generală](https://docs.kimi-mem.ai/architecture/overview)** - Componente de sistem și flux de date
+- **[Evoluția Arhitecturii](https://docs.kimi-mem.ai/architecture-evolution)** - Parcursul de la v3 la v5
+- **[Arhitectura Hook-urilor](https://docs.kimi-mem.ai/hooks-architecture)** - Cum folosește Kimi-Mem hook-urile de ciclu de viață
+- **[Referință Hook-uri](https://docs.kimi-mem.ai/architecture/hooks)** - 7 scripturi de hook explicate
+- **[Serviciu Worker](https://docs.kimi-mem.ai/architecture/worker-service)** - HTTP API și gestionare Bun
+- **[Bază de Date](https://docs.kimi-mem.ai/architecture/database)** - Schemă SQLite și căutare FTS5
+- **[Arhitectura Căutării](https://docs.kimi-mem.ai/architecture/search-architecture)** - Căutare hibridă cu baza de date vectorială Chroma
 
 ### Configurare și Dezvoltare
 
-- **[Configurare](https://docs.claude-mem.ai/configuration)** - Variabile de mediu și setări
-- **[Dezvoltare](https://docs.claude-mem.ai/development)** - Construire, testare, contribuție
-- **[Ramuri de Lansare](https://docs.claude-mem.ai/branches)** - Fluxul ramurilor stable, core-dev și community-edge
-- **[Depanare](https://docs.claude-mem.ai/troubleshooting)** - Probleme comune și soluții
+- **[Configurare](https://docs.kimi-mem.ai/configuration)** - Variabile de mediu și setări
+- **[Dezvoltare](https://docs.kimi-mem.ai/development)** - Construire, testare, contribuție
+- **[Ramuri de Lansare](https://docs.kimi-mem.ai/branches)** - Fluxul ramurilor stable, core-dev și community-edge
+- **[Depanare](https://docs.kimi-mem.ai/troubleshooting)** - Probleme comune și soluții
 
 ---
 
@@ -231,13 +231,13 @@ Programul de instalare gestionează dependențele, configurarea plugin-ului, con
 5. **Abilitatea mem-search** - Interogări în limbaj natural cu dezvăluire progresivă
 6. **Bază de Date Vectorială Chroma** - Căutare hibridă semantică + cuvinte cheie pentru recuperare inteligentă a contextului
 
-Consultați [Prezentarea Generală a Arhitecturii](https://docs.claude-mem.ai/architecture/overview) pentru detalii.
+Consultați [Prezentarea Generală a Arhitecturii](https://docs.kimi-mem.ai/architecture/overview) pentru detalii.
 
 ---
 
 ## Instrumente de Căutare MCP
 
-Claude-Mem oferă căutare inteligentă în memorie prin **4 instrumente MCP** care urmează un tipar de flux de lucru **eficient din punct de vedere al tokenilor, pe 3 niveluri**:
+Kimi-Mem oferă căutare inteligentă în memorie prin **4 instrumente MCP** care urmează un tipar de flux de lucru **eficient din punct de vedere al tokenilor, pe 3 niveluri**:
 
 **Fluxul de Lucru pe 3 Niveluri:**
 
@@ -270,7 +270,7 @@ search(query="authentication bug", type="bugfix", limit=10)
 get_observations(ids=[123, 456])
 ```
 
-Consultați [Ghidul Instrumentelor de Căutare](https://docs.claude-mem.ai/usage/search-tools) pentru exemple detaliate.
+Consultați [Ghidul Instrumentelor de Căutare](https://docs.kimi-mem.ai/usage/search-tools) pentru exemple detaliate.
 
 ---
 
@@ -278,7 +278,7 @@ Consultați [Ghidul Instrumentelor de Căutare](https://docs.claude-mem.ai/usage
 
 Lansările stabile pornesc din `main` și sunt publicate pe npm. `core-dev` și
 `community-edge` sunt ramuri rulate direct din sursă pentru remedieri timpurii de fiabilitate și
-integrări comunitare. Consultați **[Ramuri de Lansare](https://docs.claude-mem.ai/branches)**
+integrări comunitare. Consultați **[Ramuri de Lansare](https://docs.kimi-mem.ai/branches)**
 pentru fluxul ramurilor și instrucțiunile de rulare non-stabile.
 
 ---
@@ -306,13 +306,13 @@ Asigurați-vă că Node.js și npm sunt instalate și adăugate în PATH. Descă
 
 ## Configurare
 
-Setările sunt gestionate în `~/.claude-mem/settings.json` (creat automat cu valori implicite la prima rulare). Configurați modelul AI, portul worker-ului, directorul de date, nivelul de log și setările de injectare a contextului.
+Setările sunt gestionate în `~/.kimi-mem/settings.json` (creat automat cu valori implicite la prima rulare). Configurați modelul AI, portul worker-ului, directorul de date, nivelul de log și setările de injectare a contextului.
 
-Consultați **[Ghidul de Configurare](https://docs.claude-mem.ai/configuration)** pentru toate setările disponibile și exemple.
+Consultați **[Ghidul de Configurare](https://docs.kimi-mem.ai/configuration)** pentru toate setările disponibile și exemple.
 
 ### Configurarea Modului și Limbii
 
-Claude-Mem suportă mai multe moduri de lucru și limbi prin setarea `CLAUDE_MEM_MODE`.
+Kimi-Mem suportă mai multe moduri de lucru și limbi prin setarea `KIMI_MEM_MODE`.
 
 Această opțiune controlează:
 - Comportamentul fluxului de lucru (de ex. code, chill, investigation)
@@ -320,18 +320,18 @@ Această opțiune controlează:
 
 #### Cum se Configurează
 
-Editați fișierul de setări la `~/.claude-mem/settings.json`:
+Editați fișierul de setări la `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--zh"
+  "KIMI_MEM_MODE": "code--zh"
 }
 ```
 
 Modurile sunt definite în `plugin/modes/`. Pentru a vedea toate modurile disponibile local:
 
 ```bash
-ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
+ls ~/.claude/plugins/marketplaces/YD-233/plugin/modes/
 ```
 
 #### Moduri Disponibile
@@ -353,7 +353,7 @@ Reporniți Claude Code pentru a aplica noua configurație a modului.
 
 ## Dezvoltare
 
-Consultați **[Ghidul de Dezvoltare](https://docs.claude-mem.ai/development)** pentru instrucțiuni de construire, testare și fluxul de contribuție.
+Consultați **[Ghidul de Dezvoltare](https://docs.kimi-mem.ai/development)** pentru instrucțiuni de construire, testare și fluxul de contribuție.
 
 ---
 
@@ -361,7 +361,7 @@ Consultați **[Ghidul de Dezvoltare](https://docs.claude-mem.ai/development)** p
 
 Dacă întâmpinați probleme, descrieți problema lui Claude, iar abilitatea troubleshoot va diagnostica automat și va furniza soluții.
 
-Consultați **[Ghidul de Depanare](https://docs.claude-mem.ai/troubleshooting)** pentru probleme comune și soluții.
+Consultați **[Ghidul de Depanare](https://docs.kimi-mem.ai/troubleshooting)** pentru probleme comune și soluții.
 
 ---
 
@@ -370,7 +370,7 @@ Consultați **[Ghidul de Depanare](https://docs.claude-mem.ai/troubleshooting)**
 Creați rapoarte de erori complete cu generatorul automat:
 
 ```bash
-cd ~/.claude/plugins/marketplaces/thedotmack
+cd ~/.claude/plugins/marketplaces/YD-233
 npm run bug-report
 ```
 
@@ -384,18 +384,18 @@ Contribuțiile sunt binevenite! Vă rugăm:
 4. Actualizați documentația
 5. Trimiteți un Pull Request
 
-Claude-Mem este lansat din trei ramuri: `main` (stabilă), `core-dev` și
+Kimi-Mem este lansat din trei ramuri: `main` (stabilă), `core-dev` și
 `community-edge`. Doar `main` este publicată pe npm; celelalte sunt rulate din
-sursă. Consultați [Ramuri de Lansare](https://docs.claude-mem.ai/branches) pentru
+sursă. Consultați [Ramuri de Lansare](https://docs.kimi-mem.ai/branches) pentru
 strategie și instrucțiuni de rulare locală.
 
-Consultați [Ghidul de Dezvoltare](https://docs.claude-mem.ai/development) pentru fluxul de contribuție.
+Consultați [Ghidul de Dezvoltare](https://docs.kimi-mem.ai/development) pentru fluxul de contribuție.
 
 ---
 
 ## Licență
 
-Claude-Mem este licențiat sub Apache License 2.0.
+Kimi-Mem este licențiat sub Apache License 2.0.
 
 Am ales Apache-2.0 pentru că memoria agentică durabilă ar trebui să fie ușor de integrat în
 instrumente pentru dezvoltatori, agenți locali, servere MCP, sisteme enterprise, stive de robotică
@@ -412,8 +412,8 @@ open-source/comercială.
 ## Suport
 
 - **Documentație**: [docs/](docs/)
-- **Probleme**: [GitHub Issues](https://github.com/thedotmack/claude-mem/issues)
-- **Repository**: [github.com/thedotmack/claude-mem](https://github.com/thedotmack/claude-mem)
+- **Probleme**: [GitHub Issues](https://github.com/YD-233/kimi-mem/issues)
+- **Repository**: [github.com/YD-233/kimi-mem](https://github.com/YD-233/kimi-mem)
 - **Cont Oficial X**: [@Claude_Memory](https://x.com/Claude_Memory)
 - **Discord Oficial**: [Alăturați-vă pe Discord](https://discord.com/invite/J4wttp9vDu)
 - **Autor**: Alex Newman ([@thedotmack](https://github.com/thedotmack))
@@ -426,6 +426,6 @@ open-source/comercială.
 
 ### Ce Este cu CMEM?
 
-CMEM este un token creat de o terță parte, dar îmbrățișat oficial de creatorul Claude-Mem (Alex Newman, @thedotmack). Token-ul acționează ca un catalizator comunitar pentru creștere și ca un vehicul pentru a aduce CMEM la dezvoltatorii și lucrătorii din domeniul cunoașterii care au cea mai mare nevoie de el.
+CMEM este un token creat de o terță parte, dar îmbrățișat oficial de creatorul Kimi-Mem (Alex Newman, @thedotmack). Token-ul acționează ca un catalizator comunitar pentru creștere și ca un vehicul pentru a aduce CMEM la dezvoltatorii și lucrătorii din domeniul cunoașterii care au cea mai mare nevoie de el.
 
 CA Oficial BASE: 0x76b1967eec0ccaeb001bbbb2b40dc4badba31ba3

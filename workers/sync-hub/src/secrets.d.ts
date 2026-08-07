@@ -18,7 +18,7 @@ interface Env {
 	ANALYTICS_API_TOKEN?: string;
 	/**
 	 * Discord webhook URL for watchdog alerts (runtime credential lives in
-	 * ~/Scripts/claude-mem/.env as DISCORD_UPDATES_WEBHOOK — NEVER hardcode
+	 * ~/Scripts/kimi-mem/.env as DISCORD_UPDATES_WEBHOOK — NEVER hardcode
 	 * or commit a webhook URL).
 	 * `wrangler secret put DISCORD_WEBHOOK_URL`
 	 */

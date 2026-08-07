@@ -1,28 +1,28 @@
 ---
 title: Claude Desktop MCP
-description: Use claude-mem memory search in Claude Desktop with MCP tools
+description: Use kimi-mem memory search in Claude Desktop with MCP tools
 icon: desktop
 ---
 
 <Note>
-**Availability:** Claude-mem MCP tools work with Claude Desktop on macOS and Windows.
+**Availability:** Kimi-Mem MCP tools work with Claude Desktop on macOS and Windows.
 </Note>
 
 ## Overview
 
-Claude Desktop can access your claude-mem memory database through **MCP tools**. This allows you to search past sessions, decisions, and observations directly from Claude Desktop conversations.
+Claude Desktop can access your kimi-mem memory database through **MCP tools**. This allows you to search past sessions, decisions, and observations directly from Claude Desktop conversations.
 
 ## Prerequisites
 
 Before configuring MCP tools, ensure:
 
-1. **claude-mem is installed** and the worker service is running
+1. **kimi-mem is installed** and the worker service is running
 2. **MCP server is configured** in Claude Desktop (uses the `mcp-search` MCP server)
 
 ### Verify Worker is Running
 
 ```bash
-WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
 curl http://127.0.0.1:$WORKER_PORT/api/health
 # Should return: {"status":"ok"}
 ```
@@ -43,7 +43,7 @@ The skill requires the `mcp-search` MCP server. Add this to your Claude Desktop 
         "mcp-search": {
           "command": "node",
           "args": [
-            "/Users/YOUR_USERNAME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/mcp-server.cjs"
+            "/Users/YOUR_USERNAME/.claude/plugins/marketplaces/YD-233/plugin/scripts/mcp-server.cjs"
           ]
         }
       }
@@ -59,7 +59,7 @@ The skill requires the `mcp-search` MCP server. Add this to your Claude Desktop 
         "mcp-search": {
           "command": "node",
           "args": [
-            "C:\\Users\\YOUR_USERNAME\\.claude\\plugins\\marketplaces\\thedotmack\\plugin\\scripts\\mcp-server.cjs"
+            "C:\\Users\\YOUR_USERNAME\\.claude\\plugins\\marketplaces\\YD-233\\plugin\\scripts\\mcp-server.cjs"
           ]
         }
       }
@@ -134,8 +134,8 @@ This 3-layer approach provides ~10x token savings compared to fetching full deta
 
 ### Search Returns No Results
 
-1. Ensure claude-mem has recorded sessions (check http://127.0.0.1:$WORKER_PORT)
-2. Verify the database exists: `ls ~/.claude-mem/claude-mem.db`
+1. Ensure kimi-mem has recorded sessions (check http://127.0.0.1:$WORKER_PORT)
+2. Verify the database exists: `ls ~/.kimi-mem/kimi-mem.db`
 3. Test the API directly: `curl "http://127.0.0.1:$WORKER_PORT/api/search?query=test"`
 
 ## Related

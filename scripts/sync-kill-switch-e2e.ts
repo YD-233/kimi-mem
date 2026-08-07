@@ -100,7 +100,7 @@ async function main(): Promise<void> {
   kv(['delete', KILL_KEY]);
   log({ event: 'start', hub: HUB, user: USER });
 
-  const tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-kill-e2e-'));
+  const tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-kill-e2e-'));
   const dbA = new Database(':memory:');
   const dbB = new Database(':memory:');
   new SessionStore(dbA);
@@ -109,11 +109,11 @@ async function main(): Promise<void> {
 
   // Device A: the push drain.
   const cloudSync = new CloudSync(dbA, {
-    CLAUDE_MEM_CLOUD_SYNC_TOKEN: TOKEN,
-    CLAUDE_MEM_CLOUD_SYNC_USER_ID: USER,
-    CLAUDE_MEM_CLOUD_SYNC_HUB_URL: HUB,
-    CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: DEV_A,
-    CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME: 'e2e-a',
+    KIMI_MEM_CLOUD_SYNC_TOKEN: TOKEN,
+    KIMI_MEM_CLOUD_SYNC_USER_ID: USER,
+    KIMI_MEM_CLOUD_SYNC_HUB_URL: HUB,
+    KIMI_MEM_CLOUD_SYNC_DEVICE_ID: DEV_A,
+    KIMI_MEM_CLOUD_SYNC_DEVICE_NAME: 'e2e-a',
   }, {
     settingsPath: join(tempDir, 'settings-a.json'),
     debounceMs: 100,

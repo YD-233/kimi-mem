@@ -9,7 +9,7 @@ const skillDir = path.join(projectRoot, 'plugin/skills/mode-creator');
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), 'claude-mem-mode-creator-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'kimi-mem-mode-creator-'));
   tempDirs.push(dir);
   return dir;
 }
@@ -25,7 +25,7 @@ describe('mode-creator skill', () => {
     expect(content).toContain('Code mode already works well for software work.');
     expect(content).toContain('interactive question tool');
     expect(content).toContain('Never pass the token as an argument.');
-    expect(content).toContain('npx claude-mem restart');
+    expect(content).toContain('npx kimi-mem restart');
     expect(content).toContain('Mode: <mode name> (<mode id>)');
   });
 
@@ -33,12 +33,12 @@ describe('mode-creator skill', () => {
     const dataDir = makeTempDir();
     const settingsPath = path.join(dataDir, 'settings.json');
     writeFileSync(settingsPath, JSON.stringify({
-      CLAUDE_MEM_MODE: 'code',
-      CLAUDE_MEM_TELEGRAM_ENABLED: 'true',
-      CLAUDE_MEM_TELEGRAM_BOT_TOKEN: 'preserve-this-secret',
-      CLAUDE_MEM_TELEGRAM_CHAT_ID: '12345',
-      CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES: 'security_alert',
-      CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS: 'existing-tag',
+      KIMI_MEM_MODE: 'code',
+      KIMI_MEM_TELEGRAM_ENABLED: 'true',
+      KIMI_MEM_TELEGRAM_BOT_TOKEN: 'preserve-this-secret',
+      KIMI_MEM_TELEGRAM_CHAT_ID: '12345',
+      KIMI_MEM_TELEGRAM_TRIGGER_TYPES: 'security_alert',
+      KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS: 'existing-tag',
       UNRELATED_SETTING: 'preserved',
     }));
     const draftPath = path.join(dataDir, 'draft.json');
@@ -67,7 +67,7 @@ describe('mode-creator skill', () => {
       '--telegram-concepts', 'cost-impact',
     ], {
       cwd: projectRoot,
-      env: { ...process.env, CLAUDE_MEM_DATA_DIR: dataDir },
+      env: { ...process.env, KIMI_MEM_DATA_DIR: dataDir },
       encoding: 'utf8',
     });
     expect(result.status, result.stderr).toBe(0);
@@ -76,10 +76,10 @@ describe('mode-creator skill', () => {
     const installed = JSON.parse(readFileSync(path.join(dataDir, 'modes/code--architecture-practice.json'), 'utf8'));
     expect(installed).toEqual(draft);
     const settings = JSON.parse(readFileSync(settingsPath, 'utf8'));
-    expect(settings.CLAUDE_MEM_MODE).toBe('code--architecture-practice');
-    expect(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES.split(',')).toEqual(['security_alert', 'design-decision']);
-    expect(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS.split(',')).toEqual(['existing-tag', 'cost-impact']);
-    expect(settings.CLAUDE_MEM_TELEGRAM_BOT_TOKEN).toBe('preserve-this-secret');
+    expect(settings.KIMI_MEM_MODE).toBe('code--architecture-practice');
+    expect(settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES.split(',')).toEqual(['security_alert', 'design-decision']);
+    expect(settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS.split(',')).toEqual(['existing-tag', 'cost-impact']);
+    expect(settings.KIMI_MEM_TELEGRAM_BOT_TOKEN).toBe('preserve-this-secret');
     expect(settings.UNRELATED_SETTING).toBe('preserved');
   });
 
@@ -94,7 +94,7 @@ describe('mode-creator skill', () => {
       '--mode-id', 'code',
     ], {
       cwd: projectRoot,
-      env: { ...process.env, CLAUDE_MEM_DATA_DIR: dataDir },
+      env: { ...process.env, KIMI_MEM_DATA_DIR: dataDir },
       encoding: 'utf8',
     });
     expect(result.status).toBe(1);

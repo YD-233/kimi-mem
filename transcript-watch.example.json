@@ -109,5 +109,5 @@
       "startAtEnd": true
     }
   ],
-  "stateFile": "~/.claude-mem/transcript-watch-state.json"
+  "stateFile": "~/.kimi-mem/transcript-watch-state.json"
 }

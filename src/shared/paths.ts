@@ -18,11 +18,11 @@ const _dirname = getDirname();
  * Expand a leading `~/` (or a bare `~`) to the user's home directory.
  *
  * Node's `path.join` / `fs` do NOT expand `~` — only the shell does. So a
- * literal `~/.claude-mem` read from `settings.json` or an env var is treated
+ * literal `~/.kimi-mem` read from `settings.json` or an env var is treated
  * as a *relative* path, creating a directory literally named `~` in the
- * process cwd. claude-mem workers inherit the cwd of whatever spawned them
+ * process cwd. kimi-mem workers inherit the cwd of whatever spawned them
  * (subagents pinned to a subdirectory, a plugin-install dir, etc.), so a
- * `~`-prefixed DATA_DIR scattered stray `~/.claude-mem/` trees across the
+ * `~`-prefixed DATA_DIR scattered stray `~/.kimi-mem/` trees across the
  * workspace. Expanding here keeps every downstream path absolute regardless
  * of how the value was written.
  */
@@ -36,18 +36,18 @@ export function expandHome(p: string): string {
 }
 
 export function resolveDataDir(): string {
-  if (process.env.CLAUDE_MEM_DATA_DIR) {
-    return expandHome(process.env.CLAUDE_MEM_DATA_DIR);
+  if (process.env.KIMI_MEM_DATA_DIR) {
+    return expandHome(process.env.KIMI_MEM_DATA_DIR);
   }
 
-  const defaultDataDir = join(homedir(), '.claude-mem');
+  const defaultDataDir = join(homedir(), '.kimi-mem');
   const settingsPath = join(defaultDataDir, 'settings.json');
   try {
     if (existsSync(settingsPath)) {
       const raw = parseJsonWithBom<Record<string, any>>(readFileSync(settingsPath, 'utf-8'));
       const settings = raw.env ?? raw;
-      if (settings.CLAUDE_MEM_DATA_DIR) {
-        return expandHome(settings.CLAUDE_MEM_DATA_DIR);
+      if (settings.KIMI_MEM_DATA_DIR) {
+        return expandHome(settings.KIMI_MEM_DATA_DIR);
       }
     }
   } catch {
@@ -60,11 +60,11 @@ export function resolveDataDir(): string {
 export const DATA_DIR = resolveDataDir();
 export const CLAUDE_CONFIG_DIR = process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude');
 
-export const MARKETPLACE_ROOT = join(CLAUDE_CONFIG_DIR, 'plugins', 'marketplaces', 'thedotmack');
+export const MARKETPLACE_ROOT = join(CLAUDE_CONFIG_DIR, 'plugins', 'marketplaces', 'YD-233');
 
 export const LOGS_DIR = join(DATA_DIR, 'logs');
 export const USER_SETTINGS_PATH = join(DATA_DIR, 'settings.json');
-export const DB_PATH = join(DATA_DIR, 'claude-mem.db');
+export const DB_PATH = join(DATA_DIR, 'kimi-mem.db');
 
 export const OBSERVER_SESSIONS_DIR = join(DATA_DIR, 'observer-sessions');
 
@@ -107,7 +107,7 @@ export const paths = {
   serverPort: () => join(DATA_DIR, '.server-beta.port'),
   serverRuntime: () => join(DATA_DIR, '.server-beta.runtime.json'),
   settings: () => join(DATA_DIR, 'settings.json'),
-  database: () => join(DATA_DIR, 'claude-mem.db'),
+  database: () => join(DATA_DIR, 'kimi-mem.db'),
   chroma: () => join(DATA_DIR, 'chroma'),
   combinedCerts: () => join(DATA_DIR, 'combined_certs.pem'),
   transcriptsConfig: () => join(DATA_DIR, 'transcript-watch.json'),

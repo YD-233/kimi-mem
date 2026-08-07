@@ -11,7 +11,7 @@ const realHookSettingsSnapshot = { ...realHookSettings };
 
 // Mock loadFromFileOnce to avoid real file I/O and settings-dependent results
 mock.module('../../src/shared/hook-settings.js', () => ({
-  loadFromFileOnce: () => ({ CLAUDE_MEM_EXCLUDED_PROJECTS: '' }),
+  loadFromFileOnce: () => ({ KIMI_MEM_EXCLUDED_PROJECTS: '' }),
 }));
 
 afterAll(() => {
@@ -25,15 +25,15 @@ describe('shouldTrackProject — path normalization', () => {
   let savedInternal: string | undefined;
 
   beforeEach(() => {
-    savedInternal = process.env.CLAUDE_MEM_INTERNAL;
-    delete process.env.CLAUDE_MEM_INTERNAL;
+    savedInternal = process.env.KIMI_MEM_INTERNAL;
+    delete process.env.KIMI_MEM_INTERNAL;
   });
 
   afterEach(() => {
     if (savedInternal !== undefined) {
-      process.env.CLAUDE_MEM_INTERNAL = savedInternal;
+      process.env.KIMI_MEM_INTERNAL = savedInternal;
     } else {
-      delete process.env.CLAUDE_MEM_INTERNAL;
+      delete process.env.KIMI_MEM_INTERNAL;
     }
   });
 
@@ -57,8 +57,8 @@ describe('shouldTrackProject — path normalization', () => {
     expect(shouldTrackProject(unrelated)).toBe(true);
   });
 
-  it('returns false when CLAUDE_MEM_INTERNAL is set', () => {
-    process.env.CLAUDE_MEM_INTERNAL = '1';
+  it('returns false when KIMI_MEM_INTERNAL is set', () => {
+    process.env.KIMI_MEM_INTERNAL = '1';
     expect(shouldTrackProject('/any/path')).toBe(false);
   });
 });

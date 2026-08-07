@@ -19,7 +19,7 @@ let contextShowTerminalOutput = 'false';
 
 mock.module('../../../src/shared/hook-settings.js', () => ({
   loadFromFileOnce: () => ({
-    CLAUDE_MEM_CONTEXT_SHOW_TERMINAL_OUTPUT: contextShowTerminalOutput,
+    KIMI_MEM_CONTEXT_SHOW_TERMINAL_OUTPUT: contextShowTerminalOutput,
   }),
 }));
 

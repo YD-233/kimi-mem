@@ -38,12 +38,12 @@ src/ui/viewer.html
 
 plugin/.cli-installed
 
-plugin/scripts/claude-mem
+plugin/scripts/kimi-mem
 
 CONTRIB_NOTES.md
 CLAUDE.local.md
 
-.docker-claude-mem-data/
+.docker-kimi-mem-data/
 
 .docker-blowout-data/
 .scratch/

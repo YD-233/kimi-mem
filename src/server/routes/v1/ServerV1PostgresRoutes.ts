@@ -41,15 +41,15 @@ declare const __DEFAULT_PACKAGE_VERSION__: string;
 const MCP_SERVER_VERSION =
   typeof __DEFAULT_PACKAGE_VERSION__ !== 'undefined' ? __DEFAULT_PACKAGE_VERSION__ : '0.0.0-dev';
 
-// The MCP link base: CLAUDE_MEM_PUBLIC_URL in prod (behind a proxy/LB), else
+// The MCP link base: KIMI_MEM_PUBLIC_URL in prod (behind a proxy/LB), else
 // derived from the request host so the connect command points at this server.
 function mcpConnectUrl(req: Request): string {
-  const base = (process.env.CLAUDE_MEM_PUBLIC_URL ?? `${req.protocol}://${req.get('host') ?? 'localhost'}`)
+  const base = (process.env.KIMI_MEM_PUBLIC_URL ?? `${req.protocol}://${req.get('host') ?? 'localhost'}`)
     .replace(/\/+$/, '');
   return `${base}/v1/mcp`;
 }
 function mcpConnectCommand(mcpUrl: string, key: string): string {
-  return `claude mcp add --transport http claude-mem ${mcpUrl} --header "Authorization: Bearer ${key}"`;
+  return `claude mcp add --transport http kimi-mem ${mcpUrl} --header "Authorization: Bearer ${key}"`;
 }
 
 export interface ServerV1PostgresRoutesOptions {
@@ -166,15 +166,15 @@ export class ServerV1PostgresRoutes implements RouteHandler {
     // registrations below need no changes. Order after auth: rate limit → quota
     // → meter, so the request is counted only once it's admitted.
     const guards: RequestHandler[] = [];
-    const ratePerMin = Number(process.env.CLAUDE_MEM_RATE_LIMIT_PER_MIN ?? '0');
+    const ratePerMin = Number(process.env.KIMI_MEM_RATE_LIMIT_PER_MIN ?? '0');
     if (ratePerMin > 0) guards.push(requireRateLimit(this.options.pool, { windowSec: 60, max: ratePerMin }));
-    const monthlyCap = Number(process.env.CLAUDE_MEM_MONTHLY_REQUEST_CAP ?? '0');
+    const monthlyCap = Number(process.env.KIMI_MEM_MONTHLY_REQUEST_CAP ?? '0');
     if (monthlyCap > 0) guards.push(requireMonthlyQuota(this.options.pool, { kind: 'request', cap: monthlyCap }));
-    if (process.env.CLAUDE_MEM_USAGE_METERING === '1') guards.push(meterRequests(this.options.pool));
+    if (process.env.KIMI_MEM_USAGE_METERING === '1') guards.push(meterRequests(this.options.pool));
     // A monthly TOKEN cap gates writes only (ingestion drives generation = token
     // spend); reads stay available so a team over budget can still recall.
     const writeGuards: RequestHandler[] = [...guards];
-    const tokenCap = Number(process.env.CLAUDE_MEM_MONTHLY_TOKEN_CAP ?? '0');
+    const tokenCap = Number(process.env.KIMI_MEM_MONTHLY_TOKEN_CAP ?? '0');
     if (tokenCap > 0) writeGuards.push(requireMonthlyQuota(this.options.pool, { kind: 'tokens', cap: tokenCap }));
     const writeAuth: RequestHandler[] = [baseWrite, ...writeGuards];
     const readAuth: RequestHandler[] = [baseRead, ...guards];
@@ -1002,7 +1002,7 @@ export class ServerV1PostgresRoutes implements RouteHandler {
 
     // Remote authenticated MCP endpoint. The "secure MCP link" a user pastes
     // into Claude Code (or any MCP client) to recall their cloud memory:
-    //   claude mcp add --transport http claude-mem <base>/v1/mcp \
+    //   claude mcp add --transport http kimi-mem <base>/v1/mcp \
     //     --header "Authorization: Bearer cm_..."
     // Same readAuth (memories:read) + team/project scoping + audit trail as
     // /v1/search, so it reads identical data through identical guards. Stateless

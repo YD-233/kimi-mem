@@ -6,7 +6,7 @@ import { writeContextFile } from '../src/utils/cursor-utils';
 
 // Read-back helper for verifying writeContextFile output.
 function readContextFile(workspacePath: string): string | null {
-  const rulesFile = join(workspacePath, '.cursor', 'rules', 'claude-mem-context.mdc');
+  const rulesFile = join(workspacePath, '.cursor', 'rules', 'kimi-mem-context.mdc');
   if (!existsSync(rulesFile)) return null;
   return readFileSync(rulesFile, 'utf-8');
 }
@@ -37,10 +37,10 @@ describe('Cursor Context Update', () => {
       expect(existsSync(rulesDir)).toBe(true);
     });
 
-    it('creates claude-mem-context.mdc file', () => {
+    it('creates kimi-mem-context.mdc file', () => {
       writeContextFile(workspacePath, 'test context');
 
-      const rulesFile = join(workspacePath, '.cursor', 'rules', 'claude-mem-context.mdc');
+      const rulesFile = join(workspacePath, '.cursor', 'rules', 'kimi-mem-context.mdc');
       expect(existsSync(rulesFile)).toBe(true);
     });
 
@@ -55,7 +55,7 @@ describe('Cursor Context Update', () => {
       writeContextFile(workspacePath, 'test context');
 
       const content = readContextFile(workspacePath);
-      expect(content).toContain('description: "Claude-mem context from past sessions (auto-updated)"');
+      expect(content).toContain('description: "Kimi-Mem context from past sessions (auto-updated)"');
     });
 
     it('includes the provided context in the file body', () => {
@@ -82,13 +82,13 @@ describe('Cursor Context Update', () => {
       writeContextFile(workspacePath, 'test');
 
       const content = readContextFile(workspacePath);
-      expect(content).toContain("Use claude-mem's MCP search tools for more detailed queries");
+      expect(content).toContain("Use kimi-mem's MCP search tools for more detailed queries");
     });
 
     it('uses atomic write (no temp file left behind)', () => {
       writeContextFile(workspacePath, 'test context');
 
-      const tempFile = join(workspacePath, '.cursor', 'rules', 'claude-mem-context.mdc.tmp');
+      const tempFile = join(workspacePath, '.cursor', 'rules', 'kimi-mem-context.mdc.tmp');
       expect(existsSync(tempFile)).toBe(false);
     });
 

@@ -94,7 +94,7 @@ function installFetchMock(): void {
 
 describe('ensureWorkerRunning — stale-worker recycle on version mismatch', () => {
   const originalFetch = global.fetch;
-  const originalDataDir = process.env.CLAUDE_MEM_DATA_DIR;
+  const originalDataDir = process.env.KIMI_MEM_DATA_DIR;
   let tempDataDir: string;
   let killSpy: ReturnType<typeof spyOn>;
   let killCalls: Array<{ pid: number; signal: string | number | undefined }>;
@@ -103,9 +103,9 @@ describe('ensureWorkerRunning — stale-worker recycle on version mismatch', () 
   beforeEach(() => {
     // The lazy-spawn goes through the spawn gate (worker-spawn-gate.ts),
     // which writes <DATA_DIR>/spawn.lock — point DATA_DIR at a temp dir so
-    // the test never touches the real ~/.claude-mem lock.
-    tempDataDir = mkdtempSync(join(tmpdir(), 'claude-mem-version-recycle-'));
-    process.env.CLAUDE_MEM_DATA_DIR = tempDataDir;
+    // the test never touches the real ~/.kimi-mem lock.
+    tempDataDir = mkdtempSync(join(tmpdir(), 'kimi-mem-version-recycle-'));
+    process.env.KIMI_MEM_DATA_DIR = tempDataDir;
     installFetchMock();
     spawnCalls.length = 0;
     staleWorkerAlive = true;
@@ -125,9 +125,9 @@ describe('ensureWorkerRunning — stale-worker recycle on version mismatch', () 
     killSpy.mockRestore();
     global.fetch = originalFetch;
     if (originalDataDir === undefined) {
-      delete process.env.CLAUDE_MEM_DATA_DIR;
+      delete process.env.KIMI_MEM_DATA_DIR;
     } else {
-      process.env.CLAUDE_MEM_DATA_DIR = originalDataDir;
+      process.env.KIMI_MEM_DATA_DIR = originalDataDir;
     }
     rmSync(tempDataDir, { recursive: true, force: true });
     mock.restore();

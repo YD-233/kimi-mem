@@ -90,13 +90,13 @@ function readJson(filePath, label = filePath) {
 }
 
 function resolveDataDir() {
-  if (process.env.CLAUDE_MEM_DATA_DIR) return expandHome(process.env.CLAUDE_MEM_DATA_DIR);
-  const defaultDir = path.join(homedir(), '.claude-mem');
+  if (process.env.KIMI_MEM_DATA_DIR) return expandHome(process.env.KIMI_MEM_DATA_DIR);
+  const defaultDir = path.join(homedir(), '.kimi-mem');
   const defaultSettings = path.join(defaultDir, 'settings.json');
   if (!existsSync(defaultSettings)) return defaultDir;
-  const parsed = readJson(defaultSettings, 'claude-mem settings');
+  const parsed = readJson(defaultSettings, 'kimi-mem settings');
   const flat = parsed.env && typeof parsed.env === 'object' ? parsed.env : parsed;
-  return flat.CLAUDE_MEM_DATA_DIR ? expandHome(flat.CLAUDE_MEM_DATA_DIR) : defaultDir;
+  return flat.KIMI_MEM_DATA_DIR ? expandHome(flat.KIMI_MEM_DATA_DIR) : defaultDir;
 }
 
 function deepMerge(base, override) {
@@ -238,17 +238,17 @@ atomicWriteJson(destinationPath, draft);
 let settings = {};
 let settingsBackup = null;
 if (existsSync(settingsPath)) {
-  const parsed = readJson(settingsPath, 'claude-mem settings');
+  const parsed = readJson(settingsPath, 'kimi-mem settings');
   settings = parsed.env && typeof parsed.env === 'object' ? parsed.env : parsed;
   settingsBackup = `${settingsPath}.backup-${backupStamp}`;
   copyFileSync(settingsPath, settingsBackup);
   chmodSync(settingsBackup, 0o600);
 }
-if (!args['no-activate']) settings.CLAUDE_MEM_MODE = modeId;
+if (!args['no-activate']) settings.KIMI_MEM_MODE = modeId;
 if (telegramTypes.length > 0 || telegramConcepts.length > 0) {
-  settings.CLAUDE_MEM_TELEGRAM_ENABLED = 'true';
-  settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES = mergeCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES, telegramTypes);
-  settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS = mergeCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS, telegramConcepts);
+  settings.KIMI_MEM_TELEGRAM_ENABLED = 'true';
+  settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES = mergeCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES, telegramTypes);
+  settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS = mergeCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS, telegramConcepts);
 }
 atomicWriteJson(settingsPath, settings);
 

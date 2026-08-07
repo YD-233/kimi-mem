@@ -3,6 +3,7 @@ import type { EventHandler } from '../types.js';
 import { HOOK_EXIT_CODES } from '../../shared/hook-constants.js';
 import { logger } from '../../utils/logger.js';
 import { contextHandler } from './context.js';
+import { contextOnceHandler } from './context-once.js';
 import { sessionInitHandler } from './session-init.js';
 import { observationHandler } from './observation.js';
 import { summarizeHandler } from './summarize.js';
@@ -12,6 +13,7 @@ import { fileContextHandler } from './file-context.js';
 
 export type EventType =
   | 'context'           
+  | 'context-once'      
   | 'session-init'      
   | 'observation'       
   | 'summarize'         
@@ -21,6 +23,7 @@ export type EventType =
 
 const handlers: Record<EventType, EventHandler> = {
   'context': contextHandler,
+  'context-once': contextOnceHandler,
   'session-init': sessionInitHandler,
   'observation': observationHandler,
   'summarize': summarizeHandler,
@@ -43,6 +46,7 @@ export function getEventHandler(eventType: string): EventHandler {
 }
 
 export { contextHandler } from './context.js';
+export { contextOnceHandler } from './context-once.js';
 export { sessionInitHandler } from './session-init.js';
 export { observationHandler } from './observation.js';
 export { summarizeHandler } from './summarize.js';

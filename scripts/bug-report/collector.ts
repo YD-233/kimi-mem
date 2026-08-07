@@ -10,7 +10,7 @@ const execAsync = promisify(exec);
 
 export interface SystemDiagnostics {
   versions: {
-    claudeMem: string;
+    kimiMem: string;
     claudeCode: string;
     node: string;
     bun: string;
@@ -61,7 +61,7 @@ function sanitizePath(filePath: string): string {
   return filePath.replace(homeDir, "~");
 }
 
-async function getClaudememVersion(): Promise<string> {
+async function getKimimemVersion(): Promise<string> {
   try {
     const packageJsonPath = path.join(process.cwd(), "package.json");
     const content = await fs.readFile(packageJsonPath, "utf-8");
@@ -167,7 +167,7 @@ async function getDatabaseInfo(
   dataDir: string
 ): Promise<{ exists: boolean; size?: number }> {
   try {
-    const dbPath = path.join(dataDir, "claude-mem.db");
+    const dbPath = path.join(dataDir, "kimi-mem.db");
     const stats = await fs.stat(dbPath);
     return { exists: true, size: stats.size };
   } catch (error) {
@@ -179,7 +179,7 @@ async function getTableCounts(
   dataDir: string
 ): Promise<{ observations: number; sessions: number; summaries: number } | undefined> {
   try {
-    const dbPath = path.join(dataDir, "claude-mem.db");
+    const dbPath = path.join(dataDir, "kimi-mem.db");
     await fs.stat(dbPath);
 
     const query =
@@ -207,26 +207,26 @@ export async function collectDiagnostics(
   options: { includeLogs?: boolean } = {}
 ): Promise<SystemDiagnostics> {
   const homeDir = os.homedir();
-  const dataDir = path.join(homeDir, ".claude-mem");
+  const dataDir = path.join(homeDir, ".kimi-mem");
   const pluginPath = path.join(
     homeDir,
     ".claude",
     "plugins",
     "marketplaces",
-    "thedotmack"
+    "YD-233"
   );
   const cwd = process.cwd();
-  const isDevMode = cwd.includes("claude-mem") && !cwd.includes(".claude");
+  const isDevMode = cwd.includes("kimi-mem") && !cwd.includes(".claude");
 
-  const [claudeMem, claudeCode, bun, osVersion] = await Promise.all([
-    getClaudememVersion(),
+  const [kimiMem, claudeCode, bun, osVersion] = await Promise.all([
+    getKimimemVersion(),
     getClaudeCodeVersion(),
     getBunVersion(),
     getOsVersion(),
   ]);
 
   const versions = {
-    claudeMem,
+    kimiMem,
     claudeCode,
     node: process.version,
     bun,
@@ -247,8 +247,8 @@ export async function collectDiagnostics(
 
   const pidInfo = await readPidFile(dataDir);
   const workerSettings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-  const workerHost = process.env.CLAUDE_MEM_WORKER_HOST || workerSettings.CLAUDE_MEM_WORKER_HOST;
-  const configuredWorkerPort = process.env.CLAUDE_MEM_WORKER_PORT || workerSettings.CLAUDE_MEM_WORKER_PORT;
+  const workerHost = process.env.KIMI_MEM_WORKER_HOST || workerSettings.KIMI_MEM_WORKER_HOST;
+  const configuredWorkerPort = process.env.KIMI_MEM_WORKER_PORT || workerSettings.KIMI_MEM_WORKER_PORT;
   const workerPort = typeof pidInfo?.port === "number"
     ? pidInfo.port
     : parseInt(configuredWorkerPort, 10);
@@ -292,7 +292,7 @@ export async function collectDiagnostics(
     getTableCounts(dataDir),
   ]);
   const database = {
-    path: sanitizePath(path.join(dataDir, "claude-mem.db")),
+    path: sanitizePath(path.join(dataDir, "kimi-mem.db")),
     exists: dbInfo.exists,
     size: dbInfo.size,
     counts: tableCounts,
@@ -320,7 +320,7 @@ export function formatDiagnostics(diagnostics: SystemDiagnostics): string {
   let output = "";
 
   output += "## Environment\n\n";
-  output += `- **Claude-mem**: ${diagnostics.versions.claudeMem}\n`;
+  output += `- **Kimi-Mem**: ${diagnostics.versions.kimiMem}\n`;
   output += `- **Claude Code**: ${diagnostics.versions.claudeCode}\n`;
   output += `- **Node.js**: ${diagnostics.versions.node}\n`;
   output += `- **Bun**: ${diagnostics.versions.bun}\n`;
@@ -369,11 +369,11 @@ export function formatDiagnostics(diagnostics: SystemDiagnostics): string {
   if (diagnostics.config.settings) {
     output += "- **Key Settings**:\n";
     const keySettings = [
-      "CLAUDE_MEM_MODEL",
-      "CLAUDE_MEM_WORKER_PORT",
-      "CLAUDE_MEM_WORKER_HOST",
-      "CLAUDE_MEM_LOG_LEVEL",
-      "CLAUDE_MEM_CONTEXT_OBSERVATIONS",
+      "KIMI_MEM_MODEL",
+      "KIMI_MEM_WORKER_PORT",
+      "KIMI_MEM_WORKER_HOST",
+      "KIMI_MEM_LOG_LEVEL",
+      "KIMI_MEM_CONTEXT_OBSERVATIONS",
     ];
     for (const key of keySettings) {
       if (diagnostics.config.settings[key]) {

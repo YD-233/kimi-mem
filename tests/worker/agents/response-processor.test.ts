@@ -25,10 +25,10 @@ afterAll(() => {
 
 function mockSettingsDefaults(): Record<string, string> {
   return {
-    CLAUDE_MEM_FOLDER_CLAUDEMD_ENABLED: mockFolderClaudeMdEnabled,
-    CLAUDE_MEM_QUEUE_ENGINE: 'sqlite',
-    CLAUDE_MEM_WELCOME_HINT_ENABLED: 'true',
-    CLAUDE_MEM_WORKER_PORT: '37777',
+    KIMI_MEM_FOLDER_CLAUDEMD_ENABLED: mockFolderClaudeMdEnabled,
+    KIMI_MEM_QUEUE_ENGINE: 'sqlite',
+    KIMI_MEM_WELCOME_HINT_ENABLED: 'true',
+    KIMI_MEM_WORKER_PORT: '37777',
   };
 }
 
@@ -38,17 +38,17 @@ function mockSettingsFromFile(settingsPath?: string, applyEnvOverrides = true): 
     : mockSettingsDefaults();
 
   if (!applyEnvOverrides) {
-    settings.CLAUDE_MEM_FOLDER_CLAUDEMD_ENABLED = mockFolderClaudeMdEnabled;
+    settings.KIMI_MEM_FOLDER_CLAUDEMD_ENABLED = mockFolderClaudeMdEnabled;
     return settings;
   }
 
   for (const key of Object.keys(settings)) {
-    if (key === 'CLAUDE_MEM_FOLDER_CLAUDEMD_ENABLED') {
+    if (key === 'KIMI_MEM_FOLDER_CLAUDEMD_ENABLED') {
       continue;
     }
     settings[key] = process.env[key] ?? settings[key];
   }
-  settings.CLAUDE_MEM_FOLDER_CLAUDEMD_ENABLED = mockFolderClaudeMdEnabled;
+  settings.KIMI_MEM_FOLDER_CLAUDEMD_ENABLED = mockFolderClaudeMdEnabled;
 
   return settings;
 }

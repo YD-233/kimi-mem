@@ -18,7 +18,7 @@ import type { Job } from 'bullmq';
 import type { ServerGenerationJobPayload, GenerateObservationsForEventJob } from '../../../src/server/jobs/types.js';
 import { quoteIdentifier } from '../../sdk/pg-isolation.js';
 
-const testDatabaseUrl = process.env.CLAUDE_MEM_TEST_POSTGRES_URL;
+const testDatabaseUrl = process.env.KIMI_MEM_TEST_POSTGRES_URL;
 
 class StubProvider implements ServerGenerationProvider {
   readonly providerLabel = 'claude' as const;
@@ -35,7 +35,7 @@ class StubProvider implements ServerGenerationProvider {
 
 describe('Phase 11 — ProviderObservationGenerator scope enforcement', () => {
   if (!testDatabaseUrl) {
-    it.skip('requires CLAUDE_MEM_TEST_POSTGRES_URL', () => {});
+    it.skip('requires KIMI_MEM_TEST_POSTGRES_URL', () => {});
     return;
   }
 

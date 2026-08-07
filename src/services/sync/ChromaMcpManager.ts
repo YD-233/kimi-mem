@@ -18,15 +18,15 @@ import { ChromaUnavailableError } from '../worker/search/errors.js';
 
 const execFileAsync = promisify(execFile);
 
-const CHROMA_MCP_CLIENT_NAME = 'claude-mem-chroma';
+const CHROMA_MCP_CLIENT_NAME = 'kimi-mem-chroma';
 const CHROMA_MCP_CLIENT_VERSION = '1.0.0';
 const MCP_CONNECTION_TIMEOUT_MS = 30_000;
 const DEFAULT_CHROMA_PREWARM_TIMEOUT_MS = 120_000;
-const CHROMA_PREWARM_TIMEOUT_SETTING = 'CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS';
+const CHROMA_PREWARM_TIMEOUT_SETTING = 'KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS';
 const CHROMA_PREWARM_TIMEOUT_BOUNDS = { min: 1, max: 600_000 } as const;
 const CHROMA_PREWARM_REAP_TIMEOUT_MS = 1_000;
 const RECONNECT_BACKOFF_MS = 10_000;
-const CHROMA_WRITER_LOCK_FILENAME = '.claude-mem-chroma-writer.lock';
+const CHROMA_WRITER_LOCK_FILENAME = '.kimi-mem-chroma-writer.lock';
 const CHROMA_SUPERVISOR_ID = 'chroma-mcp';
 const CHROMA_OUTPUT_TAIL_MAX_CHARS = 2048;
 const DEFAULT_MAX_PENDING_MUTATIONS = 5_000;
@@ -48,7 +48,7 @@ const CHROMA_MCP_PINNED_VERSION = '0.2.6';
 // Capping below 7 lands on protobuf 6.x which opentelemetry tolerates.
 //
 // These pins are runtime-only (uvx --with) so we don't have to fork
-// chroma-mcp upstream — they apply only to claude-mem's spawned subprocess.
+// chroma-mcp upstream — they apply only to kimi-mem's spawned subprocess.
 const CHROMA_MCP_DEP_OVERRIDES: ReadonlyArray<string> = [
   'onnxruntime>=1.20',
   'protobuf<7',
@@ -99,11 +99,11 @@ export class ChromaMcpManager {
 
   private constructor() {
     const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-    const configuredLimit = Number.parseInt(settings.CLAUDE_MEM_CHROMA_MAX_PENDING_MUTATIONS, 10);
+    const configuredLimit = Number.parseInt(settings.KIMI_MEM_CHROMA_MAX_PENDING_MUTATIONS, 10);
     this.maxPendingMutationCalls = Number.isInteger(configuredLimit) && configuredLimit > 0
       ? configuredLimit
       : DEFAULT_MAX_PENDING_MUTATIONS;
-    this.serializeMutations = (settings.CLAUDE_MEM_CHROMA_MODE || 'local') !== 'remote';
+    this.serializeMutations = (settings.KIMI_MEM_CHROMA_MODE || 'local') !== 'remote';
   }
 
   static getInstance(): ChromaMcpManager {
@@ -334,22 +334,22 @@ export class ChromaMcpManager {
 
   private getLocalPersistentChromaDataDir(): string | null {
     const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-    const chromaMode = settings.CLAUDE_MEM_CHROMA_MODE || 'local';
+    const chromaMode = settings.KIMI_MEM_CHROMA_MODE || 'local';
     return chromaMode === 'remote' ? null : paths.chroma();
   }
 
   private buildCommandArgs(localChromaDataDir: string | null = this.getLocalPersistentChromaDataDir()): string[] {
     const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-    const pythonVersion = process.env.CLAUDE_MEM_PYTHON_VERSION || settings.CLAUDE_MEM_PYTHON_VERSION || '3.13';
+    const pythonVersion = process.env.KIMI_MEM_PYTHON_VERSION || settings.KIMI_MEM_PYTHON_VERSION || '3.13';
     const launcherPrefix = ChromaMcpManager.buildLauncherPrefix(pythonVersion);
 
     if (!localChromaDataDir) {
-      const chromaHost = settings.CLAUDE_MEM_CHROMA_HOST || '127.0.0.1';
-      const chromaPort = settings.CLAUDE_MEM_CHROMA_PORT || '8000';
-      const chromaSsl = settings.CLAUDE_MEM_CHROMA_SSL === 'true';
-      const chromaTenant = settings.CLAUDE_MEM_CHROMA_TENANT || 'default_tenant';
-      const chromaDatabase = settings.CLAUDE_MEM_CHROMA_DATABASE || 'default_database';
-      const chromaApiKey = settings.CLAUDE_MEM_CHROMA_API_KEY || '';
+      const chromaHost = settings.KIMI_MEM_CHROMA_HOST || '127.0.0.1';
+      const chromaPort = settings.KIMI_MEM_CHROMA_PORT || '8000';
+      const chromaSsl = settings.KIMI_MEM_CHROMA_SSL === 'true';
+      const chromaTenant = settings.KIMI_MEM_CHROMA_TENANT || 'default_tenant';
+      const chromaDatabase = settings.KIMI_MEM_CHROMA_DATABASE || 'default_database';
+      const chromaApiKey = settings.KIMI_MEM_CHROMA_API_KEY || '';
 
       const args = [
         ...launcherPrefix,
@@ -858,7 +858,7 @@ export class ChromaMcpManager {
     const queryStartedAt = Date.now();
     try {
       await this.callTool('chroma_query_documents', {
-        collection_name: 'cm__claude-mem',
+        collection_name: 'cm__kimi-mem',
         query_texts: ['ping'],
         n_results: 1
       });
@@ -869,7 +869,7 @@ export class ChromaMcpManager {
       const rawMessage = error instanceof Error ? error.message : String(error);
       const isMissingOrEmpty = /not exist|missing|empty|no such/i.test(rawMessage);
       const errorMessage = isMissingOrEmpty
-        ? `collection cm__claude-mem missing or empty (${rawMessage})`
+        ? `collection cm__kimi-mem missing or empty (${rawMessage})`
         : rawMessage;
       logger.warn('CHROMA_MCP', 'Deep probe failed at query stage', {
         error: rawMessage,
@@ -1243,7 +1243,7 @@ export class ChromaMcpManager {
   private static uvBinDirs(): string[] {
     return getUvxBinDirs({
       homedir: os.homedir,
-      override: process.env.CLAUDE_MEM_CHROMA_UVX_PATH,
+      override: process.env.KIMI_MEM_CHROMA_UVX_PATH,
       platform: process.platform,
       isFile: dir => {
         try {
@@ -1269,14 +1269,14 @@ export class ChromaMcpManager {
    *
    * Node's shell-less spawn won't resolve a bare `uvx` via PATHEXT on Windows,
    * so we resolve the absolute path to uvx.exe from the same uv bin dirs that
-   * ensureUvOnPath() adds to the child PATH (honouring CLAUDE_MEM_CHROMA_UVX_PATH
+   * ensureUvOnPath() adds to the child PATH (honouring KIMI_MEM_CHROMA_UVX_PATH
    * when it points straight at a binary), falling back to bare 'uvx.exe'.
    */
   static resolveUvxCommand(platform: NodeJS.Platform = process.platform): string {
     if (platform !== 'win32') {
       return 'uvx';
     }
-    const override = process.env.CLAUDE_MEM_CHROMA_UVX_PATH;
+    const override = process.env.KIMI_MEM_CHROMA_UVX_PATH;
     if (override) {
       try {
         if (fs.existsSync(override) && fs.statSync(override).isFile()) {

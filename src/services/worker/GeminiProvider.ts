@@ -234,7 +234,7 @@ export class GeminiProvider extends OpenAICompatibleProvider<GeminiConfig> {
   }
 
   protected missingApiKeyError(): Error {
-    return new Error('Gemini API key not configured. Set CLAUDE_MEM_GEMINI_API_KEY in settings or GEMINI_API_KEY environment variable.');
+    return new Error('Gemini API key not configured. Set KIMI_MEM_GEMINI_API_KEY in settings or GEMINI_API_KEY environment variable.');
   }
 
   protected estimateTokens(text: string): number {
@@ -306,7 +306,7 @@ export class GeminiProvider extends OpenAICompatibleProvider<GeminiConfig> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(priorRequestId ? { 'x-claude-mem-prior-request-id': priorRequestId } : {}),
+        ...(priorRequestId ? { 'x-kimi-mem-prior-request-id': priorRequestId } : {}),
       },
       body: JSON.stringify({
         contents,
@@ -393,10 +393,10 @@ export class GeminiProvider extends OpenAICompatibleProvider<GeminiConfig> {
     const settingsPath = paths.settings();
     const settings = SettingsDefaultsManager.loadFromFile(settingsPath);
 
-    const apiKey = settings.CLAUDE_MEM_GEMINI_API_KEY || getCredential('GEMINI_API_KEY') || '';
+    const apiKey = settings.KIMI_MEM_GEMINI_API_KEY || getCredential('GEMINI_API_KEY') || '';
 
     const defaultModel: GeminiModel = 'gemini-flash-latest';
-    const configuredModel = settings.CLAUDE_MEM_GEMINI_MODEL || defaultModel;
+    const configuredModel = settings.KIMI_MEM_GEMINI_MODEL || defaultModel;
     const validModels: GeminiModel[] = [
       'gemini-flash-latest',
       'gemini-flash-lite-latest',
@@ -416,7 +416,7 @@ export class GeminiProvider extends OpenAICompatibleProvider<GeminiConfig> {
       model = defaultModel;
     }
 
-    const rateLimitingEnabled = settings.CLAUDE_MEM_GEMINI_RATE_LIMITING_ENABLED !== 'false';
+    const rateLimitingEnabled = settings.KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED !== 'false';
 
     return { apiKey, model, rateLimitingEnabled };
   }
@@ -425,11 +425,11 @@ export class GeminiProvider extends OpenAICompatibleProvider<GeminiConfig> {
 export function isGeminiAvailable(): boolean {
   const settingsPath = paths.settings();
   const settings = SettingsDefaultsManager.loadFromFile(settingsPath);
-  return !!(settings.CLAUDE_MEM_GEMINI_API_KEY || getCredential('GEMINI_API_KEY'));
+  return !!(settings.KIMI_MEM_GEMINI_API_KEY || getCredential('GEMINI_API_KEY'));
 }
 
 export function isGeminiSelected(): boolean {
   const settingsPath = paths.settings();
   const settings = SettingsDefaultsManager.loadFromFile(settingsPath);
-  return settings.CLAUDE_MEM_PROVIDER === 'gemini';
+  return settings.KIMI_MEM_PROVIDER === 'gemini';
 }

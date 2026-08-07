@@ -5,7 +5,7 @@ description: "Build queryable AI brains from your observation history"
 
 # Knowledge Agents
 
-Knowledge agents let you compile a slice of your claude-mem observation history into a **queryable "brain"** that answers questions conversationally. Instead of getting raw search results back, you get synthesized, grounded answers drawn from your actual project history -- decisions, discoveries, bugfixes, and features.
+Knowledge agents let you compile a slice of your kimi-mem observation history into a **queryable "brain"** that answers questions conversationally. Instead of getting raw search results back, you get synthesized, grounded answers drawn from your actual project history -- decisions, discoveries, bugfixes, and features.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ Three ways to use knowledge agents, from simplest to most powerful.
 Use the `/knowledge-agent` skill or the MCP tools directly:
 
 ```
-build_corpus name="hooks-expertise" query="hooks architecture" project="claude-mem" limit=200
+build_corpus name="hooks-expertise" query="hooks architecture" project="kimi-mem" limit=200
 ```
 
 This searches your observation history, collects matching records, and saves them as a corpus file. Then prime it — this loads the corpus into a Claude session's context window:
@@ -79,19 +79,19 @@ BUILD  ──>  PRIME  ──>  QUERY
 A corpus is a filtered collection of observations saved as a JSON file. Use search filters to select exactly the slice of history you want.
 
 ```bash
-WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
 curl -X POST http://127.0.0.1:$WORKER_PORT/api/corpus \
   -H "Content-Type: application/json" \
   -d '{
     "name": "hooks-expertise",
     "query": "hooks architecture",
-    "project": "claude-mem",
+    "project": "kimi-mem",
     "types": ["decision", "discovery"],
     "limit": 200
   }'
 ```
 
-Under the hood, `CorpusBuilder` searches your observations, hydrates full records, parses structured fields (facts, concepts, files), calculates stats, and writes everything to `~/.claude-mem/corpora/hooks-expertise.corpus.json`.
+Under the hood, `CorpusBuilder` searches your observations, hydrates full records, parses structured fields (facts, concepts, files), calculates stats, and writes everything to `~/.kimi-mem/corpora/hooks-expertise.corpus.json`.
 
 ### 2. Prime the Knowledge Agent
 
@@ -157,7 +157,7 @@ reprime_corpus ──┘                          |
                         SessionStore         |   query() + resume
                                              |
                                         CorpusStore
-                                    (~/.claude-mem/corpora/)
+                                    (~/.kimi-mem/corpora/)
 ```
 
 **Key insight:** The Agent SDK's `resume` option lets you prime a session once (upload the corpus), save the `session_id`, and resume it for every future question. The corpus stays in context permanently -- no re-uploading, no prompt caching tricks. The 1M token context window makes this viable: 2,000 observations at ~300 tokens each fits comfortably.
@@ -199,7 +199,7 @@ reprime_corpus ──┘                          |
 - **Session expiry**: If `resume` fails, the agent auto-reprimes from the corpus file and retries
 - **SDK process exit**: If the Claude process exits after yielding all messages, the agent treats it as success when the session_id or answer was already captured
 - **Empty corpus**: A corpus with 0 observations is valid (just empty)
-- **Model from settings**: Reads `CLAUDE_MEM_MODEL` from user settings -- no hardcoded model IDs
+- **Model from settings**: Reads `KIMI_MEM_MODEL` from user settings -- no hardcoded model IDs
 
 ## Next Steps
 

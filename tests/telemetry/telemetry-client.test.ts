@@ -20,20 +20,20 @@ import { captureEvent, __resetTelemetryForTests } from '../../src/services/telem
 let tempDir: string;
 const savedEnv: Record<string, string | undefined> = {};
 const ENV_KEYS = [
-  'CLAUDE_MEM_DATA_DIR',
-  'CLAUDE_MEM_TELEMETRY',
-  'CLAUDE_MEM_TELEMETRY_DEBUG',
-  'CLAUDE_MEM_TELEMETRY_KEY',
+  'KIMI_MEM_DATA_DIR',
+  'KIMI_MEM_TELEMETRY',
+  'KIMI_MEM_TELEMETRY_DEBUG',
+  'KIMI_MEM_TELEMETRY_KEY',
   'DO_NOT_TRACK',
 ];
 
 beforeAll(() => {
   for (const key of ENV_KEYS) savedEnv[key] = process.env[key];
-  tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-telemetry-client-'));
-  process.env.CLAUDE_MEM_DATA_DIR = tempDir;
-  process.env.CLAUDE_MEM_TELEMETRY = '1';
-  delete process.env.CLAUDE_MEM_TELEMETRY_DEBUG;
-  delete process.env.CLAUDE_MEM_TELEMETRY_KEY;
+  tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-telemetry-client-'));
+  process.env.KIMI_MEM_DATA_DIR = tempDir;
+  process.env.KIMI_MEM_TELEMETRY = '1';
+  delete process.env.KIMI_MEM_TELEMETRY_DEBUG;
+  delete process.env.KIMI_MEM_TELEMETRY_KEY;
   delete process.env.DO_NOT_TRACK;
 
   __resetTelemetryForTests();

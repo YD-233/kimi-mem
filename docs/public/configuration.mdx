@@ -1,34 +1,34 @@
 ---
 title: "Configuration"
-description: "Environment variables and settings for Claude-Mem"
+description: "Environment variables and settings for Kimi-Mem"
 ---
 
 # Configuration
 
 ## Settings File
 
-Settings are managed in `~/.claude-mem/settings.json`. The file is auto-created with defaults on first run.
+Settings are managed in `~/.kimi-mem/settings.json`. The file is auto-created with defaults on first run.
 
 ### Core Settings
 
 | Setting                       | Default                         | Description                           |
 |-------------------------------|---------------------------------|---------------------------------------|
-| `CLAUDE_MEM_MODEL`            | `claude-haiku-4-5-20251001`     | Claude model used to compress observations (when using the Claude provider) |
-| `CLAUDE_MEM_PROVIDER`         | `claude`                        | AI provider: `claude`, `gemini`, or `openrouter` |
-| `CLAUDE_MEM_CLAUDE_AUTH_METHOD` | `subscription`                | Claude provider auth mode: `subscription`, `api-key`, or `gateway` |
-| `CLAUDE_MEM_MODE`             | `code`                          | Active mode profile (e.g., `code--es`, `email-investigation`) |
-| `CLAUDE_MEM_CONTEXT_OBSERVATIONS` | `50`                        | Number of observations to inject      |
-| `CLAUDE_MEM_WORKER_PORT`      | `37700 + (uid % 100)`           | Worker service port (per-user default; override for fixed port) |
-| `CLAUDE_MEM_WORKER_HOST`      | `127.0.0.1`                     | Worker service host address           |
-| `CLAUDE_MEM_DATA_DIR`         | `~/.claude-mem`                 | Data root — every other path (database, chroma, logs, settings.json, worker.pid) derives from this |
-| `CLAUDE_MEM_SKIP_TOOLS`       | `ListMcpResourcesTool,SlashCommand,Skill,TodoWrite,AskUserQuestion` | Comma-separated tools to exclude from observations |
+| `KIMI_MEM_MODEL`            | `claude-haiku-4-5-20251001`     | Claude model used to compress observations (when using the Claude provider) |
+| `KIMI_MEM_PROVIDER`         | `claude`                        | AI provider: `claude`, `gemini`, or `openrouter` |
+| `KIMI_MEM_CLAUDE_AUTH_METHOD` | `subscription`                | Claude provider auth mode: `subscription`, `api-key`, or `gateway` |
+| `KIMI_MEM_MODE`             | `code`                          | Active mode profile (e.g., `code--es`, `email-investigation`) |
+| `KIMI_MEM_CONTEXT_OBSERVATIONS` | `50`                        | Number of observations to inject      |
+| `KIMI_MEM_WORKER_PORT`      | `37700 + (uid % 100)`           | Worker service port (per-user default; override for fixed port) |
+| `KIMI_MEM_WORKER_HOST`      | `127.0.0.1`                     | Worker service host address           |
+| `KIMI_MEM_DATA_DIR`         | `~/.kimi-mem`                 | Data root — every other path (database, chroma, logs, settings.json, worker.pid) derives from this |
+| `KIMI_MEM_SKIP_TOOLS`       | `ListMcpResourcesTool,SlashCommand,Skill,TodoWrite,AskUserQuestion` | Comma-separated tools to exclude from observations |
 
 ### Gemini Provider Settings
 
 | Setting                       | Default                         | Description                           |
 |-------------------------------|---------------------------------|---------------------------------------|
-| `CLAUDE_MEM_GEMINI_API_KEY`   | —                               | Gemini API key ([get free key](https://aistudio.google.com/app/apikey)) |
-| `CLAUDE_MEM_GEMINI_MODEL`     | `gemini-flash-latest`          | Gemini model: `gemini-flash-latest`, `gemini-flash-lite-latest`, `gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-3-flash-preview` |
+| `KIMI_MEM_GEMINI_API_KEY`   | —                               | Gemini API key ([get free key](https://aistudio.google.com/app/apikey)) |
+| `KIMI_MEM_GEMINI_MODEL`     | `gemini-flash-latest`          | Gemini model: `gemini-flash-latest`, `gemini-flash-lite-latest`, `gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-3-flash-preview` |
 
 See [Gemini Provider](usage/gemini-provider) for detailed configuration and free tier information.
 
@@ -36,16 +36,16 @@ See [Gemini Provider](usage/gemini-provider) for detailed configuration and free
 
 | Setting                                      | Default                     | Description                           |
 |----------------------------------------------|-----------------------------|---------------------------------------|
-| `CLAUDE_MEM_OPENROUTER_API_KEY`              | —                           | OpenRouter API key ([get key](https://openrouter.ai/keys)) |
-| `CLAUDE_MEM_OPENROUTER_MODEL`                | `xiaomi/mimo-v2-flash:free` | Model identifier (supports 100+ models) |
-| `CLAUDE_MEM_OPENROUTER_SITE_URL`             | —                           | Optional: URL for analytics           |
-| `CLAUDE_MEM_OPENROUTER_APP_NAME`             | `claude-mem`                | Optional: App name for analytics      |
+| `KIMI_MEM_OPENROUTER_API_KEY`              | —                           | OpenRouter API key ([get key](https://openrouter.ai/keys)) |
+| `KIMI_MEM_OPENROUTER_MODEL`                | `xiaomi/mimo-v2-flash:free` | Model identifier (supports 100+ models) |
+| `KIMI_MEM_OPENROUTER_SITE_URL`             | —                           | Optional: URL for analytics           |
+| `KIMI_MEM_OPENROUTER_APP_NAME`             | `kimi-mem`                | Optional: App name for analytics      |
 
 See [OpenRouter Provider](usage/openrouter-provider) for detailed configuration, free model list, and usage guide.
 
 ### Claude Gateway Settings
 
-Gateway credentials live in `~/.claude-mem/.env`, not `settings.json`.
+Gateway credentials live in `~/.kimi-mem/.env`, not `settings.json`.
 
 | Env var | Default | Description |
 |---------|---------|-------------|
@@ -53,20 +53,20 @@ Gateway credentials live in `~/.claude-mem/.env`, not `settings.json`.
 | `ANTHROPIC_AUTH_TOKEN` | none | Optional LiteLLM master key or virtual key |
 | `ANTHROPIC_API_KEY` | none | Direct Anthropic API key; normally omit this in LiteLLM gateway mode |
 
-Use [LiteLLM Gateway](configuration/litellm-gateway) when you want `CLAUDE_MEM_PROVIDER=claude` to route through LiteLLM while preserving the Claude Agent SDK worker path.
+Use [LiteLLM Gateway](configuration/litellm-gateway) when you want `KIMI_MEM_PROVIDER=claude` to route through LiteLLM while preserving the Claude Agent SDK worker path.
 
 ### System Configuration
 
 | Setting                       | Default                         | Description                           |
 |-------------------------------|---------------------------------|---------------------------------------|
-| `CLAUDE_MEM_DATA_DIR`         | `~/.claude-mem`                 | Data directory location               |
-| `CLAUDE_MEM_LOG_LEVEL`        | `INFO`                          | Log verbosity (DEBUG, INFO, WARN, ERROR, SILENT) |
-| `CLAUDE_MEM_PYTHON_VERSION`   | `3.13`                          | Python version for chroma-mcp         |
+| `KIMI_MEM_DATA_DIR`         | `~/.kimi-mem`                 | Data directory location               |
+| `KIMI_MEM_LOG_LEVEL`        | `INFO`                          | Log verbosity (DEBUG, INFO, WARN, ERROR, SILENT) |
+| `KIMI_MEM_PYTHON_VERSION`   | `3.13`                          | Python version for chroma-mcp         |
 | `CLAUDE_CODE_PATH`            | _(auto-detect)_                 | Path to Claude Code CLI (for Windows) |
 
 ## Model Configuration
 
-Configure which Claude model compresses your observations (only applies when `CLAUDE_MEM_PROVIDER=claude`).
+Configure which Claude model compresses your observations (only applies when `KIMI_MEM_PROVIDER=claude`).
 
 ### Available Models
 
@@ -78,15 +78,15 @@ Configure which Claude model compresses your observations (only applies when `CL
 
 ### Picking via the Installer
 
-`npx claude-mem install` prompts for the Claude model (when the Claude provider is selected) and persists the choice to `~/.claude-mem/settings.json`.
+`npx kimi-mem install` prompts for the Claude model (when the Claude provider is selected) and persists the choice to `~/.kimi-mem/settings.json`.
 
 ### Manual Configuration
 
-Edit `~/.claude-mem/settings.json`:
+Edit `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_MODEL": "claude-haiku-4-5-20251001"
+  "KIMI_MEM_MODEL": "claude-haiku-4-5-20251001"
 }
 ```
 
@@ -98,21 +98,21 @@ Configure the active workflow mode and language.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `CLAUDE_MEM_MODE` | `code` | Defines behavior and language. See [Modes & Languages](modes). |
+| `KIMI_MEM_MODE` | `code` | Defines behavior and language. See [Modes & Languages](modes). |
 
 ### Examples
 
 **Spanish Code Mode:**
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--es"
+  "KIMI_MEM_MODE": "code--es"
 }
 ```
 
 **Email Investigation Mode:**
 ```json
 {
-  "CLAUDE_MEM_MODE": "email-investigation"
+  "KIMI_MEM_MODE": "email-investigation"
 }
 ```
 
@@ -121,13 +121,13 @@ Configure the active workflow mode and language.
 ### Data Directory Structure
 
 The data directory location depends on the environment:
-- **Production (installed plugin)**: `~/.claude-mem/` (always, regardless of CLAUDE_PLUGIN_ROOT)
-- **Development**: Can be overridden with `CLAUDE_MEM_DATA_DIR`
+- **Production (installed plugin)**: `~/.kimi-mem/` (always, regardless of CLAUDE_PLUGIN_ROOT)
+- **Development**: Can be overridden with `KIMI_MEM_DATA_DIR`
 
 ```
-~/.claude-mem/
-├── claude-mem.db           # SQLite database
-├── .install-version        # Version marker written by `npx claude-mem install`/`repair`
+~/.kimi-mem/
+├── kimi-mem.db           # SQLite database
+├── .install-version        # Version marker written by `npx kimi-mem install`/`repair`
 ├── settings.json           # Worker port + provider/model settings
 └── logs/
     ├── worker-out.log      # Worker stdout logs
@@ -172,13 +172,13 @@ The exact `hooks.json` entries are written by the installer; do not hand-edit th
 
 ### Search Configuration
 
-Claude-Mem provides MCP search tools for querying your project history.
+Kimi-Mem provides MCP search tools for querying your project history.
 
 **No configuration required** - MCP tools are automatically available in Claude Code sessions.
 
 Search operations are provided via:
 - **MCP Server**: 3 tools (search, timeline, get_observations) with progressive disclosure
-- **HTTP API**: 10 endpoints on the worker service port (per-user, default `37700 + (uid % 100)`; see `~/.claude-mem/settings.json`)
+- **HTTP API**: 10 endpoints on the worker service port (per-user, default `37700 + (uid % 100)`; see `~/.kimi-mem/settings.json`)
 - **Auto-Invocation**: Claude recognizes natural language queries about past work
 
 ## Worker Service Management
@@ -187,21 +187,21 @@ Worker service is managed by Bun as a background process. The worker auto-starts
 
 ## Folder Context Files
 
-Claude-mem can automatically generate `CLAUDE.md` files in your project folders with activity timelines. This feature is disabled by default.
+Kimi-Mem can automatically generate `CLAUDE.md` files in your project folders with activity timelines. This feature is disabled by default.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `CLAUDE_MEM_FOLDER_CLAUDEMD_ENABLED` | `false` | Enable auto-generation of folder CLAUDE.md files |
+| `KIMI_MEM_FOLDER_CLAUDEMD_ENABLED` | `false` | Enable auto-generation of folder CLAUDE.md files |
 
 See [Folder Context Files](usage/folder-context) for full documentation on how this feature works, configuration options, and git integration recommendations.
 
 ## Context Injection Configuration
 
-Claude-Mem injects past observations into each new session, giving Claude awareness of recent work. You can configure exactly what gets injected using the **Context Settings Modal**.
+Kimi-Mem injects past observations into each new session, giving Claude awareness of recent work. You can configure exactly what gets injected using the **Context Settings Modal**.
 
 ### Context Settings Modal
 
-Access the settings modal from the web viewer. The worker prints its URL on startup; the port comes from `CLAUDE_MEM_WORKER_PORT`.
+Access the settings modal from the web viewer. The worker prints its URL on startup; the port comes from `KIMI_MEM_WORKER_PORT`.
 
 1. Click the **gear icon** in the header
 2. Adjust settings in the right panel
@@ -273,28 +273,28 @@ Token economics help you understand the value of cached observations vs. re-read
 | Setting | Default | Description |
 |---------|---------|-------------|
 | **Model** | sonnet | AI model for generating observations |
-| **Worker Port** | `37700 + (uid % 100)` | Port for background worker service (override with `CLAUDE_MEM_WORKER_PORT`) |
+| **Worker Port** | `37700 + (uid % 100)` | Port for background worker service (override with `KIMI_MEM_WORKER_PORT`) |
 | **MCP search server** | true | Enable Model Context Protocol search tools |
 | **Include last summary** | false | Add previous session's summary to context |
 | **Include last message** | false | Add previous session's final message |
 
 ### Manual Configuration
 
-Settings are stored in `~/.claude-mem/settings.json`:
+Settings are stored in `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_CONTEXT_OBSERVATIONS": "100",
-  "CLAUDE_MEM_CONTEXT_SESSION_COUNT": "20",
-  "CLAUDE_MEM_CONTEXT_OBSERVATION_TYPES": "bugfix,decision,discovery",
-  "CLAUDE_MEM_CONTEXT_OBSERVATION_CONCEPTS": "how-it-works,gotcha",
-  "CLAUDE_MEM_CONTEXT_FULL_COUNT": "10",
-  "CLAUDE_MEM_CONTEXT_FULL_FIELD": "narrative",
-  "CLAUDE_MEM_CONTEXT_SHOW_READ_TOKENS": "true",
-  "CLAUDE_MEM_CONTEXT_SHOW_WORK_TOKENS": "true",
-  "CLAUDE_MEM_CONTEXT_SHOW_SAVINGS_AMOUNT": "true",
-  "CLAUDE_MEM_CONTEXT_SHOW_LAST_SUMMARY": "false",
-  "CLAUDE_MEM_CONTEXT_SHOW_LAST_MESSAGE": "false"
+  "KIMI_MEM_CONTEXT_OBSERVATIONS": "100",
+  "KIMI_MEM_CONTEXT_SESSION_COUNT": "20",
+  "KIMI_MEM_CONTEXT_OBSERVATION_TYPES": "bugfix,decision,discovery",
+  "KIMI_MEM_CONTEXT_OBSERVATION_CONCEPTS": "how-it-works,gotcha",
+  "KIMI_MEM_CONTEXT_FULL_COUNT": "10",
+  "KIMI_MEM_CONTEXT_FULL_FIELD": "narrative",
+  "KIMI_MEM_CONTEXT_SHOW_READ_TOKENS": "true",
+  "KIMI_MEM_CONTEXT_SHOW_WORK_TOKENS": "true",
+  "KIMI_MEM_CONTEXT_SHOW_SAVINGS_AMOUNT": "true",
+  "KIMI_MEM_CONTEXT_SHOW_LAST_SUMMARY": "false",
+  "KIMI_MEM_CONTEXT_SHOW_LAST_MESSAGE": "false"
 }
 ```
 
@@ -302,23 +302,23 @@ Settings are stored in `~/.claude-mem/settings.json`:
 
 ## Customization
 
-Settings can be customized in `~/.claude-mem/settings.json`.
+Settings can be customized in `~/.kimi-mem/settings.json`.
 
 ### Custom Data Directory
 
-Edit `~/.claude-mem/settings.json`:
+Edit `~/.kimi-mem/settings.json`:
 ```json
 {
-  "CLAUDE_MEM_DATA_DIR": "/custom/path"
+  "KIMI_MEM_DATA_DIR": "/custom/path"
 }
 ```
 
 ### Custom Worker Port
 
-Edit `~/.claude-mem/settings.json`:
+Edit `~/.kimi-mem/settings.json`:
 ```json
 {
-  "CLAUDE_MEM_WORKER_PORT": "38000"
+  "KIMI_MEM_WORKER_PORT": "38000"
 }
 ```
 
@@ -329,25 +329,25 @@ npm run worker:restart
 
 ### Custom Model
 
-Edit `~/.claude-mem/settings.json`:
+Edit `~/.kimi-mem/settings.json`:
 ```json
 {
-  "CLAUDE_MEM_MODEL": "opus"
+  "KIMI_MEM_MODEL": "opus"
 }
 ```
 
 Then restart the worker:
 ```bash
-export CLAUDE_MEM_MODEL=opus
+export KIMI_MEM_MODEL=opus
 npm run worker:restart
 ```
 
 ### Custom Skip Tools
 
-Control which tools are excluded from observations. Edit `~/.claude-mem/settings.json`:
+Control which tools are excluded from observations. Edit `~/.kimi-mem/settings.json`:
 ```json
 {
-  "CLAUDE_MEM_SKIP_TOOLS": "ListMcpResourcesTool,SlashCommand,Skill"
+  "KIMI_MEM_SKIP_TOOLS": "ListMcpResourcesTool,SlashCommand,Skill"
 }
 ```
 
@@ -378,7 +378,7 @@ Hook timeouts are written into `plugin/hooks/hooks.json` by the installer. The c
 - PostToolUse (observation): 120s
 - Stop (summary): 120s
 
-The Setup hook never installs anything — runtime install (Bun, uv, `bun install`) happens in `npx claude-mem install` / `npx claude-mem repair` outside the session lifecycle.
+The Setup hook never installs anything — runtime install (Bun, uv, `bun install`) happens in `npx kimi-mem install` / `npx kimi-mem repair` outside the session lifecycle.
 
 ### Worker Memory Limit
 
@@ -389,7 +389,7 @@ The worker service is managed by Bun and will automatically restart if it encoun
 Enable debug logging:
 
 ```bash
-export DEBUG=claude-mem:*
+export DEBUG=kimi-mem:*
 npm run worker:restart
 npm run worker:logs
 ```
@@ -413,8 +413,8 @@ npm run worker:logs
 
 2. Verify environment variables:
    ```bash
-   echo $CLAUDE_MEM_MODEL
-   echo $CLAUDE_MEM_WORKER_PORT
+   echo $KIMI_MEM_MODEL
+   echo $KIMI_MEM_WORKER_PORT
    ```
 
 3. Check worker logs:
@@ -424,7 +424,7 @@ npm run worker:logs
 
 ### Invalid Model Name
 
-If you specify an invalid Claude model name, the worker logs a warning and uses the default. Valid Claude models for `CLAUDE_MEM_MODEL`:
+If you specify an invalid Claude model name, the worker logs a warning and uses the default. Valid Claude models for `KIMI_MEM_MODEL`:
 
 - `claude-haiku-4-5-20251001` (default)
 - `claude-sonnet-5`
@@ -436,7 +436,7 @@ The default worker port is `37700 + (uid % 100)`, so different OS users on the s
 
 1. Set custom port:
    ```bash
-   export CLAUDE_MEM_WORKER_PORT=38000
+   export KIMI_MEM_WORKER_PORT=38000
    ```
 
 2. Restart worker:
@@ -446,7 +446,7 @@ The default worker port is `37700 + (uid % 100)`, so different OS users on the s
 
 3. Verify new port:
    ```bash
-   curl -s http://127.0.0.1:$CLAUDE_MEM_WORKER_PORT/api/health | jq .port
+   curl -s http://127.0.0.1:$KIMI_MEM_WORKER_PORT/api/health | jq .port
    ```
 
 ## Next Steps

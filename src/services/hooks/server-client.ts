@@ -348,7 +348,7 @@ export class ServerClient {
     if (!this.apiKey || !this.apiKey.trim()) {
       throw new ServerClientError(
         'missing_api_key',
-        'Server API key is not configured (CLAUDE_MEM_SERVER_API_KEY).',
+        'Server API key is not configured (KIMI_MEM_SERVER_API_KEY).',
       );
     }
 

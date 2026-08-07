@@ -5,7 +5,7 @@
 // expect, and verifies the ServerClient (which the MCP tools use) hits
 // those endpoints end-to-end.
 //
-// Postgres-gated: requires CLAUDE_MEM_TEST_POSTGRES_URL.
+// Postgres-gated: requires KIMI_MEM_TEST_POSTGRES_URL.
 
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import pg from 'pg';
@@ -22,11 +22,11 @@ import { ServerClient } from '../../../src/services/hooks/server-client.js';
 import { logger } from '../../../src/utils/logger.js';
 import { quoteIdentifier, newApiKey } from '../../sdk/pg-isolation.js';
 
-const testDatabaseUrl = process.env.CLAUDE_MEM_TEST_POSTGRES_URL;
+const testDatabaseUrl = process.env.KIMI_MEM_TEST_POSTGRES_URL;
 
 describe('Phase 8 MCP-backing REST endpoints (/v1/memories, /v1/search, /v1/context, /v1/jobs/:id)', () => {
   if (!testDatabaseUrl) {
-    it.skip('requires CLAUDE_MEM_TEST_POSTGRES_URL', () => {});
+    it.skip('requires KIMI_MEM_TEST_POSTGRES_URL', () => {});
     return;
   }
 

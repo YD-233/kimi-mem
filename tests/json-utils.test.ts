@@ -119,7 +119,7 @@ describe('JSON Utils', () => {
 
     it('parses UTF-8 BOM prefixed JSON (Windows PowerShell 5.1)', () => {
       const filePath = join(tempDir, 'settings.json');
-      const payload = { CLAUDE_MEM_MODEL: 'bom-model', nested: { ok: true } };
+      const payload = { KIMI_MEM_MODEL: 'bom-model', nested: { ok: true } };
       // EF BB BF is the UTF-8 BOM PowerShell 5.1 writes; decode becomes U+FEFF.
       writeFileSync(filePath, Buffer.from([0xEF, 0xBB, 0xBF, ...Buffer.from(JSON.stringify(payload), 'utf-8')]));
 

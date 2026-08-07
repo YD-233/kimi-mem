@@ -1,10 +1,10 @@
-# Claude-Mem for Cursor (No Claude Code Required)
+# Kimi-Mem for Cursor (No Claude Code Required)
 
 > **Persistent AI Memory for Cursor - Zero Cost to Start**
 
 ## Overview
 
-Use claude-mem's persistent memory in Cursor without a Claude Code subscription. Choose between free-tier providers (Gemini, OpenRouter) or paid options.
+Use kimi-mem's persistent memory in Cursor without a Claude Code subscription. Choose between free-tier providers (Gemini, OpenRouter) or paid options.
 
 **What You Get**:
 - **Persistent memory** that survives across sessions - your AI remembers what it worked on
@@ -12,7 +12,7 @@ Use claude-mem's persistent memory in Cursor without a Claude Code subscription.
 - **Context injection** via `.cursor/rules/` - relevant history included in every chat
 - **Web viewer** at http://localhost:37777 - browse and search your project history
 
-**Why This Matters**: Every Cursor session starts fresh. Claude-mem bridges that gap - your AI agent builds cumulative knowledge about your codebase, decisions, and patterns over time.
+**Why This Matters**: Every Cursor session starts fresh. Kimi-Mem bridges that gap - your AI agent builds cumulative knowledge about your codebase, decisions, and patterns over time.
 
 ## Prerequisites
 
@@ -30,12 +30,12 @@ Use claude-mem's persistent memory in Cursor without a Claude Code subscription.
 - Git
 - PowerShell 5.1+ (included with Windows 10/11)
 
-## Step 1: Clone Claude-Mem
+## Step 1: Clone Kimi-Mem
 
 ```bash
 # Clone the repository
-git clone https://github.com/thedotmack/claude-mem.git
-cd claude-mem
+git clone https://github.com/YD-233/kimi-mem.git
+cd kimi-mem
 
 # Install dependencies
 bun install
@@ -46,7 +46,7 @@ bun run build
 
 ## Step 2: Configure Provider (Choose One)
 
-Since you don't have Claude Code, you need to configure an AI provider for claude-mem's summarization engine.
+Since you don't have Claude Code, you need to configure an AI provider for kimi-mem's summarization engine.
 
 ### Option A: Gemini (Recommended - Free Tier)
 
@@ -54,15 +54,15 @@ Gemini offers 1500 free requests per day, plenty for typical usage.
 
 ```bash
 # Create settings directory
-mkdir -p ~/.claude-mem
+mkdir -p ~/.kimi-mem
 
 # Create settings file
-cat > ~/.claude-mem/settings.json << 'EOF'
+cat > ~/.kimi-mem/settings.json << 'EOF'
 {
-  "CLAUDE_MEM_PROVIDER": "gemini",
-  "CLAUDE_MEM_GEMINI_API_KEY": "YOUR_GEMINI_API_KEY",
-  "CLAUDE_MEM_GEMINI_MODEL": "gemini-2.5-flash-lite",
-  "CLAUDE_MEM_GEMINI_RATE_LIMITING_ENABLED": true
+  "KIMI_MEM_PROVIDER": "gemini",
+  "KIMI_MEM_GEMINI_API_KEY": "YOUR_GEMINI_API_KEY",
+  "KIMI_MEM_GEMINI_MODEL": "gemini-2.5-flash-lite",
+  "KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED": true
 }
 EOF
 ```
@@ -74,11 +74,11 @@ EOF
 OpenRouter provides access to many models, including free options.
 
 ```bash
-mkdir -p ~/.claude-mem
-cat > ~/.claude-mem/settings.json << 'EOF'
+mkdir -p ~/.kimi-mem
+cat > ~/.kimi-mem/settings.json << 'EOF'
 {
-  "CLAUDE_MEM_PROVIDER": "openrouter",
-  "CLAUDE_MEM_OPENROUTER_API_KEY": "YOUR_OPENROUTER_API_KEY"
+  "KIMI_MEM_PROVIDER": "openrouter",
+  "KIMI_MEM_OPENROUTER_API_KEY": "YOUR_OPENROUTER_API_KEY"
 }
 EOF
 ```
@@ -94,10 +94,10 @@ EOF
 If you have Anthropic API credits but not a Claude Code subscription:
 
 ```bash
-mkdir -p ~/.claude-mem
-cat > ~/.claude-mem/settings.json << 'EOF'
+mkdir -p ~/.kimi-mem
+cat > ~/.kimi-mem/settings.json << 'EOF'
 {
-  "CLAUDE_MEM_PROVIDER": "claude",
+  "KIMI_MEM_PROVIDER": "claude",
   "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY"
 }
 EOF
@@ -106,7 +106,7 @@ EOF
 ## Step 3: Install Cursor Hooks
 
 ```bash
-# From the claude-mem repo directory (recommended - all projects)
+# From the kimi-mem repo directory (recommended - all projects)
 bun run cursor:install -- user
 
 # Or for project-level only:
@@ -160,14 +160,14 @@ The worker runs in the background and handles:
 
 Verify your settings file exists and has valid credentials:
 ```bash
-cat ~/.claude-mem/settings.json
+cat ~/.kimi-mem/settings.json
 ```
 
 ### Worker not starting
 
 Check logs:
 ```bash
-tail -f ~/.claude-mem/logs/worker-$(date +%Y-%m-%d).log
+tail -f ~/.kimi-mem/logs/worker-$(date +%Y-%m-%d).log
 ```
 
 ### Hooks not executing
@@ -190,7 +190,7 @@ If you hit the 1500 requests/day limit:
 
 - Read [README.md](README.md) for detailed hook documentation
 - Check [CONTEXT-INJECTION.md](CONTEXT-INJECTION.md) for context behavior details
-- Visit https://docs.claude-mem.ai for full documentation
+- Visit https://docs.kimi-mem.ai for full documentation
 
 ## Quick Reference
 
@@ -221,19 +221,19 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ```powershell
 # Clone and build
-git clone https://github.com/thedotmack/claude-mem.git
-cd claude-mem
+git clone https://github.com/YD-233/kimi-mem.git
+cd kimi-mem
 bun install
 bun run build
 
 # Configure provider (Gemini example)
-$settingsDir = "$env:USERPROFILE\.claude-mem"
+$settingsDir = "$env:USERPROFILE\.kimi-mem"
 New-Item -ItemType Directory -Force -Path $settingsDir
 
 @"
 {
-  "CLAUDE_MEM_PROVIDER": "gemini",
-  "CLAUDE_MEM_GEMINI_API_KEY": "YOUR_GEMINI_API_KEY"
+  "KIMI_MEM_PROVIDER": "gemini",
+  "KIMI_MEM_GEMINI_API_KEY": "YOUR_GEMINI_API_KEY"
 }
 "@ | Out-File -FilePath "$settingsDir\settings.json" -Encoding UTF8
 

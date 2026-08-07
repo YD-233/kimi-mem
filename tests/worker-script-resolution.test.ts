@@ -22,7 +22,7 @@ afterAll(() => {
 });
 
 function makeCacheRoot(): string {
-  const root = mkdtempSync(join(tmpdir(), 'claude-mem-cache-'));
+  const root = mkdtempSync(join(tmpdir(), 'kimi-mem-cache-'));
   tmpRoots.push(root);
   return root;
 }
@@ -92,7 +92,7 @@ describe('cacheWorkerScriptCandidates', () => {
   });
 
   test('returns an empty list for a missing cache root', () => {
-    expect(cacheWorkerScriptCandidates(join(tmpdir(), 'claude-mem-no-such-cache'))).toEqual([]);
+    expect(cacheWorkerScriptCandidates(join(tmpdir(), 'kimi-mem-no-such-cache'))).toEqual([]);
   });
 });
 
@@ -135,7 +135,7 @@ describe('selectWorkerScript', () => {
 
   test('filters candidates whose script does not exist', () => {
     expect(selectWorkerScript([
-      { scriptPath: join(tmpdir(), 'claude-mem-missing', 'worker-service.cjs'), version: '99.0.0' },
+      { scriptPath: join(tmpdir(), 'kimi-mem-missing', 'worker-service.cjs'), version: '99.0.0' },
     ])).toBeNull();
   });
 });
@@ -144,11 +144,11 @@ describe('inline bootstrap resolvers stay in lockstep', () => {
   const mcpCommand = buildShellCommand({
     host: 'mcp',
     requireFile: 'mcp-server.cjs',
-    notFoundMessage: 'claude-mem: mcp server not found',
+    notFoundMessage: 'kimi-mem: mcp server not found',
     mcpExtraCandidates: ['$PWD/plugin', '$PWD'],
     mcpExtraCacheRoots: [
-      '$HOME/.codex/plugins/cache/claude-mem-local/claude-mem',
-      '$HOME/.codex/plugins/cache/thedotmack/claude-mem',
+      '$HOME/.codex/plugins/cache/kimi-mem-local/kimi-mem',
+      '$HOME/.codex/plugins/cache/YD-233/kimi-mem',
     ],
   });
   const codexWindowsCommand = buildCodexWindowsCommand(['hook', 'codex', 'context']);

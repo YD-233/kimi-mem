@@ -176,7 +176,7 @@ describe('server API key auth', () => {
       socket: { remoteAddress: '127.0.0.1' },
       header: (name: string) => {
         const normalized = name.toLowerCase();
-        if (normalized === 'host') return 'claude-mem.example.com';
+        if (normalized === 'host') return 'kimi-mem.example.com';
         if (normalized === 'x-forwarded-for') return '203.0.113.10';
         return undefined;
       },
@@ -221,8 +221,8 @@ describe('server API key auth', () => {
   });
 
   it('middleware defaults to API-key auth when auth mode is not explicitly set', () => {
-    const originalAuthMode = process.env.CLAUDE_MEM_AUTH_MODE;
-    delete process.env.CLAUDE_MEM_AUTH_MODE;
+    const originalAuthMode = process.env.KIMI_MEM_AUTH_MODE;
+    delete process.env.KIMI_MEM_AUTH_MODE;
     try {
       const middleware = requireServerAuth(() => db);
       const req: any = {
@@ -252,9 +252,9 @@ describe('server API key auth', () => {
       expect(res.body).toMatchObject({ error: 'Unauthorized' });
     } finally {
       if (originalAuthMode === undefined) {
-        delete process.env.CLAUDE_MEM_AUTH_MODE;
+        delete process.env.KIMI_MEM_AUTH_MODE;
       } else {
-        process.env.CLAUDE_MEM_AUTH_MODE = originalAuthMode;
+        process.env.KIMI_MEM_AUTH_MODE = originalAuthMode;
       }
     }
   });

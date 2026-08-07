@@ -4,7 +4,7 @@ import type { InstallOptions } from './commands/install.js';
 
 const args = process.argv.slice(2);
 const firstArg = args[0]?.toLowerCase() ?? '';
-// If the first token is a flag (e.g. `npx claude-mem --provider claude`),
+// If the first token is a flag (e.g. `npx kimi-mem --provider claude`),
 // treat the invocation as `install` with those flags. Help/version flags are
 // handled directly so they don't get swallowed by the install path.
 const HELP_OR_VERSION_FLAGS = new Set(['-h', '--help', '-v', '--version']);
@@ -17,44 +17,44 @@ function printHelp(): void {
   const version = readPluginVersion();
 
   console.log(`
-${styleText('bold', 'claude-mem')} v${version} — persistent memory for AI coding assistants
+${styleText('bold', 'kimi-mem')} v${version} — persistent memory for AI coding assistants
 
 ${styleText('bold', 'Install Commands')} (no Bun required):
-  ${styleText('cyan', 'npx claude-mem')}                     Interactive install
-  ${styleText('cyan', 'npx claude-mem install')}              Interactive install
-  ${styleText('cyan', 'npx claude-mem install --ide <id>')}   Install for specific IDE
-  ${styleText('cyan', 'npx claude-mem install --provider claude|gemini|openrouter')}   Set LLM provider non-interactively
-  ${styleText('cyan', 'npx claude-mem install --model <id>')}   Set Claude model (when provider=claude)
-  ${styleText('cyan', 'npx claude-mem install --no-auto-start')}   Skip worker auto-start at the end
-  ${styleText('cyan', 'npx claude-mem install --disable-auto-memory')}   Explicitly disable Claude Code native auto-memory
-  ${styleText('cyan', 'npx claude-mem install --runtime worker|server')}   Select runtime non-interactively (server brings up Docker pg+redis, generates an API key, injects the IDE MCP config)
-  ${styleText('cyan', 'npx claude-mem install --runtime server --server-url <url>')}   Point the server runtime at a specific base URL
-  ${styleText('cyan', 'npx claude-mem repair')}                Repair runtime (re-runs Bun/uv setup and bun install in plugin cache)
-  ${styleText('cyan', 'npx claude-mem update')}               Update to latest version
-  ${styleText('cyan', 'npx claude-mem uninstall')}            Remove plugin and configs
-  ${styleText('cyan', 'npx claude-mem version')}              Print version
+  ${styleText('cyan', 'npx kimi-mem')}                     Interactive install
+  ${styleText('cyan', 'npx kimi-mem install')}              Interactive install
+  ${styleText('cyan', 'npx kimi-mem install --ide <id>')}   Install for specific IDE
+  ${styleText('cyan', 'npx kimi-mem install --provider claude|gemini|openrouter')}   Set LLM provider non-interactively
+  ${styleText('cyan', 'npx kimi-mem install --model <id>')}   Set Claude model (when provider=claude)
+  ${styleText('cyan', 'npx kimi-mem install --no-auto-start')}   Skip worker auto-start at the end
+  ${styleText('cyan', 'npx kimi-mem install --disable-auto-memory')}   Explicitly disable Claude Code native auto-memory
+  ${styleText('cyan', 'npx kimi-mem install --runtime worker|server')}   Select runtime non-interactively (server brings up Docker pg+redis, generates an API key, injects the IDE MCP config)
+  ${styleText('cyan', 'npx kimi-mem install --runtime server --server-url <url>')}   Point the server runtime at a specific base URL
+  ${styleText('cyan', 'npx kimi-mem repair')}                Repair runtime (re-runs Bun/uv setup and bun install in plugin cache)
+  ${styleText('cyan', 'npx kimi-mem update')}               Update to latest version
+  ${styleText('cyan', 'npx kimi-mem uninstall')}            Remove plugin and configs
+  ${styleText('cyan', 'npx kimi-mem version')}              Print version
 
 ${styleText('bold', 'Runtime Commands')} (requires Bun, delegates to installed plugin):
-  ${styleText('cyan', 'npx claude-mem start')}                Start worker service
-  ${styleText('cyan', 'npx claude-mem stop')}                 Stop worker service
-  ${styleText('cyan', 'npx claude-mem restart')}              Restart worker service
-  ${styleText('cyan', 'npx claude-mem status')}               Show worker status
-  ${styleText('cyan', 'npx claude-mem doctor')}               Diagnose install/runtime health (bun, uv, worker)
-  ${styleText('cyan', 'npx claude-mem telemetry status|enable|disable')}   Manage anonymous telemetry (on by default, opt-out)
-  ${styleText('cyan', 'npx claude-mem server start')}         Start server service
-  ${styleText('cyan', 'npx claude-mem server stop')}          Stop server service
-  ${styleText('cyan', 'npx claude-mem server restart')}       Restart server service
-  ${styleText('cyan', 'npx claude-mem server status')}        Show server status
-  ${styleText('cyan', 'npx claude-mem server api-key create|list|revoke')}   Manage API keys
-  ${styleText('cyan', 'npx claude-mem worker start|stop|restart|status')}    Worker compatibility aliases
-  ${styleText('cyan', 'npx claude-mem search <query>')}       Search observations
-  ${styleText('cyan', 'npx claude-mem adopt [--dry-run] [--branch <name>]')}    Stamp merged worktrees into parent project
-  ${styleText('cyan', 'npx claude-mem cleanup [--dry-run]')}    Run one-time v12.4.3 pollution cleanup (or preview counts)
-  ${styleText('cyan', 'npx claude-mem transcript watch')}     Start transcript watcher
-  ${styleText('cyan', 'npx claude-mem antigravity-cli install|status|uninstall')}   Manage Antigravity CLI hooks + MCP config
+  ${styleText('cyan', 'npx kimi-mem start')}                Start worker service
+  ${styleText('cyan', 'npx kimi-mem stop')}                 Stop worker service
+  ${styleText('cyan', 'npx kimi-mem restart')}              Restart worker service
+  ${styleText('cyan', 'npx kimi-mem status')}               Show worker status
+  ${styleText('cyan', 'npx kimi-mem doctor')}               Diagnose install/runtime health (bun, uv, worker)
+  ${styleText('cyan', 'npx kimi-mem telemetry status|enable|disable')}   Manage anonymous telemetry (on by default, opt-out)
+  ${styleText('cyan', 'npx kimi-mem server start')}         Start server service
+  ${styleText('cyan', 'npx kimi-mem server stop')}          Stop server service
+  ${styleText('cyan', 'npx kimi-mem server restart')}       Restart server service
+  ${styleText('cyan', 'npx kimi-mem server status')}        Show server status
+  ${styleText('cyan', 'npx kimi-mem server api-key create|list|revoke')}   Manage API keys
+  ${styleText('cyan', 'npx kimi-mem worker start|stop|restart|status')}    Worker compatibility aliases
+  ${styleText('cyan', 'npx kimi-mem search <query>')}       Search observations
+  ${styleText('cyan', 'npx kimi-mem adopt [--dry-run] [--branch <name>]')}    Stamp merged worktrees into parent project
+  ${styleText('cyan', 'npx kimi-mem cleanup [--dry-run]')}    Run one-time v12.4.3 pollution cleanup (or preview counts)
+  ${styleText('cyan', 'npx kimi-mem transcript watch')}     Start transcript watcher
+  ${styleText('cyan', 'npx kimi-mem antigravity-cli install|status|uninstall')}   Manage Antigravity CLI hooks + MCP config
 
 ${styleText('bold', 'IDE Identifiers')}:
-  claude-code, cursor, opencode, openclaw,
+  claude-code, cursor, kimi, opencode, openclaw,
   windsurf, codex-cli, copilot-cli, antigravity, goose,
   roo-code, warp
 `);
@@ -220,7 +220,7 @@ async function main(): Promise<void> {
         runTranscriptWatchCommand();
       } else {
         console.error(styleText('red', `Unknown transcript subcommand: ${subCommand ?? '(none)'}`));
-        console.error(`Usage: npx claude-mem transcript watch`);
+        console.error(`Usage: npx kimi-mem transcript watch`);
         process.exit(1);
       }
       break;
@@ -228,7 +228,7 @@ async function main(): Promise<void> {
 
     default: {
       console.error(styleText('red', `Unknown command: ${command}`));
-      console.error(`Run ${styleText('bold', 'npx claude-mem --help')} for usage information.`);
+      console.error(`Run ${styleText('bold', 'npx kimi-mem --help')} for usage information.`);
       process.exit(1);
     }
   }

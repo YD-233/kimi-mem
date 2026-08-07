@@ -130,11 +130,11 @@ describe('CloudSync', () => {
 
   function makeSettings(overrides: Partial<CloudSyncSettingKeys> = {}): CloudSyncSettingKeys {
     return {
-      CLAUDE_MEM_CLOUD_SYNC_TOKEN: 'test-token-1234',
-      CLAUDE_MEM_CLOUD_SYNC_USER_ID: 'user-42',
-      CLAUDE_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: 'device-fixture',
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME: 'test-host',
+      KIMI_MEM_CLOUD_SYNC_TOKEN: 'test-token-1234',
+      KIMI_MEM_CLOUD_SYNC_USER_ID: 'user-42',
+      KIMI_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
+      KIMI_MEM_CLOUD_SYNC_DEVICE_ID: 'device-fixture',
+      KIMI_MEM_CLOUD_SYNC_DEVICE_NAME: 'test-host',
       ...overrides,
     };
   }
@@ -301,7 +301,7 @@ describe('CloudSync', () => {
   }
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-cloud-sync-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-cloud-sync-'));
     settingsPath = join(tempDir, 'settings.json');
     db = new Database(':memory:');
     store = new SessionStore(db);
@@ -1368,7 +1368,7 @@ describe('CloudSync', () => {
     seedObservation();
 
     const { impl, calls } = makeFetchMock();
-    const sync = makeCloudSync(impl, { CLAUDE_MEM_CLOUD_SYNC_TOKEN: '' });
+    const sync = makeCloudSync(impl, { KIMI_MEM_CLOUD_SYNC_TOKEN: '' });
 
     sync.start();
     sync.notify();
@@ -1386,7 +1386,7 @@ describe('CloudSync', () => {
     seedObservation();
 
     const { impl, calls } = makeFetchMock();
-    const sync = makeCloudSync(impl, { CLAUDE_MEM_CLOUD_SYNC_HUB_URL: '' });
+    const sync = makeCloudSync(impl, { KIMI_MEM_CLOUD_SYNC_HUB_URL: '' });
 
     sync.start();
     sync.notify();
@@ -1401,20 +1401,20 @@ describe('CloudSync', () => {
   describe('device id resolution', () => {
     it('uses the settings-configured device id without rewriting settings', () => {
       const { impl } = makeFetchMock();
-      const sync = makeCloudSync(impl, { CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: 'settings-dev-9' });
+      const sync = makeCloudSync(impl, { KIMI_MEM_CLOUD_SYNC_DEVICE_ID: 'settings-dev-9' });
       expect(sync.status().deviceId).toBe('settings-dev-9');
       expect(existsSync(settingsPath)).toBe(false);
     });
 
     it('mints a UUID and persists it when settings have no device id', () => {
       const { impl } = makeFetchMock();
-      const sync = makeCloudSync(impl, { CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: '' });
+      const sync = makeCloudSync(impl, { KIMI_MEM_CLOUD_SYNC_DEVICE_ID: '' });
 
       const deviceId = sync.status().deviceId;
       expect(deviceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
       const persisted = JSON.parse(readFileSync(settingsPath, 'utf-8'));
-      expect(persisted.CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID).toBe(deviceId);
+      expect(persisted.KIMI_MEM_CLOUD_SYNC_DEVICE_ID).toBe(deviceId);
     });
   });
 

@@ -124,7 +124,7 @@ export async function runShutdownSequence(options: ShutdownSequenceOptions): Pro
   // Successor handoff — ONLY for restart; 'stop' and signal shutdowns stay
   // kill-only. The old worker spawns its replacement as its final act, after
   // its port is confirmed free, so the successor never races the corpse for
-  // the port. CLI `claude-mem restart` is the caller. Hook version-mismatch
+  // the port. CLI `kimi-mem restart` is the caller. Hook version-mismatch
   // recycles (ensureWorkerRunning in src/shared/worker-utils.ts) never reach
   // this: they SIGKILL the stale worker and lazy-spawn the resolved version
   // themselves, because this handoff runs the DYING install's resolver — a

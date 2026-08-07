@@ -75,16 +75,16 @@ describe('replaceTaggedContent', () => {
   it('should wrap new content in tags when existing content is empty', () => {
     const result = replaceTaggedContent('', 'New content here');
 
-    expect(result).toBe('<claude-mem-context>\nNew content here\n</claude-mem-context>');
+    expect(result).toBe('<kimi-mem-context>\nNew content here\n</kimi-mem-context>');
   });
 
   it('should replace only tagged section when existing content has tags', () => {
-    const existingContent = 'User content before\n<claude-mem-context>\nOld generated content\n</claude-mem-context>\nUser content after';
+    const existingContent = 'User content before\n<kimi-mem-context>\nOld generated content\n</kimi-mem-context>\nUser content after';
     const newContent = 'New generated content';
 
     const result = replaceTaggedContent(existingContent, newContent);
 
-    expect(result).toBe('User content before\n<claude-mem-context>\nNew generated content\n</claude-mem-context>\nUser content after');
+    expect(result).toBe('User content before\n<kimi-mem-context>\nNew generated content\n</kimi-mem-context>\nUser content after');
   });
 
   it('should append tagged content with separator when no tags exist in existing content', () => {
@@ -93,34 +93,34 @@ describe('replaceTaggedContent', () => {
 
     const result = replaceTaggedContent(existingContent, newContent);
 
-    expect(result).toBe('User written documentation\n\n<claude-mem-context>\nGenerated timeline\n</claude-mem-context>');
+    expect(result).toBe('User written documentation\n\n<kimi-mem-context>\nGenerated timeline\n</kimi-mem-context>');
   });
 
   it('should append when only opening tag exists (no matching end tag)', () => {
-    const existingContent = 'Some content\n<claude-mem-context>\nIncomplete tag section';
+    const existingContent = 'Some content\n<kimi-mem-context>\nIncomplete tag section';
     const newContent = 'New content';
 
     const result = replaceTaggedContent(existingContent, newContent);
 
-    expect(result).toBe('Some content\n<claude-mem-context>\nIncomplete tag section\n\n<claude-mem-context>\nNew content\n</claude-mem-context>');
+    expect(result).toBe('Some content\n<kimi-mem-context>\nIncomplete tag section\n\n<kimi-mem-context>\nNew content\n</kimi-mem-context>');
   });
 
   it('should append when only closing tag exists (no matching start tag)', () => {
-    const existingContent = 'Some content\n</claude-mem-context>\nMore content';
+    const existingContent = 'Some content\n</kimi-mem-context>\nMore content';
     const newContent = 'New content';
 
     const result = replaceTaggedContent(existingContent, newContent);
 
-    expect(result).toBe('Some content\n</claude-mem-context>\nMore content\n\n<claude-mem-context>\nNew content\n</claude-mem-context>');
+    expect(result).toBe('Some content\n</kimi-mem-context>\nMore content\n\n<kimi-mem-context>\nNew content\n</kimi-mem-context>');
   });
 
   it('should preserve newlines in new content', () => {
-    const existingContent = '<claude-mem-context>\nOld content\n</claude-mem-context>';
+    const existingContent = '<kimi-mem-context>\nOld content\n</kimi-mem-context>';
     const newContent = 'Line 1\nLine 2\nLine 3';
 
     const result = replaceTaggedContent(existingContent, newContent);
 
-    expect(result).toBe('<claude-mem-context>\nLine 1\nLine 2\nLine 3\n</claude-mem-context>');
+    expect(result).toBe('<kimi-mem-context>\nLine 1\nLine 2\nLine 3\n</kimi-mem-context>');
   });
 });
 
@@ -198,9 +198,9 @@ describe('writeClaudeMdToFolder', () => {
     expect(existsSync(claudeMdPath)).toBe(true);
 
     const fileContent = readFileSync(claudeMdPath, 'utf-8');
-    expect(fileContent).toContain('<claude-mem-context>');
+    expect(fileContent).toContain('<kimi-mem-context>');
     expect(fileContent).toContain('Test content');
-    expect(fileContent).toContain('</claude-mem-context>');
+    expect(fileContent).toContain('</kimi-mem-context>');
   });
 
   it('should preserve user content outside tags', () => {
@@ -208,7 +208,7 @@ describe('writeClaudeMdToFolder', () => {
     mkdirSync(folderPath, { recursive: true });
 
     const claudeMdPath = join(folderPath, 'CLAUDE.md');
-    const userContent = 'User-written docs\n<claude-mem-context>\nOld content\n</claude-mem-context>\nMore user docs';
+    const userContent = 'User-written docs\n<kimi-mem-context>\nOld content\n</kimi-mem-context>\nMore user docs';
     writeFileSync(claudeMdPath, userContent);
 
     const newContent = 'New generated content';
@@ -566,7 +566,7 @@ describe('path validation in updateFolderClaudeMdFiles', () => {
     global.fetch = fetchMock;
 
     await updateFolderClaudeMdFiles(
-      ['~/.claude-mem/logs/worker.log'],
+      ['~/.kimi-mem/logs/worker.log'],
       'test-project',
       37777,
       tempDir
@@ -980,12 +980,12 @@ describe('issue #912 - skip unsafe directories for CLAUDE.md generation', () => 
 
 describe('getTargetFilename', () => {
   it('should return CLAUDE.md by default', () => {
-    const settings = { CLAUDE_MEM_FOLDER_USE_LOCAL_MD: 'false' } as any;
+    const settings = { KIMI_MEM_FOLDER_USE_LOCAL_MD: 'false' } as any;
     expect(getTargetFilename(settings)).toBe('CLAUDE.md');
   });
 
   it('should return CLAUDE.local.md when USE_LOCAL_MD is true', () => {
-    const settings = { CLAUDE_MEM_FOLDER_USE_LOCAL_MD: 'true' } as any;
+    const settings = { KIMI_MEM_FOLDER_USE_LOCAL_MD: 'true' } as any;
     expect(getTargetFilename(settings)).toBe('CLAUDE.local.md');
   });
 
@@ -1010,9 +1010,9 @@ describe('CLAUDE.local.md support', () => {
     expect(existsSync(regularMdPath)).toBe(false);
 
     const fileContent = readFileSync(localMdPath, 'utf-8');
-    expect(fileContent).toContain('<claude-mem-context>');
+    expect(fileContent).toContain('<kimi-mem-context>');
     expect(fileContent).toContain('Test content');
-    expect(fileContent).toContain('</claude-mem-context>');
+    expect(fileContent).toContain('</kimi-mem-context>');
   });
 
   it('should preserve user content in CLAUDE.local.md outside tags', () => {
@@ -1020,7 +1020,7 @@ describe('CLAUDE.local.md support', () => {
     mkdirSync(folderPath, { recursive: true });
 
     const localMdPath = join(folderPath, 'CLAUDE.local.md');
-    const userContent = 'My personal notes\n<claude-mem-context>\nOld content\n</claude-mem-context>\nMore notes';
+    const userContent = 'My personal notes\n<kimi-mem-context>\nOld content\n</kimi-mem-context>\nMore notes';
     writeFileSync(localMdPath, userContent);
 
     writeClaudeMdToFolder(folderPath, 'New generated content', 'CLAUDE.local.md');
@@ -1089,7 +1089,7 @@ describe('CLAUDE.local.md support', () => {
 });
 
 describe('skeleton CLAUDE.md deny-list (#2400)', () => {
-  const ENV_KEY = 'CLAUDE_MEM_FOLDER_MD_SKELETON_DENYLIST';
+  const ENV_KEY = 'KIMI_MEM_FOLDER_MD_SKELETON_DENYLIST';
   let savedEnv: string | undefined;
 
   beforeEach(() => {
@@ -1172,6 +1172,6 @@ describe('skeleton CLAUDE.md deny-list (#2400)', () => {
     // a no-op), so the tagged context section is appended to the existing file.
     const content = readFileSync(claudeMdPath, 'utf-8');
     expect(content).toContain('PRE-EXISTING');
-    expect(content).toContain('<claude-mem-context>');
+    expect(content).toContain('<kimi-mem-context>');
   });
 });

@@ -24,7 +24,7 @@ export function normalizePlatformSourceOrNull(value?: string | null): string | n
 }
 
 export function sortPlatformSources(sources: string[]): string[] {
-  const priority = ['claude', 'codex', 'cursor'];
+  const priority = ['claude', 'codex', 'cursor', 'kimi'];
 
   return [...sources].sort((a, b) => {
     const aPriority = priority.indexOf(a);

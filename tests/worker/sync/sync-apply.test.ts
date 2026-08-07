@@ -120,11 +120,11 @@ describe('SyncApply', () => {
 
   function makeSettings(): CloudSyncSettingKeys {
     return {
-      CLAUDE_MEM_CLOUD_SYNC_TOKEN: 'test-token-1234',
-      CLAUDE_MEM_CLOUD_SYNC_USER_ID: 'user-42',
-      CLAUDE_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: SELF,
-      CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME: 'test-host',
+      KIMI_MEM_CLOUD_SYNC_TOKEN: 'test-token-1234',
+      KIMI_MEM_CLOUD_SYNC_USER_ID: 'user-42',
+      KIMI_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
+      KIMI_MEM_CLOUD_SYNC_DEVICE_ID: SELF,
+      KIMI_MEM_CLOUD_SYNC_DEVICE_NAME: 'test-host',
     };
   }
 
@@ -156,7 +156,7 @@ describe('SyncApply', () => {
   }
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-sync-apply-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-sync-apply-'));
     settingsPath = join(tempDir, 'settings.json');
     db = new Database(':memory:');
     new SessionStore(db);

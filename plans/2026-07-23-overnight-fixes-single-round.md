@@ -10,7 +10,7 @@ Four root-cause fixes from the post-v13.12.2 issue batch, shipped as one release
 | 4 | #3381 | Maintainer-only agent directives in root CLAUDE.md ship to end users via the marketplace git clone |
 | 5 | — | Verification + release 13.12.4 |
 
-**Execution model:** each phase is self-contained and can run in a fresh context. Run consecutively (Phase 3 depends on nothing from 1–2, but Phase 5 needs all of 1–4 committed). Execute with `/claude-mem:do` or by hand.
+**Execution model:** each phase is self-contained and can run in a fresh context. Run consecutively (Phase 3 depends on nothing from 1–2, but Phase 5 needs all of 1–4 committed). Execute with `/kimi-mem:do` or by hand.
 
 **Binding constraints (repo merge rubric, `docs/merge-rubric.md`):** root-cause corrections only. No retry loops, no circuit breakers, no fallback paths, no fail-open modes, no truncation of user data, no new background processes/state files, no env-var escape hatches. Fail-fast conversions and deletions of machinery are encouraged. Tests are always in scope. Diff size must match the size of the logic error. Do not edit `CHANGELOG.md` (generated).
 
@@ -61,7 +61,7 @@ All findings below were verified against source at v13.12.3 (commit `68b077f7f` 
 - `database is locked` during adoption: adoption's own connection (`WorktreeAdoption.ts:187`) races the boot-time migration writer because it is kicked at `worker-service.ts:480`, **before** `dbManager.initialize()` at `:507`; WAL single-writer + 5 s busy_timeout (`connection.ts:4,:44`).
 
 **CLAUDE.md shipping (#3381):**
-- The leak vector is the **marketplace git clone**: `known_marketplaces.json` shows `source: github, repo: thedotmack/claude-mem` cloned to `~/.claude/plugins/marketplaces/thedotmack/` — every tracked file ships, including root `CLAUDE.md` (byte-identical, verified by shasum), `docs/`, `plans/`. The plugin **cache** (`~/.claude/plugins/cache/…/13.12.3/`) is clean because `marketplace.json:9-16` sets plugin `source: "./plugin"`.
+- The leak vector is the **marketplace git clone**: `known_marketplaces.json` shows `source: github, repo: YD-233/kimi-mem` cloned to `~/.claude/plugins/marketplaces/YD-233/` — every tracked file ships, including root `CLAUDE.md` (byte-identical, verified by shasum), `docs/`, `plans/`. The plugin **cache** (`~/.claude/plugins/cache/…/13.12.3/`) is clean because `marketplace.json:9-16` sets plugin `source: "./plugin"`.
 - The #2537 fix is `.npmignore:9-14` (`/CLAUDE.md` etc.) — it governs only the npm tarball, which is why GitHub-source installs bypass it (#3359). No evidence of any "#2688" fix exists in-repo.
 - The maintainer rsync (`scripts/sync-marketplace.cjs:77-80`) filters by `.gitignore` only and also copies CLAUDE.md.
 - Maintainer-only sections in root `CLAUDE.md`: `## Local Status Notes` (lines 35-37) and `## Daily Maintenance` (lines 39-47, the autonomous upgrade+commit directive). Lines 1-33 (Build, File Locations, Requirements, Documentation, Important) are legitimate contributor content.
@@ -205,7 +205,7 @@ Fix: `repairOrphanedSessionParents()` creates stub parents (mirroring `ensureSes
 
 - [ ] `grep -n "Daily Maintenance\|Local Status Notes" CLAUDE.md` → no hits; the sections exist verbatim in `CLAUDE.local.md`.
 - [ ] `git check-ignore CLAUDE.local.md` → ignored; `git status` shows CLAUDE.local.md untracked-and-ignored.
-- [ ] After `npm run build-and-sync`: `grep -L "Daily Maintenance" ~/.claude/plugins/marketplaces/thedotmack/CLAUDE.md` confirms the marketplace copy no longer contains the directive (file present but slim).
+- [ ] After `npm run build-and-sync`: `grep -L "Daily Maintenance" ~/.claude/plugins/marketplaces/YD-233/CLAUDE.md` confirms the marketplace copy no longer contains the directive (file present but slim).
 - [ ] Comment on #3381 and #3359 explaining: tarball was already guarded (#2537 `.npmignore`), the git-clone channel is now guarded by relocation; close #3381.
 
 ### Anti-pattern guards
@@ -222,9 +222,9 @@ Fix: `repairOrphanedSessionParents()` creates stub parents (mirroring `ensureSes
 1. **Full verification:**
    - `npx tsc --noEmit` → clean.
    - `bun test tests/` → 0 fail (the `workers/sync-hub` `cloudflare:test` errors are pre-existing and excluded; do not chase them).
-   - Anti-pattern grep sweep over the round's diff (`git diff v13.12.3..HEAD -- src/ plugin/modes/`): no new `catch {}` swallows, no `setInterval`/poller additions, no new env-var flags (`grep -E "CLAUDE_MEM_[A-Z_]+" diff` should show no new names), injection query unchanged.
+   - Anti-pattern grep sweep over the round's diff (`git diff v13.12.3..HEAD -- src/ plugin/modes/`): no new `catch {}` swallows, no `setInterval`/poller additions, no new env-var flags (`grep -E "KIMI_MEM_[A-Z_]+" diff` should show no new names), injection query unchanged.
    - `npm run build-and-sync` → worker restarts and verifies at the current version.
-2. **Release 13.12.4** via the version-bump workflow (`/claude-mem:version-bump patch`): bump all 8 manifests, verify with `git grep`, build-and-sync, commit, tag `v13.12.4`, push branch + tag, GitHub release notes covering all four fixes (cite #3378/#3379/#3380/#3381), regenerate changelog, Discord notify. **npm publish is handed off to the human maintainer**; start the background `npm view claude-mem@13.12.4 version` poller.
+2. **Release 13.12.4** via the version-bump workflow (`/kimi-mem:version-bump patch`): bump all 8 manifests, verify with `git grep`, build-and-sync, commit, tag `v13.12.4`, push branch + tag, GitHub release notes covering all four fixes (cite #3378/#3379/#3380/#3381), regenerate changelog, Discord notify. **npm publish is handed off to the human maintainer**; start the background `npm view kimi-mem@13.12.4 version` poller.
 3. **Issue housekeeping:** close #3378 (both halves now fixed — link the FK commit and the 13.12.3 recycle fix), close #3379 (normalize+backfill shipped), comment on #3380 asking the reporter to verify on Windows against 13.12.4 (close if the earlier 13.12.3 comment thread already confirmed), close #3381.
 
 ### Verification checklist

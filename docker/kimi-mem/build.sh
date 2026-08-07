@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-TAG="${TAG:-claude-mem:basic}"
+TAG="${TAG:-kimi-mem:basic}"
 
 cd "$REPO_ROOT"
 
@@ -12,7 +12,7 @@ npm run build
 
 echo "[build] docker build -t $TAG"
 docker build \
-  -f docker/claude-mem/Dockerfile \
+  -f docker/kimi-mem/Dockerfile \
   -t "$TAG" \
   "$REPO_ROOT"
 

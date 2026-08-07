@@ -2,11 +2,11 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/thedotmack/claude-mem">
+  <a href="https://github.com/YD-233/kimi-mem">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-dark-mode.webp">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/claude-mem-logo-for-light-mode.webp" alt="Claude-Mem" width="400">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-dark-mode.webp">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp" alt="Kimi-Mem" width="400">
     </picture>
   </a>
   <br>
@@ -70,9 +70,9 @@
 <p align="center">
   <a href="https://trendshift.io/repositories/15496" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg">
-      <img src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/trendshift-badge.svg" alt="thedotmack/claude-mem | Trendshift" width="250" height="55"/>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg">
+      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/trendshift-badge.svg" alt="YD-233/kimi-mem | Trendshift" width="250" height="55"/>
     </picture>
   </a>
 </p>
@@ -82,30 +82,30 @@
 <table align="center">
   <tr>
     <td align="center">
-      <a href="https://github.com/thedotmack/claude-mem">
+      <a href="https://github.com/YD-233/kimi-mem">
         <picture>
           <img
-            src="https://raw.githubusercontent.com/thedotmack/claude-mem/main/docs/public/cm-preview.gif"
-            alt="Claude-Mem Preview"
+            src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/cm-preview.gif"
+            alt="Kimi-Mem Preview"
             width="500"
           >
         </picture>
       </a>
     </td>
     <td align="center">
-      <a href="https://www.star-history.com/#thedotmack/claude-mem&Date">
+      <a href="https://www.star-history.com/#YD-233/kimi-mem&Date">
         <picture>
           <source
             media="(prefers-color-scheme: dark)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&theme=dark&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&theme=dark&legend=top-left"
           />
           <source
             media="(prefers-color-scheme: light)"
-            srcset="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            srcset="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
           />
           <img
             alt="Star History Chart"
-            src="https://api.star-history.com/image?repos=thedotmack/claude-mem&type=date&legend=top-left"
+            src="https://api.star-history.com/image?repos=YD-233/kimi-mem&type=date&legend=top-left"
             width="500"
           />
         </picture>
@@ -125,7 +125,7 @@
 </p>
 
 <p align="center">
-  Το Claude-Mem διατηρεί απρόσκοπτα το πλαίσιο μεταξύ συνεδριών καταγράφοντας αυτόματα παρατηρήσεις χρήσης εργαλείων, δημιουργώντας σημασιολογικές περιλήψεις και καθιστώντας τες διαθέσιμες σε μελλοντικές συνεδρίες. Αυτό επιτρέπει στο Claude να διατηρεί τη συνέχεια της γνώσης για έργα ακόμη και μετά το τέλος ή την επανασύνδεση συνεδριών.
+  Το Kimi-Mem διατηρεί απρόσκοπτα το πλαίσιο μεταξύ συνεδριών καταγράφοντας αυτόματα παρατηρήσεις χρήσης εργαλείων, δημιουργώντας σημασιολογικές περιλήψεις και καθιστώντας τες διαθέσιμες σε μελλοντικές συνεδρίες. Αυτό επιτρέπει στο Claude να διατηρεί τη συνέχεια της γνώσης για έργα ακόμη και μετά το τέλος ή την επανασύνδεση συνεδριών.
 </p>
 
 ---
@@ -135,42 +135,42 @@
 Εγκαταστήστε με μία μόνο εντολή:
 
 ```bash
-npx claude-mem install
+npx kimi-mem install
 ```
 
 Ή εγκαταστήστε για το OpenCode:
 
 ```bash
-npx claude-mem install --ide opencode
+npx kimi-mem install --ide opencode
 ```
 
-Ή εγκαταστήστε για το Antigravity CLI ([οδηγός εγκατάστασης](https://docs.claude-mem.ai/antigravity-cli/setup)):
+Ή εγκαταστήστε για το Antigravity CLI ([οδηγός εγκατάστασης](https://docs.kimi-mem.ai/antigravity-cli/setup)):
 
 ```bash
-npx claude-mem install --ide antigravity
+npx kimi-mem install --ide antigravity
 ```
 
 Ή εγκαταστήστε από το plugin marketplace μέσα στο Claude Code:
 
 ```bash
-/plugin marketplace add thedotmack/claude-mem
+/plugin marketplace add YD-233/kimi-mem
 
-/plugin install claude-mem
+/plugin install kimi-mem
 ```
 
 Επανεκκινήστε το Claude Code. Το πλαίσιο από προηγούμενες συνεδρίες θα εμφανιστεί αυτόματα σε νέες συνεδρίες.
 
-> **Σημείωση:** Το Claude-Mem δημοσιεύεται επίσης στο npm, αλλά το `npm install -g claude-mem` εγκαθιστά **μόνο το SDK/library** — δεν καταχωρεί τα plugin hooks ούτε ρυθμίζει την υπηρεσία worker. Πάντα να εγκαθιστάτε μέσω του `npx claude-mem install` ή των παραπάνω εντολών `/plugin`.
+> **Σημείωση:** Το Kimi-Mem δημοσιεύεται επίσης στο npm, αλλά το `npm install -g kimi-mem` εγκαθιστά **μόνο το SDK/library** — δεν καταχωρεί τα plugin hooks ούτε ρυθμίζει την υπηρεσία worker. Πάντα να εγκαθιστάτε μέσω του `npx kimi-mem install` ή των παραπάνω εντολών `/plugin`.
 
 ### 🦞 OpenClaw Gateway
 
-Εγκαταστήστε το claude-mem ως plugin μόνιμης μνήμης σε gateways [OpenClaw](https://openclaw.ai) με μία μόνο εντολή:
+Εγκαταστήστε το kimi-mem ως plugin μόνιμης μνήμης σε gateways [OpenClaw](https://openclaw.ai) με μία μόνο εντολή:
 
 ```bash
 curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 ```
 
-Ο εγκαταστάτης διαχειρίζεται τις εξαρτήσεις, τη ρύθμιση του plugin, τη διαμόρφωση του πάροχου AI, την εκκίνηση του worker, καθώς και προαιρετικές ροές παρατηρήσεων σε πραγματικό χρόνο προς Telegram, Discord, Slack, και άλλα. Δείτε τον [Οδηγό Ενσωμάτωσης OpenClaw](https://docs.claude-mem.ai/openclaw-integration) για λεπτομέρειες.
+Ο εγκαταστάτης διαχειρίζεται τις εξαρτήσεις, τη ρύθμιση του plugin, τη διαμόρφωση του πάροχου AI, την εκκίνηση του worker, καθώς και προαιρετικές ροές παρατηρήσεων σε πραγματικό χρόνο προς Telegram, Discord, Slack, και άλλα. Δείτε τον [Οδηγό Ενσωμάτωσης OpenClaw](https://docs.kimi-mem.ai/openclaw-integration) για λεπτομέρειες.
 
 **Βασικά Χαρακτηριστικά:**
 
@@ -188,35 +188,35 @@ curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 
 ## Τεκμηρίωση
 
-📚 **[Προβολή Πλήρους Τεκμηρίωσης](https://docs.claude-mem.ai/)** - Περιήγηση στον επίσημο ιστότοπο
+📚 **[Προβολή Πλήρους Τεκμηρίωσης](https://docs.kimi-mem.ai/)** - Περιήγηση στον επίσημο ιστότοπο
 
 ### Ξεκινώντας
 
-- **[Οδηγός Εγκατάστασης](https://docs.claude-mem.ai/installation)** - Γρήγορη εκκίνηση & προηγμένη εγκατάσταση
-- **[Οδηγός Χρήσης](https://docs.claude-mem.ai/usage/getting-started)** - Πώς λειτουργεί αυτόματα το Claude-Mem
-- **[Εργαλεία Αναζήτησης](https://docs.claude-mem.ai/usage/search-tools)** - Ερωτήματα στο ιστορικό του έργου σας με φυσική γλώσσα
+- **[Οδηγός Εγκατάστασης](https://docs.kimi-mem.ai/installation)** - Γρήγορη εκκίνηση & προηγμένη εγκατάσταση
+- **[Οδηγός Χρήσης](https://docs.kimi-mem.ai/usage/getting-started)** - Πώς λειτουργεί αυτόματα το Kimi-Mem
+- **[Εργαλεία Αναζήτησης](https://docs.kimi-mem.ai/usage/search-tools)** - Ερωτήματα στο ιστορικό του έργου σας με φυσική γλώσσα
 
 ### Βέλτιστες Πρακτικές
 
-- **[Μηχανική Πλαισίου](https://docs.claude-mem.ai/context-engineering)** - Αρχές βελτιστοποίησης πλαισίου για AI agents
-- **[Προοδευτική Αποκάλυψη](https://docs.claude-mem.ai/progressive-disclosure)** - Φιλοσοφία πίσω από τη στρατηγική προετοιμασίας πλαισίου του Claude-Mem
+- **[Μηχανική Πλαισίου](https://docs.kimi-mem.ai/context-engineering)** - Αρχές βελτιστοποίησης πλαισίου για AI agents
+- **[Προοδευτική Αποκάλυψη](https://docs.kimi-mem.ai/progressive-disclosure)** - Φιλοσοφία πίσω από τη στρατηγική προετοιμασίας πλαισίου του Kimi-Mem
 
 ### Αρχιτεκτονική
 
-- **[Επισκόπηση](https://docs.claude-mem.ai/architecture/overview)** - Συστατικά στοιχεία συστήματος & ροή δεδομένων
-- **[Εξέλιξη Αρχιτεκτονικής](https://docs.claude-mem.ai/architecture-evolution)** - Το ταξίδι από το v3 στο v5
-- **[Αρχιτεκτονική Hooks](https://docs.claude-mem.ai/hooks-architecture)** - Πώς το Claude-Mem χρησιμοποιεί lifecycle hooks
-- **[Αναφορά Hooks](https://docs.claude-mem.ai/architecture/hooks)** - Επεξήγηση 7 hook scripts
-- **[Υπηρεσία Worker](https://docs.claude-mem.ai/architecture/worker-service)** - HTTP API & διαχείριση Bun
-- **[Βάση Δεδομένων](https://docs.claude-mem.ai/architecture/database)** - Σχήμα SQLite & αναζήτηση FTS5
-- **[Αρχιτεκτονική Αναζήτησης](https://docs.claude-mem.ai/architecture/search-architecture)** - Υβριδική αναζήτηση με βάση δεδομένων διανυσμάτων Chroma
+- **[Επισκόπηση](https://docs.kimi-mem.ai/architecture/overview)** - Συστατικά στοιχεία συστήματος & ροή δεδομένων
+- **[Εξέλιξη Αρχιτεκτονικής](https://docs.kimi-mem.ai/architecture-evolution)** - Το ταξίδι από το v3 στο v5
+- **[Αρχιτεκτονική Hooks](https://docs.kimi-mem.ai/hooks-architecture)** - Πώς το Kimi-Mem χρησιμοποιεί lifecycle hooks
+- **[Αναφορά Hooks](https://docs.kimi-mem.ai/architecture/hooks)** - Επεξήγηση 7 hook scripts
+- **[Υπηρεσία Worker](https://docs.kimi-mem.ai/architecture/worker-service)** - HTTP API & διαχείριση Bun
+- **[Βάση Δεδομένων](https://docs.kimi-mem.ai/architecture/database)** - Σχήμα SQLite & αναζήτηση FTS5
+- **[Αρχιτεκτονική Αναζήτησης](https://docs.kimi-mem.ai/architecture/search-architecture)** - Υβριδική αναζήτηση με βάση δεδομένων διανυσμάτων Chroma
 
 ### Διαμόρφωση & Ανάπτυξη
 
-- **[Διαμόρφωση](https://docs.claude-mem.ai/configuration)** - Μεταβλητές περιβάλλοντος & ρυθμίσεις
-- **[Ανάπτυξη](https://docs.claude-mem.ai/development)** - Κατασκευή, δοκιμή, συνεισφορά
-- **[Κλάδοι Έκδοσης](https://docs.claude-mem.ai/branches)** - Ροή κλάδων stable, core-dev, και community-edge
-- **[Αντιμετώπιση Προβλημάτων](https://docs.claude-mem.ai/troubleshooting)** - Συνήθη προβλήματα & λύσεις
+- **[Διαμόρφωση](https://docs.kimi-mem.ai/configuration)** - Μεταβλητές περιβάλλοντος & ρυθμίσεις
+- **[Ανάπτυξη](https://docs.kimi-mem.ai/development)** - Κατασκευή, δοκιμή, συνεισφορά
+- **[Κλάδοι Έκδοσης](https://docs.kimi-mem.ai/branches)** - Ροή κλάδων stable, core-dev, και community-edge
+- **[Αντιμετώπιση Προβλημάτων](https://docs.kimi-mem.ai/troubleshooting)** - Συνήθη προβλήματα & λύσεις
 
 ---
 
@@ -231,13 +231,13 @@ curl -fsSL https://install.cmem.ai/openclaw.sh | bash
 5. **Δεξιότητα mem-search** - Ερωτήματα φυσικής γλώσσας με προοδευτική αποκάλυψη
 6. **Βάση Δεδομένων Διανυσμάτων Chroma** - Υβριδική σημασιολογική + αναζήτηση λέξεων-κλειδιών για έξυπνη ανάκτηση πλαισίου
 
-Δείτε την [Επισκόπηση Αρχιτεκτονικής](https://docs.claude-mem.ai/architecture/overview) για λεπτομέρειες.
+Δείτε την [Επισκόπηση Αρχιτεκτονικής](https://docs.kimi-mem.ai/architecture/overview) για λεπτομέρειες.
 
 ---
 
 ## Εργαλεία Αναζήτησης MCP
 
-Το Claude-Mem παρέχει έξυπνη αναζήτηση μνήμης μέσω **4 εργαλείων MCP** ακολουθώντας ένα αποδοτικό ως προς τα tokens **μοτίβο ροής εργασίας 3 επιπέδων**:
+Το Kimi-Mem παρέχει έξυπνη αναζήτηση μνήμης μέσω **4 εργαλείων MCP** ακολουθώντας ένα αποδοτικό ως προς τα tokens **μοτίβο ροής εργασίας 3 επιπέδων**:
 
 **Η Ροή Εργασίας 3 Επιπέδων:**
 
@@ -270,7 +270,7 @@ search(query="authentication bug", type="bugfix", limit=10)
 get_observations(ids=[123, 456])
 ```
 
-Δείτε τον [Οδηγό Εργαλείων Αναζήτησης](https://docs.claude-mem.ai/usage/search-tools) για λεπτομερή παραδείγματα.
+Δείτε τον [Οδηγό Εργαλείων Αναζήτησης](https://docs.kimi-mem.ai/usage/search-tools) για λεπτομερή παραδείγματα.
 
 ---
 
@@ -278,7 +278,7 @@ get_observations(ids=[123, 456])
 
 Οι σταθερές εκδόσεις κυκλοφορούν από τον κλάδο `main` και δημοσιεύονται στο npm. Οι κλάδοι `core-dev` και
 `community-edge` εκτελούνται από τον πηγαίο κώδικα για πρώιμες διορθώσεις αξιοπιστίας και
-ενσωματώσεις της κοινότητας. Δείτε τους **[Κλάδους Έκδοσης](https://docs.claude-mem.ai/branches)**
+ενσωματώσεις της κοινότητας. Δείτε τους **[Κλάδους Έκδοσης](https://docs.kimi-mem.ai/branches)**
 για τη ροή κλάδων και τις οδηγίες εκτέλεσης μη σταθερών εκδόσεων.
 
 ---
@@ -306,13 +306,13 @@ npm : The term 'npm' is not recognized as the name of a cmdlet
 
 ## Διαμόρφωση
 
-Οι ρυθμίσεις διαχειρίζονται στο `~/.claude-mem/settings.json` (δημιουργείται αυτόματα με προεπιλογές κατά την πρώτη εκτέλεση). Διαμορφώστε το μοντέλο AI, τη θύρα worker, τον κατάλογο δεδομένων, το επίπεδο καταγραφής και τις ρυθμίσεις εισαγωγής πλαισίου.
+Οι ρυθμίσεις διαχειρίζονται στο `~/.kimi-mem/settings.json` (δημιουργείται αυτόματα με προεπιλογές κατά την πρώτη εκτέλεση). Διαμορφώστε το μοντέλο AI, τη θύρα worker, τον κατάλογο δεδομένων, το επίπεδο καταγραφής και τις ρυθμίσεις εισαγωγής πλαισίου.
 
-Δείτε τον **[Οδηγό Διαμόρφωσης](https://docs.claude-mem.ai/configuration)** για όλες τις διαθέσιμες ρυθμίσεις και παραδείγματα.
+Δείτε τον **[Οδηγό Διαμόρφωσης](https://docs.kimi-mem.ai/configuration)** για όλες τις διαθέσιμες ρυθμίσεις και παραδείγματα.
 
 ### Διαμόρφωση Λειτουργίας & Γλώσσας
 
-Το Claude-Mem υποστηρίζει πολλαπλές λειτουργίες ροής εργασίας και γλώσσες μέσω της ρύθμισης `CLAUDE_MEM_MODE`.
+Το Kimi-Mem υποστηρίζει πολλαπλές λειτουργίες ροής εργασίας και γλώσσες μέσω της ρύθμισης `KIMI_MEM_MODE`.
 
 Αυτή η επιλογή ελέγχει:
 - Τη συμπεριφορά της ροής εργασίας (π.χ. code, chill, investigation)
@@ -320,18 +320,18 @@ npm : The term 'npm' is not recognized as the name of a cmdlet
 
 #### Πώς να Διαμορφώσετε
 
-Επεξεργαστείτε το αρχείο ρυθμίσεών σας στο `~/.claude-mem/settings.json`:
+Επεξεργαστείτε το αρχείο ρυθμίσεών σας στο `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--zh"
+  "KIMI_MEM_MODE": "code--zh"
 }
 ```
 
 Οι λειτουργίες ορίζονται στο `plugin/modes/`. Για να δείτε όλες τις διαθέσιμες λειτουργίες τοπικά:
 
 ```bash
-ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
+ls ~/.claude/plugins/marketplaces/YD-233/plugin/modes/
 ```
 
 #### Διαθέσιμες Λειτουργίες
@@ -353,7 +353,7 @@ ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
 
 ## Ανάπτυξη
 
-Δείτε τον **[Οδηγό Ανάπτυξης](https://docs.claude-mem.ai/development)** για οδηγίες κατασκευής, δοκιμών και ροής εργασίας συνεισφοράς.
+Δείτε τον **[Οδηγό Ανάπτυξης](https://docs.kimi-mem.ai/development)** για οδηγίες κατασκευής, δοκιμών και ροής εργασίας συνεισφοράς.
 
 ---
 
@@ -361,7 +361,7 @@ ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
 
 Εάν αντιμετωπίζετε προβλήματα, περιγράψτε το πρόβλημα στο Claude και η δεξιότητα troubleshoot θα διαγνώσει αυτόματα και θα παράσχει λύσεις.
 
-Δείτε τον **[Οδηγό Αντιμετώπισης Προβλημάτων](https://docs.claude-mem.ai/troubleshooting)** για συνήθη προβλήματα και λύσεις.
+Δείτε τον **[Οδηγό Αντιμετώπισης Προβλημάτων](https://docs.kimi-mem.ai/troubleshooting)** για συνήθη προβλήματα και λύσεις.
 
 ---
 
@@ -370,7 +370,7 @@ ls ~/.claude/plugins/marketplaces/thedotmack/plugin/modes/
 Δημιουργήστε περιεκτικές αναφορές σφαλμάτων με την αυτοματοποιημένη γεννήτρια:
 
 ```bash
-cd ~/.claude/plugins/marketplaces/thedotmack
+cd ~/.claude/plugins/marketplaces/YD-233
 npm run bug-report
 ```
 
@@ -384,18 +384,18 @@ npm run bug-report
 4. Ενημερώστε την τεκμηρίωση
 5. Υποβάλετε ένα Pull Request
 
-Το Claude-Mem κυκλοφορεί από τρεις κλάδους: `main` (σταθερός), `core-dev`, και
+Το Kimi-Mem κυκλοφορεί από τρεις κλάδους: `main` (σταθερός), `core-dev`, και
 `community-edge`. Μόνο ο `main` δημοσιεύεται στο npm· οι υπόλοιποι εκτελούνται από
-τον πηγαίο κώδικα. Δείτε τους [Κλάδους Έκδοσης](https://docs.claude-mem.ai/branches) για τη
+τον πηγαίο κώδικα. Δείτε τους [Κλάδους Έκδοσης](https://docs.kimi-mem.ai/branches) για τη
 στρατηγική και τις οδηγίες τοπικής εκτέλεσης.
 
-Δείτε τον [Οδηγό Ανάπτυξης](https://docs.claude-mem.ai/development) για τη ροή εργασίας συνεισφοράς.
+Δείτε τον [Οδηγό Ανάπτυξης](https://docs.kimi-mem.ai/development) για τη ροή εργασίας συνεισφοράς.
 
 ---
 
 ## Άδεια Χρήσης
 
-Το Claude-Mem διανέμεται με άδεια Apache License 2.0.
+Το Kimi-Mem διανέμεται με άδεια Apache License 2.0.
 
 Επιλέξαμε την Apache-2.0 επειδή η διαρκής agentic μνήμη θα πρέπει να είναι εύκολο να
 ενσωματωθεί σε εργαλεία προγραμματιστών, τοπικούς agents, διακομιστές MCP, επιχειρησιακά
@@ -412,8 +412,8 @@ npm run bug-report
 ## Υποστήριξη
 
 - **Τεκμηρίωση**: [docs/](docs/)
-- **Ζητήματα**: [GitHub Issues](https://github.com/thedotmack/claude-mem/issues)
-- **Repository**: [github.com/thedotmack/claude-mem](https://github.com/thedotmack/claude-mem)
+- **Ζητήματα**: [GitHub Issues](https://github.com/YD-233/kimi-mem/issues)
+- **Repository**: [github.com/YD-233/kimi-mem](https://github.com/YD-233/kimi-mem)
 - **Επίσημος Λογαριασμός X**: [@Claude_Memory](https://x.com/Claude_Memory)
 - **Επίσημο Discord**: [Συμμετοχή στο Discord](https://discord.com/invite/J4wttp9vDu)
 - **Συγγραφέας**: Alex Newman ([@thedotmack](https://github.com/thedotmack))
@@ -426,6 +426,6 @@ npm run bug-report
 
 ### Τι Γίνεται με το CMEM;
 
-Το CMEM είναι ένα token που δημιουργήθηκε από τρίτο μέρος, αλλά υιοθετήθηκε επίσημα από τον δημιουργό του Claude-Mem (Alex Newman, @thedotmack). Το token λειτουργεί ως καταλύτης ανάπτυξης για την κοινότητα και ως όχημα για να φέρει το CMEM στους προγραμματιστές και τους εργαζόμενους γνώσης που το χρειάζονται περισσότερο.
+Το CMEM είναι ένα token που δημιουργήθηκε από τρίτο μέρος, αλλά υιοθετήθηκε επίσημα από τον δημιουργό του Kimi-Mem (Alex Newman, @thedotmack). Το token λειτουργεί ως καταλύτης ανάπτυξης για την κοινότητα και ως όχημα για να φέρει το CMEM στους προγραμματιστές και τους εργαζόμενους γνώσης που το χρειάζονται περισσότερο.
 
 Επίσημη διεύθυνση BASE CA: 0x76b1967eec0ccaeb001bbbb2b40dc4badba31ba3

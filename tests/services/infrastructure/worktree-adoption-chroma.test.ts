@@ -54,7 +54,7 @@ function git(cwd: string, ...args: string[]): void {
 
 describe('worktree adoption Chroma hydration', () => {
   it('patches a session-summary document when the adopted worktree has no observations', async () => {
-    tempRoot = mkdtempSync(path.join(tmpdir(), 'claude-mem-3331-'));
+    tempRoot = mkdtempSync(path.join(tmpdir(), 'kimi-mem-3331-'));
     const mainRepo = path.join(tempRoot, 'parent-repo');
     mainRepoForCleanup = mainRepo;
     const worktree = path.join(tempRoot, 'summary-worktree');
@@ -70,7 +70,7 @@ describe('worktree adoption Chroma hydration', () => {
     git(mainRepo, 'commit', '-m', 'base');
     git(mainRepo, 'worktree', 'add', '-b', 'feature', worktree);
 
-    const dbPath = path.join(dataDirectory, 'claude-mem.db');
+    const dbPath = path.join(dataDirectory, 'kimi-mem.db');
     const store = new SessionStore(dbPath);
     const sdkSessionId = store.createSDKSession('content-summary', 'parent-repo/summary-worktree', 'prompt');
     store.ensureMemorySessionIdRegistered(sdkSessionId, 'summary-session');

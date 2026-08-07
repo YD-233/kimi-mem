@@ -35,13 +35,13 @@ function readJson(filePath) {
 }
 
 function resolveDataDir() {
-  if (process.env.CLAUDE_MEM_DATA_DIR) return expandHome(process.env.CLAUDE_MEM_DATA_DIR);
-  const defaultDir = path.join(homedir(), '.claude-mem');
+  if (process.env.KIMI_MEM_DATA_DIR) return expandHome(process.env.KIMI_MEM_DATA_DIR);
+  const defaultDir = path.join(homedir(), '.kimi-mem');
   const defaultSettings = path.join(defaultDir, 'settings.json');
   if (!existsSync(defaultSettings)) return defaultDir;
   const parsed = readJson(defaultSettings);
   const flat = parsed.env && typeof parsed.env === 'object' ? parsed.env : parsed;
-  return flat.CLAUDE_MEM_DATA_DIR ? expandHome(flat.CLAUDE_MEM_DATA_DIR) : defaultDir;
+  return flat.KIMI_MEM_DATA_DIR ? expandHome(flat.KIMI_MEM_DATA_DIR) : defaultDir;
 }
 
 function splitCsv(value) {
@@ -148,10 +148,10 @@ let settings = existsSync(settingsPath) ? readJson(settingsPath) : {};
 if (settings.env && typeof settings.env === 'object') settings = settings.env;
 
 try {
-  let token = process.env.CLAUDE_MEM_TELEGRAM_BOT_TOKEN ?? '';
-  if (!token && settings.CLAUDE_MEM_TELEGRAM_BOT_TOKEN) {
-    if (await askYesNo('Use the Telegram bot token already saved in claude-mem?')) {
-      token = settings.CLAUDE_MEM_TELEGRAM_BOT_TOKEN;
+  let token = process.env.KIMI_MEM_TELEGRAM_BOT_TOKEN ?? '';
+  if (!token && settings.KIMI_MEM_TELEGRAM_BOT_TOKEN) {
+    if (await askYesNo('Use the Telegram bot token already saved in kimi-mem?')) {
+      token = settings.KIMI_MEM_TELEGRAM_BOT_TOKEN;
     }
   }
   if (!token) token = await promptLine('Paste the BotFather token (input is hidden): ', { hidden: true });
@@ -159,10 +159,10 @@ try {
   const bot = await telegramCall(token, 'getMe');
   console.log(`Authenticated as @${bot.username ?? bot.first_name}.`);
 
-  let chatId = process.env.CLAUDE_MEM_TELEGRAM_CHAT_ID ?? '';
-  if (!chatId && settings.CLAUDE_MEM_TELEGRAM_CHAT_ID) {
-    if (await askYesNo(`Use the saved chat ID ${settings.CLAUDE_MEM_TELEGRAM_CHAT_ID}?`)) {
-      chatId = settings.CLAUDE_MEM_TELEGRAM_CHAT_ID;
+  let chatId = process.env.KIMI_MEM_TELEGRAM_CHAT_ID ?? '';
+  if (!chatId && settings.KIMI_MEM_TELEGRAM_CHAT_ID) {
+    if (await askYesNo(`Use the saved chat ID ${settings.KIMI_MEM_TELEGRAM_CHAT_ID}?`)) {
+      chatId = settings.KIMI_MEM_TELEGRAM_CHAT_ID;
     }
   }
 
@@ -187,7 +187,7 @@ try {
 
   await telegramCall(token, 'sendMessage', {
     chat_id: chatId,
-    text: '✅ claude-mem Telegram notifications are connected.',
+    text: '✅ kimi-mem Telegram notifications are connected.',
   });
 
   const backupPath = existsSync(settingsPath)
@@ -197,19 +197,19 @@ try {
     copyFileSync(settingsPath, backupPath);
     chmodSync(backupPath, 0o600);
   }
-  settings.CLAUDE_MEM_TELEGRAM_ENABLED = 'true';
-  settings.CLAUDE_MEM_TELEGRAM_BOT_TOKEN = token;
-  settings.CLAUDE_MEM_TELEGRAM_CHAT_ID = chatId;
-  if (types.length > 0) settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES = mergeCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES, types);
-  if (concepts.length > 0) settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS = mergeCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS, concepts);
+  settings.KIMI_MEM_TELEGRAM_ENABLED = 'true';
+  settings.KIMI_MEM_TELEGRAM_BOT_TOKEN = token;
+  settings.KIMI_MEM_TELEGRAM_CHAT_ID = chatId;
+  if (types.length > 0) settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES = mergeCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES, types);
+  if (concepts.length > 0) settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS = mergeCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS, concepts);
   atomicWriteJson(settingsPath, settings);
 
   console.log(JSON.stringify({
     ok: true,
     bot: bot.username ?? bot.first_name,
     chatId,
-    triggerTypes: splitCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_TYPES),
-    triggerConcepts: splitCsv(settings.CLAUDE_MEM_TELEGRAM_TRIGGER_CONCEPTS),
+    triggerTypes: splitCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_TYPES),
+    triggerConcepts: splitCsv(settings.KIMI_MEM_TELEGRAM_TRIGGER_CONCEPTS),
     settingsPath,
     backupPath,
   }, null, 2));

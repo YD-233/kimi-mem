@@ -31,7 +31,7 @@ import { captureCliEvent } from '../../services/telemetry/cli-telemetry.js';
 function readSelectedRuntime(): InstallRuntimeId {
   try {
     const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-    return normalizeRuntimeFlag(settings.CLAUDE_MEM_RUNTIME) ?? 'worker';
+    return normalizeRuntimeFlag(settings.KIMI_MEM_RUNTIME) ?? 'worker';
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     console.warn('[uninstall] Could not read selected runtime from settings, defaulting to worker:', err);
@@ -74,7 +74,7 @@ function removeMarketplaceDirectory(): boolean {
 }
 
 function removeCacheDirectory(): boolean {
-  const cacheDirectory = join(pluginsDirectory(), 'cache', 'thedotmack', 'claude-mem');
+  const cacheDirectory = join(pluginsDirectory(), 'cache', 'YD-233', 'kimi-mem');
   if (existsSync(cacheDirectory)) {
     rmSync(cacheDirectory, { recursive: true, force: true });
     return true;
@@ -84,21 +84,21 @@ function removeCacheDirectory(): boolean {
 
 function removeFromKnownMarketplaces(): void {
   const knownMarketplaces = readJsonSafe<Record<string, any>>(knownMarketplacesPath(), {});
-  if (knownMarketplaces['thedotmack']) {
-    delete knownMarketplaces['thedotmack'];
+  if (knownMarketplaces['YD-233']) {
+    delete knownMarketplaces['YD-233'];
     writeJsonFileAtomic(knownMarketplacesPath(), knownMarketplaces);
   }
 }
 
 function removeFromInstalledPlugins(): void {
   const installedPlugins = readJsonSafe<Record<string, any>>(installedPluginsPath(), {});
-  if (installedPlugins.plugins?.['claude-mem@thedotmack']) {
-    delete installedPlugins.plugins['claude-mem@thedotmack'];
+  if (installedPlugins.plugins?.['kimi-mem@YD-233']) {
+    delete installedPlugins.plugins['kimi-mem@YD-233'];
     writeJsonFileAtomic(installedPluginsPath(), installedPlugins);
   }
 }
 
-function stripLegacyClaudeMemAlias(): void {
+function stripLegacyKimiMemAlias(): void {
   const home = homedir();
   const candidateFiles = [
     join(home, '.bashrc'),
@@ -106,7 +106,7 @@ function stripLegacyClaudeMemAlias(): void {
     join(home, 'Documents', 'PowerShell', 'Microsoft.PowerShell_profile.ps1'),
   ];
 
-  const aliasLineRegex = /^\s*alias\s+claude-mem\s*=/;
+  const aliasLineRegex = /^\s*alias\s+kimi-mem\s*=/;
 
   for (const filePath of candidateFiles) {
     if (!existsSync(filePath)) continue;
@@ -122,7 +122,7 @@ function stripLegacyClaudeMemAlias(): void {
     if (filtered.length === lines.length) continue; 
     try {
       writeFileSync(filePath, filtered.join('\n'));
-      console.error(`Removed legacy claude-mem alias from ${filePath}`);
+      console.error(`Removed legacy kimi-mem alias from ${filePath}`);
     } catch (error: unknown) {
       console.warn(`[uninstall] Could not rewrite ${filePath}:`, error instanceof Error ? error.message : String(error));
     }
@@ -133,8 +133,8 @@ export function removeFromClaudeSettings(): void {
   const settings = readJsonSafe<Record<string, any>>(claudeSettingsPath(), {});
   let dirty = false;
 
-  if (settings.enabledPlugins?.['claude-mem@thedotmack'] !== undefined) {
-    delete settings.enabledPlugins['claude-mem@thedotmack'];
+  if (settings.enabledPlugins?.['kimi-mem@YD-233'] !== undefined) {
+    delete settings.enabledPlugins['kimi-mem@YD-233'];
     dirty = true;
   }
 
@@ -144,9 +144,9 @@ export function removeFromClaudeSettings(): void {
   // CLI's default behavior by removing that key. The value-equality guard
   // (=== '1') ensures we only strip the specific token the installer wrote
   // — if a user had pre-set this key to something else (e.g. '0' to force
-  // auto-memory on), or to '1' themselves before installing claude-mem,
+  // auto-memory on), or to '1' themselves before installing kimi-mem,
   // their intent is preserved. The installer's own no-op-when-already-'1'
-  // path means the worst case is leaving behind a value claude-mem would
+  // path means the worst case is leaving behind a value kimi-mem would
   // have written anyway. Any other env entries the user added themselves
   // (ANTHROPIC_AUTH_TOKEN, AWS_REGION, etc.) are preserved. If the env
   // block becomes empty as a result, the block itself is dropped to keep
@@ -169,7 +169,7 @@ export function removeFromClaudeSettings(): void {
   }
 }
 
-function removeStrayClaudeMemPaths(): number {
+function removeStrayKimiMemPaths(): number {
   const home = homedir();
   let removedCount = 0;
 
@@ -182,7 +182,7 @@ function removeStrayClaudeMemPaths(): number {
       console.warn(`[uninstall] Could not read ${npxRoot}:`, error instanceof Error ? error.message : String(error));
     }
     for (const hashDir of hashDirs) {
-      const candidate = join(npxRoot, hashDir, 'node_modules', 'claude-mem');
+      const candidate = join(npxRoot, hashDir, 'node_modules', 'kimi-mem');
       if (!existsSync(candidate)) continue;
       try {
         rmSync(candidate, { recursive: true, force: true });
@@ -211,7 +211,7 @@ function removeStrayClaudeMemPaths(): number {
         continue;
       }
       for (const entry of logEntries) {
-        if (!entry.startsWith('mcp-logs-plugin-claude-mem-')) continue;
+        if (!entry.startsWith('mcp-logs-plugin-kimi-mem-')) continue;
         const logPath = join(projectPath, entry);
         try {
           rmSync(logPath, { recursive: true, force: true });
@@ -223,7 +223,7 @@ function removeStrayClaudeMemPaths(): number {
     }
   }
 
-  const pluginDataDir = join(home, '.claude', 'plugins', 'data', 'claude-mem-thedotmack');
+  const pluginDataDir = join(home, '.claude', 'plugins', 'data', 'kimi-mem-YD-233');
   if (existsSync(pluginDataDir)) {
     try {
       rmSync(pluginDataDir, { recursive: true, force: true });
@@ -237,10 +237,10 @@ function removeStrayClaudeMemPaths(): number {
 }
 
 export async function runUninstallCommand(): Promise<void> {
-  p.intro(styleText(['bgRed', 'white'], ' claude-mem uninstall '));
+  p.intro(styleText(['bgRed', 'white'], ' kimi-mem uninstall '));
 
   if (!isPluginInstalled()) {
-    p.log.warn('claude-mem does not appear to be installed.');
+    p.log.warn('kimi-mem does not appear to be installed.');
 
     if (process.stdin.isTTY) {
       const shouldCleanup = await p.confirm({
@@ -258,7 +258,7 @@ export async function runUninstallCommand(): Promise<void> {
     }
   } else if (process.stdin.isTTY) {
     const shouldContinue = await p.confirm({
-      message: 'Are you sure you want to uninstall claude-mem?',
+      message: 'Are you sure you want to uninstall kimi-mem?',
       initialValue: false,
     });
 
@@ -268,7 +268,7 @@ export async function runUninstallCommand(): Promise<void> {
     }
   }
 
-  const workerPort = SettingsDefaultsManager.get('CLAUDE_MEM_WORKER_PORT');
+  const workerPort = SettingsDefaultsManager.get('KIMI_MEM_WORKER_PORT');
   try {
     const result = await shutdownWorkerAndWait(workerPort, 10000);
     if (result.workerWasRunning) {
@@ -294,7 +294,7 @@ export async function runUninstallCommand(): Promise<void> {
       p.log.info('Server runtime detected (externally managed stack — leaving Docker/pg/redis untouched).');
     }
     clearServerRuntimeSettings(SERVER_RUNTIME_SETTINGS_KEYS);
-    p.log.info('Server runtime settings cleared from ~/.claude-mem/settings.json.');
+    p.log.info('Server runtime settings cleared from ~/.kimi-mem/settings.json.');
   }
 
   await p.tasks([
@@ -338,16 +338,16 @@ export async function runUninstallCommand(): Promise<void> {
       },
     },
     {
-      title: 'Removing legacy claude-mem shell alias',
+      title: 'Removing legacy kimi-mem shell alias',
       task: async () => {
-        stripLegacyClaudeMemAlias();
+        stripLegacyKimiMemAlias();
         return `Legacy alias check complete ${styleText('green', 'OK')}`;
       },
     },
     {
-      title: 'Removing stray claude-mem caches and logs',
+      title: 'Removing stray kimi-mem caches and logs',
       task: async () => {
-        const removed = removeStrayClaudeMemPaths();
+        const removed = removeStrayKimiMemPaths();
         return removed > 0
           ? `Stray paths removed: ${removed} ${styleText('green', 'OK')}`
           : `No stray paths found ${styleText('dim', 'skipped')}`;
@@ -391,15 +391,15 @@ export async function runUninstallCommand(): Promise<void> {
 
   p.note(
     [
-      `Your data directory at ${styleText('cyan', '~/.claude-mem')} was preserved.`,
-      'To remove it manually: rm -rf ~/.claude-mem',
+      `Your data directory at ${styleText('cyan', '~/.kimi-mem')} was preserved.`,
+      'To remove it manually: rm -rf ~/.kimi-mem',
     ].join('\n'),
     'Note',
   );
 
   // Capture BEFORE the data dir note becomes stale advice: consent and the
-  // install ID still live in ~/.claude-mem, which uninstall preserves.
+  // install ID still live in ~/.kimi-mem, which uninstall preserves.
   await captureCliEvent('uninstall_completed', {}, { person: true });
 
-  p.outro(styleText('green', 'claude-mem has been uninstalled.'));
+  p.outro(styleText('green', 'kimi-mem has been uninstalled.'));
 }

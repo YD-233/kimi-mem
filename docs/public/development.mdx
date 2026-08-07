@@ -1,6 +1,6 @@
 ---
 title: "Development"
-description: "Build from source, run tests, and contribute to Claude-Mem"
+description: "Build from source, run tests, and contribute to Kimi-Mem"
 ---
 
 # Development Guide
@@ -17,8 +17,8 @@ description: "Build from source, run tests, and contribute to Claude-Mem"
 
 ```bash
 # Clone repository
-git clone https://github.com/thedotmack/claude-mem.git
-cd claude-mem
+git clone https://github.com/YD-233/kimi-mem.git
+cd kimi-mem
 
 # Install dependencies
 npm install
@@ -306,7 +306,7 @@ createObservation(obs: Observation) {
 
 ```bash
 # Backup database first!
-cp ~/.claude-mem/claude-mem.db ~/.claude-mem/claude-mem.db.backup
+cp ~/.kimi-mem/kimi-mem.db ~/.kimi-mem/kimi-mem.db.backup
 
 # Run tests
 npm test
@@ -373,7 +373,7 @@ npm test
 
 ### Testing Philosophy
 
-Claude-mem relies on **real-world usage and manual testing** rather than traditional unit tests. The project philosophy prioritizes:
+Kimi-Mem relies on **real-world usage and manual testing** rather than traditional unit tests. The project philosophy prioritizes:
 
 1. **Manual verification** - Testing features in actual Claude Code sessions
 2. **Integration testing** - Running the full system end-to-end
@@ -405,7 +405,7 @@ When developing new features:
 
 3. **Check database state**:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT * FROM your_table;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT * FROM your_table;"
    ```
 
 4. **Monitor worker logs**:
@@ -426,11 +426,11 @@ When developing new features:
 npm run worker:status
 
 # Queue inspection
-WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
 curl http://127.0.0.1:$WORKER_PORT/api/pending-queue
 
 # Database integrity
-sqlite3 ~/.claude-mem/claude-mem.db "PRAGMA integrity_check;"
+sqlite3 ~/.kimi-mem/kimi-mem.db "PRAGMA integrity_check;"
 ```
 
 **Hook Testing**:
@@ -445,7 +445,7 @@ echo '{"session_id":"test-123","cwd":"'$(pwd)'","prompt":"test"}' | node plugin/
 **Data Verification**:
 ```bash
 # Check recent observations
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT id, tool_name, created_at
   FROM observations
   ORDER BY created_at_epoch DESC
@@ -453,7 +453,7 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 "
 
 # Check summaries
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT id, request, completed
   FROM session_summaries
   ORDER BY created_at_epoch DESC
@@ -468,7 +468,7 @@ For manual recovery features specifically:
 1. **Simulate stuck messages**:
    ```bash
    # Manually create stuck message (for testing only)
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      UPDATE pending_messages
      SET status = 'processing',
          started_processing_at_epoch = strftime('%s', 'now', '-10 minutes') * 1000
@@ -483,7 +483,7 @@ For manual recovery features specifically:
 
 3. **Verify results**:
    ```bash
-   WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+   WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
    curl http://127.0.0.1:$WORKER_PORT/api/pending-queue | jq '.queue'
    ```
 
@@ -561,7 +561,7 @@ export async function createObservation(
 ### Enable Debug Logging
 
 ```bash
-export DEBUG=claude-mem:*
+export DEBUG=kimi-mem:*
 npm run worker:restart
 npm run worker:logs
 ```
@@ -569,7 +569,7 @@ npm run worker:logs
 ### Inspect Database
 
 ```bash
-sqlite3 ~/.claude-mem/claude-mem.db
+sqlite3 ~/.kimi-mem/kimi-mem.db
 
 # View schema
 .schema observations
@@ -583,7 +583,7 @@ SELECT * FROM observations LIMIT 10;
 Use correlation IDs to trace observations through the pipeline:
 
 ```bash
-sqlite3 ~/.claude-mem/claude-mem.db
+sqlite3 ~/.kimi-mem/kimi-mem.db
 SELECT correlation_id, tool_name, created_at
 FROM observations
 WHERE session_id = 'YOUR_SESSION_ID'
@@ -642,7 +642,7 @@ Publishing to npm requires the maintainer's npm credentials and 2FA:
 
 ```bash
 npm publish
-npm view claude-mem@NEW_VERSION version
+npm view kimi-mem@NEW_VERSION version
 ```
 
 Only after npm resolves the version, create the GitHub release and regenerate the
@@ -737,7 +737,7 @@ rm -rf plugin/scripts/*.js plugin/scripts/*.cjs
 
 1. Check database:
    ```bash
-   rm ~/.claude-mem/claude-mem.db
+   rm ~/.kimi-mem/kimi-mem.db
    npm test
    ```
 
@@ -760,18 +760,18 @@ rm -rf plugin/scripts/*.js plugin/scripts/*.cjs
 
 2. Check port:
    ```bash
-   WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+   WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
    lsof -i :$WORKER_PORT
    ```
 
 3. Try custom port:
    ```bash
-   export CLAUDE_MEM_WORKER_PORT=38000
+   export KIMI_MEM_WORKER_PORT=38000
    npm run worker:start
    ```
 
 ## Next Steps
 
 - [Architecture Overview](architecture/overview) - Understand the system
-- [Configuration](configuration) - Customize Claude-Mem
+- [Configuration](configuration) - Customize Kimi-Mem
 - [Troubleshooting](troubleshooting) - Common issues

@@ -1,6 +1,6 @@
 ---
 title: "Troubleshooting"
-description: "Common issues and solutions for Claude-Mem"
+description: "Common issues and solutions for Kimi-Mem"
 ---
 
 # Troubleshooting Guide
@@ -26,7 +26,7 @@ The skill includes comprehensive diagnostics, automated repair sequences, and de
 For worker API commands below, set `PORT` first:
 
 ```bash
-PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)}
+PORT=${KIMI_MEM_WORKER_PORT:-$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)}
 ```
 
 ### Viewer UI Not Loading
@@ -35,9 +35,9 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 **Solutions**:
 
-1. Find the worker port. The default is `37700 + (uid % 100)`. The configured port is the value of `CLAUDE_MEM_WORKER_PORT` in `~/.claude-mem/settings.json`; the running worker also reports it on `/api/health`:
+1. Find the worker port. The default is `37700 + (uid % 100)`. The configured port is the value of `KIMI_MEM_WORKER_PORT` in `~/.kimi-mem/settings.json`; the running worker also reports it on `/api/health`:
    ```bash
-   PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+   PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
    lsof -i :$PORT
    npm run worker:status
    ```
@@ -59,7 +59,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 5. Pin a fixed port if the auto-assigned one collides:
    ```bash
-   export CLAUDE_MEM_WORKER_PORT=38000
+   export KIMI_MEM_WORKER_PORT=38000
    npm run worker:restart
    ```
 
@@ -72,7 +72,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 1. Check browser localStorage is enabled:
    ```javascript
    // In browser console
-   localStorage.getItem('claude-mem-settings')
+   localStorage.getItem('kimi-mem-settings')
    ```
 
 2. Verify settings endpoint is working:
@@ -83,7 +83,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 3. Clear localStorage and try again:
    ```javascript
    // In browser console
-   localStorage.removeItem('claude-mem-settings')
+   localStorage.removeItem('kimi-mem-settings')
    ```
 
 4. Check for browser privacy mode (blocks localStorage)
@@ -133,7 +133,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 2. Install chromadb manually:
    ```bash
-   cd ~/.claude/plugins/marketplaces/thedotmack
+   cd ~/.claude/plugins/marketplaces/YD-233
    npm install chromadb
    ```
 
@@ -158,19 +158,19 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 1. Clear install cache:
    ```bash
-   rm ~/.claude/plugins/marketplaces/thedotmack/.install-version
+   rm ~/.claude/plugins/marketplaces/YD-233/.install-version
    ```
 
 2. Force reinstall:
    ```bash
-   cd ~/.claude/plugins/marketplaces/thedotmack
+   cd ~/.claude/plugins/marketplaces/YD-233
    npm install --force
    ```
 
 3. Check version marker:
    ```bash
-   cat ~/.claude/plugins/marketplaces/thedotmack/.install-version
-   cat ~/.claude/plugins/marketplaces/thedotmack/package.json | grep version
+   cat ~/.claude/plugins/marketplaces/YD-233/.install-version
+   cat ~/.claude/plugins/marketplaces/YD-233/package.json | grep version
    ```
 
 4. Restart Claude Code after manual install
@@ -228,13 +228,13 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 3. Or use a different port:
    ```bash
-   export CLAUDE_MEM_WORKER_PORT=38000
+   export KIMI_MEM_WORKER_PORT=38000
    npm run worker:restart
    ```
 
 4. Verify new port:
    ```bash
-   curl -s http://127.0.0.1:$CLAUDE_MEM_WORKER_PORT/api/health | jq .port
+   curl -s http://127.0.0.1:$KIMI_MEM_WORKER_PORT/api/health | jq .port
    ```
 
 ### Worker Keeps Crashing
@@ -255,7 +255,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 3. Check database for corruption:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "PRAGMA integrity_check;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "PRAGMA integrity_check;"
    ```
 
 4. Verify Bun installation:
@@ -281,7 +281,7 @@ PORT=${CLAUDE_MEM_WORKER_PORT:-$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/set
 
 3. Verify database has observations:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT COUNT(*) FROM observations;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT COUNT(*) FROM observations;"
    ```
 
 4. Restart worker:
@@ -404,12 +404,12 @@ If recovery fails or messages remain stuck:
 
 2. **Check database for corruption**:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "PRAGMA integrity_check;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "PRAGMA integrity_check;"
    ```
 
 3. **View stuck messages directly**:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      SELECT id, session_db_id, status, retry_count,
             (strftime('%s', 'now') * 1000 - started_processing_at_epoch) / 60000 as age_minutes
      FROM pending_messages
@@ -420,7 +420,7 @@ If recovery fails or messages remain stuck:
 
 4. **Force reset stuck messages** (nuclear option):
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      UPDATE pending_messages
      SET status = 'pending', started_processing_at_epoch = NULL
      WHERE status = 'processing';
@@ -459,14 +459,14 @@ CREATE TABLE pending_messages (
 
 ```bash
 # Count messages by status
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT status, COUNT(*)
   FROM pending_messages
   GROUP BY status;
 "
 
 # Find sessions with pending work
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT session_db_id, COUNT(*) as pending_count
   FROM pending_messages
   WHERE status IN ('pending', 'processing')
@@ -474,7 +474,7 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 "
 
 # View recent failures
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT id, session_db_id, message_type, retry_count,
          datetime(completed_at_epoch/1000, 'unixepoch') as failed_at
   FROM pending_messages
@@ -521,7 +521,7 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 
 1. Check if summaries exist:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT COUNT(*) FROM session_summaries;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT COUNT(*) FROM session_summaries;"
    ```
 
 2. View recent sessions:
@@ -531,7 +531,7 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 
 3. Check database integrity:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "PRAGMA integrity_check;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "PRAGMA integrity_check;"
    ```
 
 4. Manually test context hook:
@@ -559,12 +559,12 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 
 3. Check database size (large database = slow queries):
    ```bash
-   ls -lh ~/.claude-mem/claude-mem.db
+   ls -lh ~/.kimi-mem/kimi-mem.db
    ```
 
 4. Optimize database:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "VACUUM;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "VACUUM;"
    ```
 
 ### Windows: `"bun" is not recognized` Hook Errors
@@ -582,7 +582,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 **Solutions**:
 
-1. Update claude-mem — the launcher now resolves the absolute `bun.exe` path and spawns it directly without cmd.exe.
+1. Update kimi-mem — the launcher now resolves the absolute `bun.exe` path and spawns it directly without cmd.exe.
 
 2. Check your PATH length; if it is near or above ~4,000 characters it will exceed the cmd.exe limit once doubled:
    ```powershell
@@ -599,7 +599,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 1. Manually install dependencies:
    ```bash
-   cd ~/.claude/plugins/marketplaces/thedotmack
+   cd ~/.claude/plugins/marketplaces/YD-233
    npm install
    ```
 
@@ -611,7 +611,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 3. Check package.json exists:
    ```bash
-   ls -la ~/.claude/plugins/marketplaces/thedotmack/package.json
+   ls -la ~/.claude/plugins/marketplaces/YD-233/package.json
    ```
 
 ## Database Issues
@@ -629,7 +629,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 2. Check for stale locks:
    ```bash
-   lsof ~/.claude-mem/claude-mem.db
+   lsof ~/.kimi-mem/kimi-mem.db
    ```
 
 3. Kill processes holding locks:
@@ -650,22 +650,22 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 1. Check database integrity:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "PRAGMA integrity_check;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "PRAGMA integrity_check;"
    ```
 
 2. Backup database:
    ```bash
-   cp ~/.claude-mem/claude-mem.db ~/.claude-mem/claude-mem.db.backup
+   cp ~/.kimi-mem/kimi-mem.db ~/.kimi-mem/kimi-mem.db.backup
    ```
 
 3. Try to repair:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "VACUUM;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "VACUUM;"
    ```
 
 4. Nuclear option - recreate database:
    ```bash
-   rm ~/.claude-mem/claude-mem.db
+   rm ~/.kimi-mem/kimi-mem.db
    npm run worker:start  # Will recreate schema
    ```
 
@@ -677,12 +677,12 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 1. Check FTS5 tables exist:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%_fts';"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%_fts';"
    ```
 
 2. Rebuild FTS5 tables:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      INSERT INTO observations_fts(observations_fts) VALUES('rebuild');
      INSERT INTO session_summaries_fts(session_summaries_fts) VALUES('rebuild');
      INSERT INTO user_prompts_fts(user_prompts_fts) VALUES('rebuild');
@@ -691,7 +691,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 3. Check triggers exist:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT name FROM sqlite_master WHERE type='trigger';"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT name FROM sqlite_master WHERE type='trigger';"
    ```
 
 ### Database Too Large
@@ -702,17 +702,17 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 1. Check database size:
    ```bash
-   ls -lh ~/.claude-mem/claude-mem.db
+   ls -lh ~/.kimi-mem/kimi-mem.db
    ```
 
 2. Vacuum database:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "VACUUM;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "VACUUM;"
    ```
 
 3. Delete old sessions:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      DELETE FROM observations WHERE created_at_epoch < $(date -v-30d +%s);
      DELETE FROM session_summaries WHERE created_at_epoch < $(date -v-30d +%s);
      DELETE FROM sdk_sessions WHERE created_at_epoch < $(date -v-30d +%s);
@@ -721,7 +721,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 4. Rebuild FTS5 after deletion:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      INSERT INTO observations_fts(observations_fts) VALUES('rebuild');
      INSERT INTO session_summaries_fts(session_summaries_fts) VALUES('rebuild');
    "
@@ -760,12 +760,12 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 1. Check database has data:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT COUNT(*) FROM observations;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT COUNT(*) FROM observations;"
    ```
 
 2. Verify FTS5 tables populated:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "SELECT COUNT(*) FROM observations_fts;"
+   sqlite3 ~/.kimi-mem/kimi-mem.db "SELECT COUNT(*) FROM observations_fts;"
    ```
 
 3. Test simple query:
@@ -841,7 +841,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 2. Optimize database:
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      ANALYZE;
      VACUUM;
    "
@@ -849,7 +849,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 3. Add indexes (if missing):
    ```bash
-   sqlite3 ~/.claude-mem/claude-mem.db "
+   sqlite3 ~/.kimi-mem/kimi-mem.db "
      CREATE INDEX IF NOT EXISTS idx_sessions_project_created ON sdk_sessions(project, created_at_epoch DESC);
    "
    ```
@@ -888,23 +888,23 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 
 ### Plugin Not Found
 
-**Symptoms**: `/plugin install claude-mem` fails.
+**Symptoms**: `/plugin install kimi-mem` fails.
 
 **Solutions**:
 
 1. Add marketplace first:
    ```bash
-   /plugin marketplace add thedotmack/claude-mem
+   /plugin marketplace add YD-233/kimi-mem
    ```
 
 2. Then install:
    ```bash
-   /plugin install claude-mem
+   /plugin install kimi-mem
    ```
 
 3. Verify installation:
    ```bash
-   ls -la ~/.claude/plugins/marketplaces/thedotmack/
+   ls -la ~/.claude/plugins/marketplaces/YD-233/
    ```
 
 ### Build Failures
@@ -955,7 +955,7 @@ Failed with non-blocking status code: ""bun"" is not recognized as an internal o
 ### Enable Verbose Logging
 
 ```bash
-export DEBUG=claude-mem:*
+export DEBUG=kimi-mem:*
 npm run worker:restart
 npm run worker:logs
 ```
@@ -965,7 +965,7 @@ npm run worker:logs
 Trace observations through the pipeline:
 
 ```bash
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT correlation_id, tool_name, created_at
   FROM observations
   WHERE session_id = 'YOUR_SESSION_ID'
@@ -983,7 +983,7 @@ npm run worker:status
 npm run worker:logs
 
 # Check configured port (per-user default = 37700 + uid % 100)
-jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json
+jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json
 
 # Test worker health (substitute PORT for the value above)
 curl "http://127.0.0.1:$PORT/health"
@@ -992,7 +992,7 @@ curl "http://127.0.0.1:$PORT/health"
 ### Database Inspection
 
 ```bash
-sqlite3 ~/.claude-mem/claude-mem.db
+sqlite3 ~/.kimi-mem/kimi-mem.db
 
 # View schema
 .schema
@@ -1034,7 +1034,7 @@ SELECT created_at, tool_name FROM observations ORDER BY created_at DESC LIMIT 10
 
 **Cause**: Database file permissions or missing directory.
 
-**Solution**: Check `~/.claude-mem/` exists and is writable.
+**Solution**: Check `~/.kimi-mem/` exists and is writable.
 
 ### "Module not found"
 
@@ -1051,7 +1051,7 @@ If none of these solutions work:
    npm run worker:logs
    ```
 
-2. **Create issue**: [GitHub Issues](https://github.com/thedotmack/claude-mem/issues)
+2. **Create issue**: [GitHub Issues](https://github.com/YD-233/kimi-mem/issues)
    - Include error messages
    - Include relevant logs
    - Include steps to reproduce
@@ -1060,6 +1060,6 @@ If none of these solutions work:
 
 ## Next Steps
 
-- [Configuration](configuration) - Customize Claude-Mem
+- [Configuration](configuration) - Customize Kimi-Mem
 - [Development](development) - Build from source
 - [Architecture](architecture/overview) - Understand the system

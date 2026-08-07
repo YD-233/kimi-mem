@@ -12,6 +12,7 @@ const codexPluginPath = path.join(rootDir, '.codex-plugin', 'plugin.json');
 const bundledCodexPluginPath = path.join(rootDir, 'plugin', '.codex-plugin', 'plugin.json');
 const claudePluginPath = path.join(rootDir, '.claude-plugin', 'plugin.json');
 const bundledClaudePluginPath = path.join(rootDir, 'plugin', '.claude-plugin', 'plugin.json');
+const kimiPluginPath = path.join(rootDir, 'plugin', 'kimi.plugin.json');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -63,6 +64,15 @@ function syncClaudePlugin(plugin, pkg) {
   };
 }
 
+function syncKimiPlugin(plugin, pkg) {
+  // The Kimi plugin keeps its own identity (name stays "kimi-mem" per Kimi's
+  // plugin name rules); only the version tracks package.json.
+  return {
+    ...plugin,
+    version: pkg.version,
+  };
+}
+
 function normalizeAuthorName(author) {
   if (typeof author === 'string') return author;
   if (author && typeof author === 'object' && typeof author.name === 'string') return author.name;
@@ -77,7 +87,7 @@ function normalizeRepositoryUrl(repository) {
 }
 
 function main() {
-  for (const filePath of [packageJsonPath, codexPluginPath, bundledCodexPluginPath, claudePluginPath, bundledClaudePluginPath]) {
+  for (const filePath of [packageJsonPath, codexPluginPath, bundledCodexPluginPath, claudePluginPath, bundledClaudePluginPath, kimiPluginPath]) {
     if (!fs.existsSync(filePath)) {
       console.error(`Missing required file: ${filePath}`);
       process.exit(1);
@@ -89,11 +99,13 @@ function main() {
   const bundledCodexPlugin = readJson(bundledCodexPluginPath);
   const claudePlugin = readJson(claudePluginPath);
   const bundledClaudePlugin = readJson(bundledClaudePluginPath);
+  const kimiPlugin = readJson(kimiPluginPath);
 
   writeJson(codexPluginPath, syncCodexPlugin(codexPlugin, pkg));
   writeJson(bundledCodexPluginPath, syncCodexPlugin(bundledCodexPlugin, pkg));
   writeJson(claudePluginPath, syncClaudePlugin(claudePlugin, pkg));
   writeJson(bundledClaudePluginPath, syncClaudePlugin(bundledClaudePlugin, pkg));
+  writeJson(kimiPluginPath, syncKimiPlugin(kimiPlugin, pkg));
 
   console.log('✓ Synced plugin manifests from package.json');
 }

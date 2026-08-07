@@ -1,7 +1,7 @@
 ---
 name: mode-creator
-description: Interactively create, install, activate, and verify custom claude-mem modes, including domain-specific observation types, concept tags, optional Telegram alerts, bot setup, worker restart, and startup-context verification. Use this whenever someone asks to customize what claude-mem remembers, create or change a mode, track domain-specific notes, add observation types or tags, or send Telegram notifications for particular memories—even if they do not use the word "mode."
-compatibility: Requires a local claude-mem worker installation, an interactive question tool, filesystem access, and Node.js 20+. Telegram setup requires network access and a Telegram account.
+description: Interactively create, install, activate, and verify custom kimi-mem modes, including domain-specific observation types, concept tags, optional Telegram alerts, bot setup, worker restart, and startup-context verification. Use this whenever someone asks to customize what kimi-mem remembers, create or change a mode, track domain-specific notes, add observation types or tags, or send Telegram notifications for particular memories—even if they do not use the word "mode."
+compatibility: Requires a local kimi-mem worker installation, an interactive question tool, filesystem access, and Node.js 20+. Telegram setup requires network access and a Telegram account.
 ---
 
 # Mode Creator
@@ -13,10 +13,10 @@ Create a useful note-taking system, not merely a valid JSON file. Interview the 
 - Use the available interactive question tool (`AskUserQuestion`, `request_user_input`, or equivalent) for the interview. Ask in small batches and wait for each response.
 - Explain observation types as mutually exclusive kinds of notes and concepts as reusable tags. Avoid jargon unless the user uses it first.
 - Inspect existing bundled and user modes before inventing a new one. Reuse or remix a close match when that serves the user better.
-- Do not edit a plugin cache or bundled mode. Install custom files under the resolved claude-mem data directory's `modes/` folder.
+- Do not edit a plugin cache or bundled mode. Install custom files under the resolved kimi-mem data directory's `modes/` folder.
 - Do not expose a Telegram token in chat, command arguments, logs, or tool output. Treat it like a password.
 - Preserve unrelated settings and existing Telegram triggers. The helpers make timestamped backups and merge requested triggers.
-- Custom modes are supported by the local worker runtime. If `CLAUDE_MEM_RUNTIME` is `server`, explain that this workflow cannot safely install a per-user mode into the shared server and stop before mutation.
+- Custom modes are supported by the local worker runtime. If `KIMI_MEM_RUNTIME` is `server`, explain that this workflow cannot safely install a per-user mode into the shared server and stop before mutation.
 - Existing observations keep their original types. The new mode applies to future observation generation.
 
 ## 1. Open with the purpose
@@ -59,19 +59,19 @@ Propose:
 
 Present the proposal in plain language and use the interactive question tool for approval. Let the user rename, add, remove, or reword categories. Do not write or install until they approve the taxonomy and privacy boundary.
 
-Prefer an inherited ID such as `code--architecture-practice` so the mode reuses claude-mem's stable output protocol while replacing the domain taxonomy and behavioral prompts. The `code` parent is an implementation base; the override must remove code-specific semantics from the prompts. Use a standalone mode only when inheritance is genuinely unsuitable.
+Prefer an inherited ID such as `code--architecture-practice` so the mode reuses kimi-mem's stable output protocol while replacing the domain taxonomy and behavioral prompts. The `code` parent is an implementation base; the override must remove code-specific semantics from the prompts. Use a standalone mode only when inheritance is genuinely unsuitable.
 
 ## 4. Ask about Telegram alerts
 
 After the taxonomy is approved, ask:
 
-> Would you like Telegram notifications when claude-mem records any particular types or tags? Alerts include the observation type, title, subtitle, project, and observation ID, so avoid selecting categories that may expose sensitive material.
+> Would you like Telegram notifications when kimi-mem records any particular types or tags? Alerts include the observation type, title, subtitle, project, and observation ID, so avoid selecting categories that may expose sensitive material.
 
 If yes:
 
 - Let the user select exact observation types and/or concept tags from the approved mode.
 - Explain that matching is OR: any selected type or any selected concept sends an alert.
-- Ask whether they already have a Telegram bot connected to claude-mem.
+- Ask whether they already have a Telegram bot connected to kimi-mem.
 - Read [references/telegram.md](references/telegram.md), then guide new users through BotFather and the secure setup helper.
 
 If no, leave every Telegram setting unchanged.
@@ -103,7 +103,7 @@ Omit both Telegram flags when alerts were declined. The installer:
 
 - Merges the override with its parent and validates the complete mode.
 - Installs the source override under `<data-dir>/modes/`.
-- Sets `CLAUDE_MEM_MODE` in `settings.json`.
+- Sets `KIMI_MEM_MODE` in `settings.json`.
 - Merges approved alert triggers without deleting existing triggers.
 - Writes atomically and reports any backup paths.
 
@@ -130,8 +130,8 @@ If the agent environment cannot give the user control of an interactive terminal
 Read the configured runtime before restarting. For a worker runtime, use the verified CLI restart path:
 
 ```bash
-npx claude-mem restart
-npx claude-mem status
+npx kimi-mem restart
+npx kimi-mem status
 ```
 
 If the CLI shim is unavailable, run the installed plugin's `scripts/worker-service.cjs restart` with Bun. Do not use a bare restart HTTP request when the verified CLI path is available.
@@ -140,7 +140,7 @@ Verify all of the following:
 
 1. Restart reports a new healthy worker and exits successfully.
 2. The installed file exists under the resolved data directory.
-3. `settings.json` names the intended `CLAUDE_MEM_MODE` without displaying secrets.
+3. `settings.json` names the intended `KIMI_MEM_MODE` without displaying secrets.
 4. Request full startup context with the `session_start_context` MCP tool when available. Otherwise call `/api/context/inject?project=mode-creator-verification&full=true` on the configured local worker.
 5. Startup context contains `Mode: <mode name> (<mode id>)`.
 6. If Telegram was configured, the test message arrived.

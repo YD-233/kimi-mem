@@ -14,8 +14,8 @@ import {
 } from '../../shared/dependency-health.js';
 
 interface DependencyPreflightSettings {
-  CLAUDE_MEM_PROVIDER?: string;
-  CLAUDE_MEM_CHROMA_ENABLED?: string;
+  KIMI_MEM_PROVIDER?: string;
+  KIMI_MEM_CHROMA_ENABLED?: string;
 }
 
 interface ClassifiedClaudeSetupError {
@@ -85,7 +85,7 @@ function effectiveUvxEnv(options: WorkerDependencyPreflightOptions): Record<stri
   const additions = getUvxBinDirs({
     homedir,
     isFile,
-    override: env.CLAUDE_MEM_CHROMA_UVX_PATH,
+    override: env.KIMI_MEM_CHROMA_UVX_PATH,
     platform,
   }).filter(dir => {
     if (!pathExists(dir)) return false;
@@ -133,7 +133,7 @@ function resolveUvxCommand(options: WorkerDependencyPreflightOptions): string {
 
   const isFile = options.isFile ?? defaultIsFile;
   const env = effectiveUvxEnv(options);
-  const override = env.CLAUDE_MEM_CHROMA_UVX_PATH;
+  const override = env.KIMI_MEM_CHROMA_UVX_PATH;
   if (override && isFile(override)) {
     return override;
   }
@@ -150,8 +150,8 @@ function resolveUvxCommand(options: WorkerDependencyPreflightOptions): string {
 }
 
 export function runWorkerDependencyPreflight(options: WorkerDependencyPreflightOptions): DependencyHealthSnapshot {
-  const provider = options.settings.CLAUDE_MEM_PROVIDER || 'claude';
-  const chromaEnabled = options.settings.CLAUDE_MEM_CHROMA_ENABLED !== 'false';
+  const provider = options.settings.KIMI_MEM_PROVIDER || 'claude';
+  const chromaEnabled = options.settings.KIMI_MEM_CHROMA_ENABLED !== 'false';
 
   if (provider === 'claude') {
     const findClaudeExecutable = options.findClaudeExecutable ?? (() => defaultFindClaudeExecutable('WORKER'));

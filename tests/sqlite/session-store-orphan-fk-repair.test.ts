@@ -139,8 +139,8 @@ describe('SessionStore migration chain over a legacy DB with orphaned FK childre
   });
 
   function makeTempDbPath(): string {
-    tempDir = mkdtempSync(path.join(tmpdir(), 'claude-mem-orphan-fk-'));
-    return path.join(tempDir, 'claude-mem.db');
+    tempDir = mkdtempSync(path.join(tmpdir(), 'kimi-mem-orphan-fk-'));
+    return path.join(tempDir, 'kimi-mem.db');
   }
 
   it('v9 observations rebuild completes over an orphaned observation and repairs its parent', () => {

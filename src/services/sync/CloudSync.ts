@@ -304,11 +304,11 @@ const KINDS: KindSpec[] = [
 ];
 
 export type CloudSyncSettingKeys = Pick<SettingsDefaults,
-  | 'CLAUDE_MEM_CLOUD_SYNC_TOKEN'
-  | 'CLAUDE_MEM_CLOUD_SYNC_USER_ID'
-  | 'CLAUDE_MEM_CLOUD_SYNC_HUB_URL'
-  | 'CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID'
-  | 'CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME'
+  | 'KIMI_MEM_CLOUD_SYNC_TOKEN'
+  | 'KIMI_MEM_CLOUD_SYNC_USER_ID'
+  | 'KIMI_MEM_CLOUD_SYNC_HUB_URL'
+  | 'KIMI_MEM_CLOUD_SYNC_DEVICE_ID'
+  | 'KIMI_MEM_CLOUD_SYNC_DEVICE_NAME'
 >;
 
 export interface CloudSyncOptions {
@@ -401,13 +401,13 @@ export class CloudSync {
 
   constructor(db: Database, settings: CloudSyncSettingKeys, options: CloudSyncOptions = {}) {
     this.db = db;
-    this.token = settings.CLAUDE_MEM_CLOUD_SYNC_TOKEN ?? '';
-    this.userId = settings.CLAUDE_MEM_CLOUD_SYNC_USER_ID ?? '';
+    this.token = settings.KIMI_MEM_CLOUD_SYNC_TOKEN ?? '';
+    this.userId = settings.KIMI_MEM_CLOUD_SYNC_USER_ID ?? '';
     // Launch contract: the Hub URL has no default. Empty means sync is off;
     // there is no application-API or per-kind fallback lane.
-    this.hubUrl = (settings.CLAUDE_MEM_CLOUD_SYNC_HUB_URL ?? '').trim().replace(/\/+$/, '');
+    this.hubUrl = (settings.KIMI_MEM_CLOUD_SYNC_HUB_URL ?? '').trim().replace(/\/+$/, '');
     // Human-readable device label for the dashboard's Devices panel.
-    this.deviceName = (settings.CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME || hostname() || '').slice(0, 80);
+    this.deviceName = (settings.KIMI_MEM_CLOUD_SYNC_DEVICE_NAME || hostname() || '').slice(0, 80);
     this.fetchImpl = options.fetchImpl ?? globalThis.fetch;
     this.settingsPath = options.settingsPath ?? USER_SETTINGS_PATH;
     this.debounceMs = options.debounceMs ?? 1_500;
@@ -418,7 +418,7 @@ export class CloudSync {
     this.nextBackoffMs = this.backoffInitialMs;
 
     if (this.isConfigured()) {
-      this.deviceId = this.resolveDeviceId(settings.CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID ?? '');
+      this.deviceId = this.resolveDeviceId(settings.KIMI_MEM_CLOUD_SYNC_DEVICE_ID ?? '');
     }
   }
 
@@ -1451,7 +1451,7 @@ export class CloudSync {
     const target = settings.env && typeof settings.env === 'object'
       ? settings.env as Record<string, unknown>
       : settings;
-    target.CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID = deviceId;
+    target.KIMI_MEM_CLOUD_SYNC_DEVICE_ID = deviceId;
     writeJsonFileAtomic(this.settingsPath, settings);
   }
 }

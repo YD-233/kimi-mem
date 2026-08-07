@@ -24,14 +24,14 @@ const realSdkClientStdioSnapshot = { ...realSdkClientStdio };
 const realSdkClientIndexSnapshot = { ...realSdkClientIndex };
 const realChildProcess = require('node:child_process');
 const realProcessPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
-const originalPrewarmTimeout = process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS;
+const originalPrewarmTimeout = process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS;
 const tempRoots: string[] = [];
 let mockedChromaDir = '';
 let mockedCombinedCertPath = '';
 let mockedSettings: Record<string, string> = {};
 
 function resetMockedChromaPaths(): void {
-  const root = mkdtempSync(path.join(os.tmpdir(), 'claude-mem-chroma-manager-'));
+  const root = mkdtempSync(path.join(os.tmpdir(), 'kimi-mem-chroma-manager-'));
   tempRoots.push(root);
   mockedChromaDir = path.join(root, 'chroma');
   mockedCombinedCertPath = path.join(root, 'combined-certs.pem');
@@ -150,7 +150,7 @@ mock.module('../../../src/shared/SettingsDefaultsManager.js', () => ({
     get: () => '',
     getInt: () => 0,
     loadFromFile: () => ({
-      CLAUDE_MEM_CHROMA_MAX_PENDING_MUTATIONS: '5000',
+      KIMI_MEM_CHROMA_MAX_PENDING_MUTATIONS: '5000',
       ...mockedSettings,
     }),
   },
@@ -288,9 +288,9 @@ afterAll(() => {
   ChromaMcpManager.setUvxAvailabilityProbeForTesting(null);
   process.kill = realProcessKill;
   if (originalPrewarmTimeout === undefined) {
-    delete process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS;
+    delete process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS;
   } else {
-    process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS = originalPrewarmTimeout;
+    process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS = originalPrewarmTimeout;
   }
   if (realProcessPlatform) {
     Object.defineProperty(process, 'platform', realProcessPlatform);
@@ -335,9 +335,9 @@ function resetState(): void {
   ChromaMcpManager.setUvxAvailabilityProbeForTesting(() => true);
   resetDependencyStatusesForTesting();
   if (originalPrewarmTimeout === undefined) {
-    delete process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS;
+    delete process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS;
   } else {
-    process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS = originalPrewarmTimeout;
+    process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS = originalPrewarmTimeout;
   }
   if (realProcessPlatform) {
     Object.defineProperty(process, 'platform', realProcessPlatform);
@@ -355,7 +355,7 @@ async function waitForCondition(predicate: () => boolean): Promise<void> {
 }
 
 function chromaWriterLockPath(): string {
-  return path.join(mockedChromaDir, '.claude-mem-chroma-writer.lock');
+  return path.join(mockedChromaDir, '.kimi-mem-chroma-writer.lock');
 }
 
 function writeChromaWriterLock(pid: number, ownerId: string): void {
@@ -424,7 +424,7 @@ describe('ChromaMcpManager singleton enforcement (#2313)', () => {
 
   it('bounds the pending mutation queue and leaves rejected writes for backfill', async () => {
     mockedSettings = {
-      CLAUDE_MEM_CHROMA_MAX_PENDING_MUTATIONS: '2',
+      KIMI_MEM_CHROMA_MAX_PENDING_MUTATIONS: '2',
     };
     const mgr = ChromaMcpManager.getInstance();
     const mutationReleases: Array<() => void> = [];
@@ -567,7 +567,7 @@ describe('ChromaMcpManager singleton enforcement (#2313)', () => {
   });
 
   it('stop() during a hanging prewarm does not record uvx unavailable or apply reconnect backoff', async () => {
-    process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS = '25';
+    process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS = '25';
     prewarmSpawnBehavior = 'timeout';
     prewarmKillEmitsClose = false;
     const mgr = ChromaMcpManager.getInstance();
@@ -669,7 +669,7 @@ describe('ChromaMcpManager singleton enforcement (#2313)', () => {
   });
 
   it('uses the configured prewarm timeout before constructing transport and kills the prewarm tree', async () => {
-    process.env.CLAUDE_MEM_CHROMA_PREWARM_TIMEOUT_MS = '5';
+    process.env.KIMI_MEM_CHROMA_PREWARM_TIMEOUT_MS = '5';
     prewarmSpawnBehavior = 'timeout';
     prewarmStdout = 'prewarm stdout before hang';
     prewarmStderr = 'prewarm stderr before hang';
@@ -799,7 +799,7 @@ describe('ChromaMcpManager singleton enforcement (#2313)', () => {
 
   it('preserves remote mutation concurrency', async () => {
     mockedSettings = {
-      CLAUDE_MEM_CHROMA_MODE: 'remote',
+      KIMI_MEM_CHROMA_MODE: 'remote',
     };
     const mgr = ChromaMcpManager.getInstance();
     const mutationReleases: Array<() => void> = [];

@@ -1,0 +1,56 @@
+{
+  "name": "kimi-mem",
+  "version": "13.13.1",
+  "description": "Persistent memory for Kimi Code — compresses and recalls session context across sessions (kimi-mem for Kimi Code).",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/YD-233/kimi-mem#readme",
+  "keywords": [
+    "kimi",
+    "kimi-code",
+    "memory",
+    "compression",
+    "knowledge-graph",
+    "transcript"
+  ],
+  "skills": [
+    "./skills/"
+  ],
+  "mcpServers": {
+    "mcp-search": {
+      "command": "node",
+      "args": [
+        "scripts/mcp-server.cjs"
+      ]
+    }
+  },
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs start",
+      "timeout": 60
+    },
+    {
+      "event": "UserPromptSubmit",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi context-once",
+      "timeout": 60
+    },
+    {
+      "event": "UserPromptSubmit",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi session-init",
+      "timeout": 60
+    },
+    {
+      "event": "PostToolUse",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi observation"
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": "Read",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi file-context"
+    },
+    {
+      "event": "Stop",
+      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi summarize"
+    }
+  ]
+}

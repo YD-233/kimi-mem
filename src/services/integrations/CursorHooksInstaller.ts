@@ -88,7 +88,7 @@ export function configureCursorMcp(target: CursorInstallTarget): number {
 
   if (!mcpServerPath) {
     console.error('Could not find MCP server script');
-    console.error('   Expected at: ~/.claude/plugins/marketplaces/thedotmack/plugin/scripts/mcp-server.cjs');
+    console.error('   Expected at: ~/.claude/plugins/marketplaces/YD-233/plugin/scripts/mcp-server.cjs');
     return 1;
   }
 
@@ -113,7 +113,7 @@ export function configureCursorMcp(target: CursorInstallTarget): number {
 }
 
 export async function installCursorHooks(target: CursorInstallTarget): Promise<number> {
-  console.log(`\nInstalling Claude-Mem Cursor hooks (${target} level)...\n`);
+  console.log(`\nInstalling Kimi-Mem Cursor hooks (${target} level)...\n`);
 
   const targetDir = getTargetDir(target);
   if (!targetDir) {
@@ -124,7 +124,7 @@ export async function installCursorHooks(target: CursorInstallTarget): Promise<n
   const workerServicePath = getWorkerServiceAbsolutePath();
   if (!workerServicePath) {
     console.error('Could not find worker-service.cjs');
-    console.error('   Expected at: ~/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs');
+    console.error('   Expected at: ~/.claude/plugins/marketplaces/YD-233/plugin/scripts/worker-service.cjs');
     return 1;
   }
 
@@ -203,12 +203,12 @@ Hooks installed to: ${targetDir}/hooks.json
 Using unified CLI: bun worker-service.cjs hook cursor <command>
 
 Next steps:
-  1. Start claude-mem worker: claude-mem start
+  1. Start kimi-mem worker: kimi-mem start
   2. Restart Cursor to load the hooks
   3. Check Cursor Settings → Hooks tab to verify
 
 Context Injection:
-  Context from past sessions is stored in .cursor/rules/claude-mem-context.mdc
+  Context from past sessions is stored in .cursor/rules/kimi-mem-context.mdc
   and automatically included in every chat. It updates after each session ends.
 `);
 }
@@ -233,17 +233,17 @@ async function setupProjectContext(targetDir: string, workspaceRoot: string): Pr
   }
 
   if (!contextGenerated) {
-    const rulesFile = path.join(rulesDir, 'claude-mem-context.mdc');
+    const rulesFile = path.join(rulesDir, 'kimi-mem-context.mdc');
     const placeholderContent = `---
 alwaysApply: true
-description: "Claude-mem context from past sessions (auto-updated)"
+description: "Kimi-Mem context from past sessions (auto-updated)"
 ---
 
 # Memory Context from Past Sessions
 
 *No context yet. Complete your first session and context will appear here.*
 
-Use claude-mem's MCP search tools for manual memory queries.
+Use kimi-mem's MCP search tools for manual memory queries.
 `;
     writeFileSync(rulesFile, placeholderContent);
     console.log(`  Created placeholder context file (will populate after first session)`);
@@ -275,7 +275,7 @@ async function fetchInitialContextFromWorker(
 }
 
 export function uninstallCursorHooks(target: CursorInstallTarget): number {
-  console.log(`\nUninstalling Claude-Mem Cursor hooks (${target} level)...\n`);
+  console.log(`\nUninstalling Kimi-Mem Cursor hooks (${target} level)...\n`);
 
   const targetDir = getTargetDir(target);
   if (!targetDir) {
@@ -324,7 +324,7 @@ function removeCursorHooksFiles(
   }
 
   if (target === 'project') {
-    const contextFile = path.join(targetDir, 'rules', 'claude-mem-context.mdc');
+    const contextFile = path.join(targetDir, 'rules', 'kimi-mem-context.mdc');
     if (existsSync(contextFile)) {
       unlinkSync(contextFile);
       console.log(`  Removed context file`);
@@ -340,7 +340,7 @@ function removeCursorHooksFiles(
 }
 
 export function checkCursorHooksStatus(): number {
-  console.log('\nClaude-Mem Cursor Hooks Status\n');
+  console.log('\nKimi-Mem Cursor Hooks Status\n');
 
   const locations: Array<{ name: string; dir: string }> = [
     { name: 'Project', dir: path.join(process.cwd(), '.cursor') },
@@ -404,7 +404,7 @@ export function checkCursorHooksStatus(): number {
       }
 
       if (loc.name === 'Project') {
-        const contextFile = path.join(loc.dir, 'rules', 'claude-mem-context.mdc');
+        const contextFile = path.join(loc.dir, 'rules', 'kimi-mem-context.mdc');
         if (existsSync(contextFile)) {
           console.log(`   Context: Active`);
         } else {
@@ -418,7 +418,7 @@ export function checkCursorHooksStatus(): number {
   }
 
   if (!anyInstalled) {
-    console.log('No hooks installed. Run: claude-mem cursor install\n');
+    console.log('No hooks installed. Run: kimi-mem cursor install\n');
   }
 
   return 0;
@@ -447,9 +447,9 @@ export async function handleCursorCommand(subcommand: string, args: string[]): P
 
     default: {
       console.log(`
-Claude-Mem Cursor Integration
+Kimi-Mem Cursor Integration
 
-Usage: claude-mem cursor <command> [options]
+Usage: kimi-mem cursor <command> [options]
 
 Commands:
   setup               Interactive guided setup (recommended for first-time users)
@@ -465,11 +465,11 @@ Commands:
 Examples:
   npm run cursor:setup                   # Interactive wizard (recommended)
   npm run cursor:install                 # Install for current project
-  claude-mem cursor install user         # Install globally for user
-  claude-mem cursor uninstall            # Remove from current project
-  claude-mem cursor status               # Check if hooks are installed
+  kimi-mem cursor install user         # Install globally for user
+  kimi-mem cursor uninstall            # Remove from current project
+  kimi-mem cursor status               # Check if hooks are installed
 
-For more info: https://docs.claude-mem.ai/cursor
+For more info: https://docs.kimi-mem.ai/cursor
       `);
       return 0;
     }

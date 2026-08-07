@@ -65,7 +65,7 @@ class ServerRuntimeInfoRoutes implements RouteHandler {
     app.get('/v1/info', async (_req, res) => {
       const queueLanes = await collectQueueLaneMetrics(this.graph);
       res.json({
-        name: 'claude-mem-server',
+        name: 'kimi-mem-server',
         runtime: SERVER_RUNTIME,
         authMode: this.graph.authMode,
         postgres: {
@@ -109,7 +109,7 @@ export class ServerService {
 
   constructor(options: ServerServiceOptions) {
     this.graph = options.graph;
-    this.host = options.host ?? process.env.CLAUDE_MEM_SERVER_HOST ?? DEFAULT_SERVER_HOST;
+    this.host = options.host ?? process.env.KIMI_MEM_SERVER_HOST ?? DEFAULT_SERVER_HOST;
     this.requestedPort = options.port ?? getServerPort();
     this.persistRuntimeState = options.persistRuntimeState ?? true;
   }
@@ -158,7 +158,7 @@ export class ServerService {
             mode: String(details.mode ?? 'unknown'),
             host: String(details.host ?? '127.0.0.1'),
             port: typeof details.port === 'number' ? details.port : 6379,
-            prefix: String(details.prefix ?? 'claude_mem'),
+            prefix: String(details.prefix ?? 'kimi_mem'),
           },
           lanes: lanes.map(lane => ({
             kind: lane.kind,
@@ -286,9 +286,9 @@ export function startCommandWantsDaemon(startArgs: string[]): boolean {
 export async function runServerServiceCli(argv: string[] = process.argv.slice(2)): Promise<void> {
   const command = argv[0] ?? '--daemon';
   const port = getServerPort();
-  const host = process.env.CLAUDE_MEM_SERVER_HOST ?? DEFAULT_SERVER_HOST;
+  const host = process.env.KIMI_MEM_SERVER_HOST ?? DEFAULT_SERVER_HOST;
 
-  // Phase 10: `claude-mem server worker [start|--daemon]` runs the BullMQ
+  // Phase 10: `kimi-mem server worker [start|--daemon]` runs the BullMQ
   // generation worker as a foregrounded process — no HTTP server, no route
   // registration. In Compose this becomes a separately scaled service.
   if (command === 'worker') {
@@ -438,8 +438,8 @@ async function runServerForeground(port: number, host: string): Promise<void> {
 //
 // The server operability commands (`api-key`, `keys`, `jobs`) only make
 // sense in the server runtime, whose canonical store is Postgres. If they
-// are invoked in a worker-only context — `CLAUDE_MEM_RUNTIME` set to `worker`,
-// or no `CLAUDE_MEM_SERVER_DATABASE_URL` configured — we fail fast with an
+// are invoked in a worker-only context — `KIMI_MEM_RUNTIME` set to `worker`,
+// or no `KIMI_MEM_SERVER_DATABASE_URL` configured — we fail fast with an
 // actionable message instead of crashing later with an opaque pool error.
 //
 // Phase 1d: dual-accept the persisted runtime literal (`'server'` is the new
@@ -448,17 +448,17 @@ export function assertServerRuntimeForCli(
   commandLabel: string,
   env: NodeJS.ProcessEnv = process.env,
 ): void {
-  const runtime = (env.CLAUDE_MEM_RUNTIME ?? '').trim().toLowerCase();
+  const runtime = (env.KIMI_MEM_RUNTIME ?? '').trim().toLowerCase();
   if (runtime && runtime !== 'server' && runtime !== 'server-beta') {
     throw new Error(
-      `\`server ${commandLabel}\` is a server runtime command, but CLAUDE_MEM_RUNTIME=${runtime}. ` +
-        'Set CLAUDE_MEM_RUNTIME=server (and CLAUDE_MEM_SERVER_DATABASE_URL) to run server operations, ' +
+      `\`server ${commandLabel}\` is a server runtime command, but KIMI_MEM_RUNTIME=${runtime}. ` +
+        'Set KIMI_MEM_RUNTIME=server (and KIMI_MEM_SERVER_DATABASE_URL) to run server operations, ' +
         'or use the worker CLI (`worker-service ...`) for the worker runtime.',
     );
   }
-  if (!(env.CLAUDE_MEM_SERVER_DATABASE_URL ?? '').trim()) {
+  if (!(env.KIMI_MEM_SERVER_DATABASE_URL ?? '').trim()) {
     throw new Error(
-      `CLAUDE_MEM_SERVER_DATABASE_URL is required for \`server ${commandLabel}\`. ` +
+      `KIMI_MEM_SERVER_DATABASE_URL is required for \`server ${commandLabel}\`. ` +
         'This command talks to the server Postgres backend; export the connection string before running it.',
     );
   }
@@ -768,7 +768,7 @@ function parseFlagArgs(argv: string[]): CliFlagValues {
 // the same Postgres + Valkey/Redis the HTTP server service uses, but
 // never opens an HTTP listener. In Compose this is a separate, horizontally
 // scalable service. The HTTP server service should run with
-// CLAUDE_MEM_GENERATION_DISABLED=true so generation only happens in this
+// KIMI_MEM_GENERATION_DISABLED=true so generation only happens in this
 // process.
 export async function runServerGenerationWorker(): Promise<void> {
   const { validateServerEnv, createServerService } = await import('./create-server-service.js');
@@ -776,8 +776,8 @@ export async function runServerGenerationWorker(): Promise<void> {
   // Build the service WITHOUT starting HTTP. We reuse createServerService
   // for pool + bootstrap + queue + generation worker wiring, but never call
   // service.start(). Generation is enabled here even if env says
-  // CLAUDE_MEM_GENERATION_DISABLED, because this IS the generation worker.
-  delete process.env.CLAUDE_MEM_GENERATION_DISABLED;
+  // KIMI_MEM_GENERATION_DISABLED, because this IS the generation worker.
+  delete process.env.KIMI_MEM_GENERATION_DISABLED;
   const service = await createServerService();
   const state = service.getRuntimeState();
   logger.info('SYSTEM', 'Server generation worker started (no HTTP)', {
@@ -806,13 +806,13 @@ export async function runServerGenerationWorker(): Promise<void> {
 }
 
 function getServerPort(): number {
-  const parsed = Number.parseInt(process.env.CLAUDE_MEM_SERVER_PORT ?? '', 10);
+  const parsed = Number.parseInt(process.env.KIMI_MEM_SERVER_PORT ?? '', 10);
   if (Number.isInteger(parsed) && parsed > 0) {
     return parsed;
   }
   // UID-derived default for multi-account isolation: two users on the same
   // host get distinct ports without explicit configuration. Containerized
-  // deployments always pass CLAUDE_MEM_SERVER_PORT so this branch is local-only.
+  // deployments always pass KIMI_MEM_SERVER_PORT so this branch is local-only.
   return DEFAULT_SERVER_PORT + ((process.getuid?.() ?? 77) % 100);
 }
 
@@ -824,11 +824,11 @@ function spawnServerDaemon(port: number): number | undefined {
     windowsHide: true,
     // Strip host CLI bleed-through (CLAUDE_CODE_*, including EFFORT_LEVEL) and
     // Anthropic credentials before handing env to the detached daemon. The
-    // daemon re-reads credentials from ~/.claude-mem/.env at SDK spawn time.
+    // daemon re-reads credentials from ~/.kimi-mem/.env at SDK spawn time.
     // See env-isolation discipline (#2357 / #2375).
     env: {
       ...sanitizeEnv(process.env),
-      CLAUDE_MEM_SERVER_PORT: String(port),
+      KIMI_MEM_SERVER_PORT: String(port),
     },
   });
   child.unref();

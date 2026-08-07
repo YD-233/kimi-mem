@@ -79,7 +79,7 @@ export const sessionInitHandler: EventHandler = {
     const platformSource = normalizePlatformSource(input.platform);
     const settings = dependencies.loadFromFileOnce();
     const semanticInject =
-      String(settings.CLAUDE_MEM_SEMANTIC_INJECT).toLowerCase() === 'true';
+      String(settings.KIMI_MEM_SEMANTIC_INJECT).toLowerCase() === 'true';
 
     const runtime = dependencies.resolveRuntimeContext();
     // Phase 1a (cmem-sdk rename): `runtime.runtime` is the canonical `'server'`
@@ -147,7 +147,7 @@ export const sessionInitHandler: EventHandler = {
     let additionalContext = '';
 
     if (semanticInject && prompt && prompt.length >= 20 && prompt !== '[media prompt]') {
-      const limit = settings.CLAUDE_MEM_SEMANTIC_INJECT_LIMIT || '5';
+      const limit = settings.KIMI_MEM_SEMANTIC_INJECT_LIMIT || '5';
       const semanticResult = await dependencies.executeWithWorkerFallback<SemanticContextResponse>(
         '/api/context/semantic',
         'POST',

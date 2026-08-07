@@ -1,13 +1,15 @@
 {
-  "name": "claude-mem",
+  "name": "kimi-mem",
   "version": "13.13.1",
-  "description": "Memory compression system for Claude Code - persist context across sessions",
+  "description": "Memory compression system for Kimi Code and Claude Code - persist context across sessions",
   "author": {
     "name": "Alex Newman"
   },
-  "repository": "https://github.com/thedotmack/claude-mem",
+  "repository": "https://github.com/YD-233/kimi-mem",
   "license": "Apache-2.0",
   "keywords": [
+    "kimi",
+    "kimi-code",
     "claude",
     "claude-code",
     "claude-agent-sdk",
@@ -20,5 +22,5 @@
     "typescript",
     "nodejs"
   ],
-  "homepage": "https://github.com/thedotmack/claude-mem#readme"
+  "homepage": "https://github.com/YD-233/kimi-mem#readme"
 }

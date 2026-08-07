@@ -15,7 +15,7 @@
 //
 // DEVICE IDENTITY: this module never resolves an identity of its own. The
 // caller MUST pass the id resolved by CloudSync.resolveDeviceId
-// (CloudSync.ts:529-594 — settings key CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID,
+// (CloudSync.ts:529-594 — settings key KIMI_MEM_CLOUD_SYNC_DEVICE_ID,
 // legacy-state adoption, fail-closed). A second identity source would fork
 // origin attribution; do not add one.
 //

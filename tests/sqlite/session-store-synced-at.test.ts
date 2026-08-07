@@ -213,10 +213,10 @@ describe('SessionStore SyncHub launch baseline', () => {
       }
 
       sync = new CloudSync(db, {
-        CLAUDE_MEM_CLOUD_SYNC_TOKEN: 'test-token',
-        CLAUDE_MEM_CLOUD_SYNC_USER_ID: 'test-user',
-        CLAUDE_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
-        CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: 'epoch-boundary-device',
+        KIMI_MEM_CLOUD_SYNC_TOKEN: 'test-token',
+        KIMI_MEM_CLOUD_SYNC_USER_ID: 'test-user',
+        KIMI_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
+        KIMI_MEM_CLOUD_SYNC_DEVICE_ID: 'epoch-boundary-device',
       });
       expect(sync.status().pending).toEqual({
         observations: 1,
@@ -365,11 +365,11 @@ describe('SessionStore SyncHub launch baseline', () => {
         return Response.json({ acked, head_seq: String(seq), projected_seq: String(seq) });
       }) as typeof fetch;
       sync = new CloudSync(db, {
-        CLAUDE_MEM_CLOUD_SYNC_TOKEN: 'token',
-        CLAUDE_MEM_CLOUD_SYNC_USER_ID: 'user',
-        CLAUDE_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
-        CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID: 'device-launch-boundary',
-        CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME: 'launch-boundary-test',
+        KIMI_MEM_CLOUD_SYNC_TOKEN: 'token',
+        KIMI_MEM_CLOUD_SYNC_USER_ID: 'user',
+        KIMI_MEM_CLOUD_SYNC_HUB_URL: 'https://hub.test',
+        KIMI_MEM_CLOUD_SYNC_DEVICE_ID: 'device-launch-boundary',
+        KIMI_MEM_CLOUD_SYNC_DEVICE_NAME: 'launch-boundary-test',
       }, {
         fetchImpl,
       });

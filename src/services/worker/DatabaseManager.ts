@@ -28,20 +28,20 @@ export class DatabaseManager {
     this.sessionStore = new SessionStore(this.db);
     this.sessionSearch = new SessionSearch(this.db);
 
-    const chromaEnabled = settings.CLAUDE_MEM_CHROMA_ENABLED !== 'false';
+    const chromaEnabled = settings.KIMI_MEM_CHROMA_ENABLED !== 'false';
     if (chromaEnabled) {
-      this.chromaSync = new ChromaSync('claude-mem');
+      this.chromaSync = new ChromaSync('kimi-mem');
     } else {
-      logger.info('DB', 'Chroma disabled via CLAUDE_MEM_CHROMA_ENABLED=false, using SQLite-only search');
+      logger.info('DB', 'Chroma disabled via KIMI_MEM_CHROMA_ENABLED=false, using SQLite-only search');
     }
 
     // Cloud sync is active iff token, user id, and Hub URL are all non-empty.
     // Inactive installs get null so the write-site `getCloudSync()?.notify()`
     // nudges are free no-ops.
     if (
-      settings.CLAUDE_MEM_CLOUD_SYNC_TOKEN !== '' &&
-      settings.CLAUDE_MEM_CLOUD_SYNC_USER_ID !== '' &&
-      settings.CLAUDE_MEM_CLOUD_SYNC_HUB_URL.trim() !== ''
+      settings.KIMI_MEM_CLOUD_SYNC_TOKEN !== '' &&
+      settings.KIMI_MEM_CLOUD_SYNC_USER_ID !== '' &&
+      settings.KIMI_MEM_CLOUD_SYNC_HUB_URL.trim() !== ''
     ) {
       this.cloudSync = new CloudSync(this.db, settings);
     }

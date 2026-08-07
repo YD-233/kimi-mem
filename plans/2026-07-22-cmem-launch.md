@@ -4,9 +4,9 @@
 
 ## Repos and locations
 
-- **claude-mem** (plugin + sync hub): worktree `/Users/alexnewman/.superset/worktrees/df8069a7-eb08-4626-9d3d-918d1e12eb9f/freckle-nail`, branch `feat/phase5-two-lane-sync`, remote `thedotmack/claude-mem`. Hub worker in `workers/sync-hub/`.
-- **claude-mem-pro** (cmem.ai): `~/Scripts/claude-mem-pro` (currently checked out on `codex/turbopuffer-only-launch`; `main` auto-deploys to Vercel prod). Remote `thedotmack/claude-mem-pro`.
-- **Cutover plan**: `PLAN-postgres-to-turbopuffer-cutover.md` (in claude-mem-pro worktree `.claude/worktrees/tpuf-content-plan`, branch `docs/tpuf-content-migration-plan`).
+- **kimi-mem** (plugin + sync hub): worktree `/Users/alexnewman/.superset/worktrees/df8069a7-eb08-4626-9d3d-918d1e12eb9f/freckle-nail`, branch `feat/phase5-two-lane-sync`, remote `YD-233/kimi-mem`. Hub worker in `workers/sync-hub/`.
+- **kimi-mem-pro** (cmem.ai): `~/Scripts/kimi-mem-pro` (currently checked out on `codex/turbopuffer-only-launch`; `main` auto-deploys to Vercel prod). Remote `YD-233/kimi-mem-pro`.
+- **Cutover plan**: `PLAN-postgres-to-turbopuffer-cutover.md` (in kimi-mem-pro worktree `.claude/worktrees/tpuf-content-plan`, branch `docs/tpuf-content-migration-plan`).
 
 ## Human-only items (Alex, anytime — not blocking Phase 1)
 
@@ -16,8 +16,8 @@
 
 ## Known state (verified 2026-07-22, trust unless contradicted)
 
-- PR #3333 (claude-mem, two-lane sync, 6 phases) — OPEN, code-complete, 2,465 tests green, 39/39 e2e. Hub suite re-run 68/68 today.
-- PR #51 (claude-mem-pro, `GET /api/pro/sync/verify`) — OPEN, green, branch `feat/sync-hub-token-verify`.
+- PR #3333 (kimi-mem, two-lane sync, 6 phases) — OPEN, code-complete, 2,465 tests green, 39/39 e2e. Hub suite re-run 68/68 today.
+- PR #51 (kimi-mem-pro, `GET /api/pro/sync/verify`) — OPEN, green, branch `feat/sync-hub-token-verify`.
 - sync-hub worker deployed to Cloudflare prod Jul 19; `AUTH_CACHE` KV exists; `DISCORD_WEBHOOK_URL` secret set; `TOKEN_VERIFY_URL` NOT yet set → hub fails closed (by design).
 - v13.11.0 is npm latest (legacy sync protocol). SyncHub activation requires v13.12.0 (`connect-info` gates worker protocol v1 on `13.12.0` + rollout flags).
 - Prod DB restored and healthy after the Jul 20–22 pause; signups working; 251 outage leads recovered into `email_waitlist`.
@@ -31,8 +31,8 @@
 **Goal:** hub live in production, verified end-to-end with real tokens.
 
 Tasks:
-1. In claude-mem-pro: merge PR #51 into `main` (`gh pr merge 51 -R thedotmack/claude-mem-pro`). Vercel auto-deploys. Verify `GET https://cmem.ai/api/pro/sync/verify` responds (401/contract response, not 404) after deploy.
-2. In claude-mem: merge PR #3333 (`gh pr merge 3333 -R thedotmack/claude-mem`).
+1. In kimi-mem-pro: merge PR #51 into `main` (`gh pr merge 51 -R YD-233/kimi-mem-pro`). Vercel auto-deploys. Verify `GET https://cmem.ai/api/pro/sync/verify` responds (401/contract response, not 404) after deploy.
+2. In kimi-mem: merge PR #3333 (`gh pr merge 3333 -R YD-233/kimi-mem`).
 3. Configure the hub worker (`workers/sync-hub/`): set `TOKEN_VERIFY_URL=https://cmem.ai/api/pro/sync/verify` (wrangler secret or var per `wrangler.jsonc` — note the worktree has an uncommitted `wrangler.jsonc` modification; reconcile it first). Confirm watchdog cron trigger + secrets per `workers/sync-hub/DEPLOY.md`. Ensure `DEV_ALLOW_ANY_TOKEN` is empty in prod. Redeploy.
 4. Run the two-device canary (`workers/sync-hub/canary/`) against prod with a real account's `setup_token` from `/api/pro/connect-info`.
 5. Drill the kill switch once (trip → verify `X-Sync-Mode: poll` fleet-wide + WS refused with 503 → untrip).
@@ -51,14 +51,14 @@ Anti-pattern guards: don't set `DEV_ALLOW_ANY_TOKEN` in prod; don't bypass the f
 **Goal:** a release whose plugin bundle speaks hub protocol, ready for Alex to `npm publish`.
 
 Tasks:
-1. On merged `main` of claude-mem, run the `version-bump` skill flow to `13.12.0` (manifests: root `package.json`, `plugin/plugin.json`, marketplace.json; build via `npm run build-and-sync`; verify worker starts; tag + GitHub release).
-2. Confirm the built `plugin/scripts/worker-service.cjs` contains the SyncHub client paths (`/v1/sync/ops`, `/v1/sync/changes`) and that `CLAUDE_MEM_CLOUD_SYNC_HUB_URL` defaults empty (sync off unless configured).
+1. On merged `main` of kimi-mem, run the `version-bump` skill flow to `13.12.0` (manifests: root `package.json`, `plugin/plugin.json`, marketplace.json; build via `npm run build-and-sync`; verify worker starts; tag + GitHub release).
+2. Confirm the built `plugin/scripts/worker-service.cjs` contains the SyncHub client paths (`/v1/sync/ops`, `/v1/sync/changes`) and that `KIMI_MEM_CLOUD_SYNC_HUB_URL` defaults empty (sync off unless configured).
 3. Hand off to Alex for `npm publish`. After publish, flip `CMEM_WORKER_PROTOCOL_V1_ONBOARDING_ENABLED` + canary user IDs on Vercel per the staged-rollout flags in `connect-info`.
 
 Verification checklist:
 - [ ] `grep -c "/v1/sync/" plugin/scripts/worker-service.cjs` > 0 in the shipped bundle
 - [ ] Fresh install smoke test: plugin boots, sync stays OFF without hub URL
-- [ ] `npm view claude-mem dist-tags` shows 13.12.0 after Alex publishes
+- [ ] `npm view kimi-mem dist-tags` shows 13.12.0 after Alex publishes
 
 ## Phase 3 — Execute the Turbopuffer cutover
 
@@ -73,7 +73,7 @@ Sub-steps (the plan's own Phases 0–3):
 Verification checklist:
 - [ ] E2E: local write → hub → projection → Turbopuffer → MCP tool answer returns the row
 - [ ] Pagination correct past 10,000 rows (`chronological_key`, opaque cursor)
-- [ ] `grep -r "pro_observations\|pro_summaries\|pro_prompts" src/` returns nothing in claude-mem-pro serving code
+- [ ] `grep -r "pro_observations\|pro_summaries\|pro_prompts" src/` returns nothing in kimi-mem-pro serving code
 - [ ] Legacy routes removed only after npm latest ≥ 13.12.0
 
 Anti-pattern guards: do NOT adopt `codex/turbopuffer-only-launch` wholesale (auth-fused tpuf design is the documented failure mode); never use `created_at_epoch` as a sync cursor (hub `seq` only); no outbound I/O from the Durable Object; auth/session/billing code stays untouched (Supabase remains the identity provider).

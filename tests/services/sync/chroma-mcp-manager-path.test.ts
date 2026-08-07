@@ -56,7 +56,7 @@ type ChromaPathInternals = {
 
 const getUvxPreflightEnv = (ChromaMcpManager as unknown as ChromaPathInternals).getUvxPreflightEnv;
 const originalPath = process.env.PATH;
-const originalOverride = process.env.CLAUDE_MEM_CHROMA_UVX_PATH;
+const originalOverride = process.env.KIMI_MEM_CHROMA_UVX_PATH;
 const fsRuntime = require('node:fs');
 const originalExistsSync = fsRuntime.existsSync;
 fsRuntime.existsSync = (candidate: string) => existingDirs.has(candidate);
@@ -67,7 +67,7 @@ function setPlatform(platform: NodeJS.Platform): void {
 
 function setPath(value: string): void {
   delete process.env.Path;
-  delete process.env.CLAUDE_MEM_CHROMA_UVX_PATH;
+  delete process.env.KIMI_MEM_CHROMA_UVX_PATH;
   process.env.PATH = value;
 }
 
@@ -84,8 +84,8 @@ beforeEach(() => {
 afterAll(() => {
   if (originalPath === undefined) delete process.env.PATH;
   else process.env.PATH = originalPath;
-  if (originalOverride === undefined) delete process.env.CLAUDE_MEM_CHROMA_UVX_PATH;
-  else process.env.CLAUDE_MEM_CHROMA_UVX_PATH = originalOverride;
+  if (originalOverride === undefined) delete process.env.KIMI_MEM_CHROMA_UVX_PATH;
+  else process.env.KIMI_MEM_CHROMA_UVX_PATH = originalOverride;
   if (realProcessPlatform) {
     Object.defineProperty(process, 'platform', realProcessPlatform);
   }

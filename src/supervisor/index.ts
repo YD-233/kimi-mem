@@ -154,7 +154,7 @@ export function configureSupervisorSignalHandlers(shutdownHandler: () => Promise
 
 /**
  * The verified-owner PID info from the worker PID file, or null when the file
- * is missing, unparseable, or names a process that is not a live claude-mem
+ * is missing, unparseable, or names a process that is not a live kimi-mem
  * worker. Read-only sibling of validateWorkerPidFile for callers that need
  * the pid itself (the hook's stale-worker kill in shared/worker-utils.ts).
  */

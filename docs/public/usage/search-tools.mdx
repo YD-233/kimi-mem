@@ -5,11 +5,11 @@ description: "Search your project history with MCP tools"
 
 # Memory Search with MCP Tools
 
-Claude-mem provides persistent memory across sessions through **4 MCP tools** that follow a token-efficient **3-layer workflow pattern**.
+Kimi-Mem provides persistent memory across sessions through **4 MCP tools** that follow a token-efficient **3-layer workflow pattern**.
 
 ## Overview
 
-Instead of fetching all historical data upfront (expensive), claude-mem uses a progressive disclosure approach:
+Instead of fetching all historical data upfront (expensive), kimi-mem uses a progressive disclosure approach:
 
 1. **Search** → Get a compact index with IDs (~50-100 tokens/result)
 2. **Timeline** → Get context around interesting results
@@ -372,7 +372,7 @@ All observations include rich metadata:
 
 2. **Check database has data:**
    ```bash
-   WORKER_PORT=$(jq -r .CLAUDE_MEM_WORKER_PORT ~/.claude-mem/settings.json)
+   WORKER_PORT=$(jq -r .KIMI_MEM_WORKER_PORT ~/.kimi-mem/settings.json)
    curl "http://127.0.0.1:$WORKER_PORT/api/search?query=test"
    ```
 
@@ -439,11 +439,11 @@ If searches seem slow:
 
 **Architecture:** MCP tools are a thin wrapper over the local Worker HTTP API. The MCP server translates tool calls into HTTP requests to the worker service, which handles all business logic, database queries, and Chroma vector search.
 
-**MCP Server:** Located at `~/.claude/plugins/marketplaces/thedotmack/plugin/scripts/mcp-server.cjs`
+**MCP Server:** Located at `~/.claude/plugins/marketplaces/YD-233/plugin/scripts/mcp-server.cjs`
 
 **Worker Service:** Express API on the configured worker port, managed by Bun
 
-**Database:** SQLite FTS5 full-text search on `~/.claude-mem/claude-mem.db`
+**Database:** SQLite FTS5 full-text search on `~/.kimi-mem/kimi-mem.db`
 
 **Vector Search:** Chroma embeddings for semantic search (underlying implementation)
 

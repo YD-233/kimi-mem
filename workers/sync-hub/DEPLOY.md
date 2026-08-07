@@ -152,7 +152,7 @@ and verification URLs. The returned options run the real
 contain no outbound-service mock. For example, an orchestrator may use:
 
 ```sh
-CMEM_PRO_REPO_PATH=../../../../claude-mem-pro \
+CMEM_PRO_REPO_PATH=../../../../kimi-mem-pro \
 INTERNAL_PROJECTOR_URL=http://127.0.0.1:3005/api/internal/sync/project \
 TOKEN_VERIFY_URL=http://127.0.0.1:3005/api/pro/sync/verify \
 CMEM_INTERNAL_PROJECTOR_SECRET=local-e2e-projector-secret-32-chars \
@@ -232,7 +232,7 @@ wrangler secret put DISCORD_WEBHOOK_URL
   scope **Account → Account Analytics → Read** (nothing else). Reference:
   developers.cloudflare.com/analytics/graphql-api/getting-started/authentication/api-token-auth/
 - `DISCORD_WEBHOOK_URL`: the runtime credential lives in
-  `~/Scripts/claude-mem/.env` as `DISCORD_UPDATES_WEBHOOK` — paste that
+  `~/Scripts/kimi-mem/.env` as `DISCORD_UPDATES_WEBHOOK` — paste that
   value into the secret prompt. **Never hardcode or commit a webhook URL.**
   (Payload shape matches `scripts/discord-release-notify.js`.)
 
@@ -325,7 +325,7 @@ hibernation detector sensitive.
 CANARY_HUB_URL=https://sync-hub.<account>.workers.dev \
 CANARY_USER_ID=canary-user \
 CANARY_TOKEN=<a real cmem.ai token provisioned for the canary user> \
-bun workers/sync-hub/canary/canary.ts >> ~/.claude-mem/logs/sync-canary.jsonl
+bun workers/sync-hub/canary/canary.ts >> ~/.kimi-mem/logs/sync-canary.jsonl
 ```
 
 Note: production auth is real — provision a dedicated cmem.ai account/token
@@ -340,7 +340,7 @@ for the canary user (the hub binds tokens to canonical user ids, §1.2).
   <key>Label</key><string>ai.cmem.sync-canary</string>
   <key>ProgramArguments</key><array>
     <string>/opt/homebrew/bin/bun</string>
-    <string>/path/to/claude-mem/workers/sync-hub/canary/canary.ts</string>
+    <string>/path/to/kimi-mem/workers/sync-hub/canary/canary.ts</string>
   </array>
   <key>EnvironmentVariables</key><dict>
     <key>CANARY_HUB_URL</key><string>https://sync-hub.ACCOUNT.workers.dev</string>
@@ -349,8 +349,8 @@ for the canary user (the hub binds tokens to canonical user ids, §1.2).
   </dict>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
-  <key>StandardOutPath</key><string>/Users/USER/.claude-mem/logs/sync-canary.jsonl</string>
-  <key>StandardErrorPath</key><string>/Users/USER/.claude-mem/logs/sync-canary.err</string>
+  <key>StandardOutPath</key><string>/Users/USER/.kimi-mem/logs/sync-canary.jsonl</string>
+  <key>StandardErrorPath</key><string>/Users/USER/.kimi-mem/logs/sync-canary.err</string>
 </dict></plist>
 ```
 
@@ -414,7 +414,7 @@ Suggested prompt to schedule, verbatim:
 > duration GB-s (should be near zero — hibernation), requests, and SQLite
 > rows read/written. If the delta vs last week is more than 20% or any
 > line item is new, post a short summary to the Discord updates webhook
-> (credentials in ~/Scripts/claude-mem/.env, DISCORD_UPDATES_WEBHOOK).
+> (credentials in ~/Scripts/kimi-mem/.env, DISCORD_UPDATES_WEBHOOK).
 > Otherwise post nothing.
 
 Cadence: weekly (e.g. Monday 09:00). Discord ping **only on delta** — a

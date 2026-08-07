@@ -88,8 +88,8 @@ describe('OpenAICompatibleProvider summary tier routing', () => {
   it('routes summarize messages to the summary-tier model while observation stays on the session model', async () => {
     loadFromFileSpy = spyOn(SettingsDefaultsManager, 'loadFromFile').mockImplementation(() => ({
       ...SettingsDefaultsManager.getAllDefaults(),
-      CLAUDE_MEM_TIER_ROUTING_ENABLED: 'true',
-      CLAUDE_MEM_TIER_SUMMARY_MODEL: 'summary-model',
+      KIMI_MEM_TIER_ROUTING_ENABLED: 'true',
+      KIMI_MEM_TIER_SUMMARY_MODEL: 'summary-model',
     }));
 
     const provider = new TestProvider({} as any, {
@@ -107,8 +107,8 @@ describe('OpenAICompatibleProvider summary tier routing', () => {
   it('keeps summarize on the session model when routing is disabled', async () => {
     loadFromFileSpy = spyOn(SettingsDefaultsManager, 'loadFromFile').mockImplementation(() => ({
       ...SettingsDefaultsManager.getAllDefaults(),
-      CLAUDE_MEM_TIER_ROUTING_ENABLED: 'false',
-      CLAUDE_MEM_TIER_SUMMARY_MODEL: 'summary-model',
+      KIMI_MEM_TIER_ROUTING_ENABLED: 'false',
+      KIMI_MEM_TIER_SUMMARY_MODEL: 'summary-model',
     }));
 
     const provider = new TestProvider({} as any, {

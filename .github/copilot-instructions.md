@@ -1,7 +1,7 @@
-<claude-mem-context>
-# claude-mem: Cross-Session Memory
+<kimi-mem-context>
+# kimi-mem: Cross-Session Memory
 
 *No context yet. Complete your first session and context will appear here.*
 
-Use claude-mem's MCP search tools for manual memory queries.
-</claude-mem-context>
+Use kimi-mem's MCP search tools for manual memory queries.
+</kimi-mem-context>

@@ -1,5 +1,5 @@
 /**
- * `npx claude-mem doctor` — a minimal diagnostic that probes every layer an
+ * `npx kimi-mem doctor` — a minimal diagnostic that probes every layer an
  * operator would otherwise check by hand (#2548). Read-only: it never mutates
  * state. Exits 0 when all REQUIRED checks pass, 1 otherwise, so it is CI/script
  * friendly.
@@ -71,7 +71,7 @@ export async function runDoctorCommand(): Promise<void> {
   checks.push({
     name: 'Plugin installed',
     status: installed ? 'ok' : 'fail',
-    detail: installed ? marketplaceDirectory() : 'run `npx claude-mem install`',
+    detail: installed ? marketplaceDirectory() : 'run `npx kimi-mem install`',
     required: true,
   });
 
@@ -85,10 +85,10 @@ export async function runDoctorCommand(): Promise<void> {
   const marketplaceDetail = marketplaceCurrent
     ? 'node_modules and install marker present'
     : !depsPresent
-      ? 'node_modules missing — run `npx claude-mem repair`'
+      ? 'node_modules missing — run `npx kimi-mem repair`'
       : !markerPresent
-        ? 'install marker missing — run `npx claude-mem repair`'
-        : 'install marker stale — run `npx claude-mem repair`';
+        ? 'install marker missing — run `npx kimi-mem repair`'
+        : 'install marker stale — run `npx kimi-mem repair`';
   checks.push({
     name: 'Marketplace runtime',
     status: installed ? (marketplaceCurrent ? 'ok' : 'fail') : 'warn',
@@ -97,10 +97,10 @@ export async function runDoctorCommand(): Promise<void> {
   });
 
   // 5. Worker health.
-  const workerHost = SettingsDefaultsManager.get('CLAUDE_MEM_WORKER_HOST');
-  const workerPort = SettingsDefaultsManager.get('CLAUDE_MEM_WORKER_PORT');
+  const workerHost = SettingsDefaultsManager.get('KIMI_MEM_WORKER_HOST');
+  const workerPort = SettingsDefaultsManager.get('KIMI_MEM_WORKER_PORT');
   let workerStatus: CheckStatus = 'fail';
-  let workerDetail = `no response at http://${workerHost}:${workerPort} — start with \`npx claude-mem start\``;
+  let workerDetail = `no response at http://${workerHost}:${workerPort} — start with \`npx kimi-mem start\``;
   try {
     const worker = await probeWorkerHealth(workerHost, workerPort);
     workerStatus = worker.status;
@@ -138,7 +138,7 @@ export async function runDoctorCommand(): Promise<void> {
   const icon = (s: CheckStatus): string =>
     s === 'ok' ? styleText('green', '✓') : s === 'warn' ? styleText('yellow', '!') : styleText('red', '✗');
 
-  console.log(styleText('bold', '\nclaude-mem doctor\n'));
+  console.log(styleText('bold', '\nkimi-mem doctor\n'));
   for (const c of checks) {
     console.log(`  ${icon(c.status)} ${c.name.padEnd(22)} ${styleText('dim', c.detail)}`);
   }

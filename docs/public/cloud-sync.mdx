@@ -23,7 +23,7 @@ or wrong with **zero data loss**; the HTTP cursor is always the truth.
 
 Three kinds of rows are replicated between your devices:
 
-- **Observations** — the compressed memories claude-mem generates from your sessions.
+- **Observations** — the compressed memories kimi-mem generates from your sessions.
 - **Session summaries** — the per-session overview records.
 - **User prompts** — the prompts you typed (clamped to 200&nbsp;KB per field).
 
@@ -88,7 +88,7 @@ receives new ops the moment another device pushes them — multi-device
 convergence in well under a second instead of a poll interval. The socket is
 strictly **advisory**: any anomaly (a gap, a parse error, a dropped
 connection) simply closes it and runs one HTTP pull, which is always correct.
-Set `CLAUDE_MEM_CLOUD_SYNC_WS` to `false` to turn it off — sync stays fully
+Set `KIMI_MEM_CLOUD_SYNC_WS` to `false` to turn it off — sync stays fully
 correct at poll latency.
 
 The hub can also ask every client to fall back to polling by stamping
@@ -104,13 +104,13 @@ URL are non-empty — there is no separate enable flag; blank any one of them to
 turn sync off.
 
 1. A **cmem.ai Pro sync token and user id** (from **cmem.ai → Connect**).
-2. A **sync hub URL** in `CLAUDE_MEM_CLOUD_SYNC_HUB_URL`. The hub is a
+2. A **sync hub URL** in `KIMI_MEM_CLOUD_SYNC_HUB_URL`. The hub is a
    Cloudflare Workers service (source in `workers/sync-hub/` with its own
    deploy runbook); use the hub URL your cmem.ai account documentation
    provides for it.
 
 Run the `/cloud-sync` skill in Claude Code to check status and walk through
-setup. It writes the settings into `~/.claude-mem/settings.json` (mode
+setup. It writes the settings into `~/.kimi-mem/settings.json` (mode
 `0600`) without ever echoing the token, restarts the worker, and verifies the
 installed client can reach SyncHub.
 
@@ -118,12 +118,12 @@ installed client can reach SyncHub.
 
 | Key | Default | Meaning |
 |-----|---------|---------|
-| `CLAUDE_MEM_CLOUD_SYNC_TOKEN` | `''` | Your cmem.ai sync token (from **cmem.ai → Connect**). Sent as `Authorization: Bearer`. |
-| `CLAUDE_MEM_CLOUD_SYNC_USER_ID` | `''` | Your cmem.ai user id (from **cmem.ai → Connect**). All your devices share it — it names your hub log. |
-| `CLAUDE_MEM_CLOUD_SYNC_HUB_URL` | `''` | Sync hub base URL. **Empty = sync off.** |
-| `CLAUDE_MEM_CLOUD_SYNC_WS` | `'true'` | Advisory WebSocket speed layer. `'false'` = HTTP polling only; sync stays fully correct at poll latency. |
-| `CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID` | `''` | Stable identity of this machine. A fresh UUID is minted and persisted on first start. Don't edit it: every row is attributed to its origin device. |
-| `CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME` | machine hostname | Human-readable label for this device. |
+| `KIMI_MEM_CLOUD_SYNC_TOKEN` | `''` | Your cmem.ai sync token (from **cmem.ai → Connect**). Sent as `Authorization: Bearer`. |
+| `KIMI_MEM_CLOUD_SYNC_USER_ID` | `''` | Your cmem.ai user id (from **cmem.ai → Connect**). All your devices share it — it names your hub log. |
+| `KIMI_MEM_CLOUD_SYNC_HUB_URL` | `''` | Sync hub base URL. **Empty = sync off.** |
+| `KIMI_MEM_CLOUD_SYNC_WS` | `'true'` | Advisory WebSocket speed layer. `'false'` = HTTP polling only; sync stays fully correct at poll latency. |
+| `KIMI_MEM_CLOUD_SYNC_DEVICE_ID` | `''` | Stable identity of this machine. A fresh UUID is minted and persisted on first start. Don't edit it: every row is attributed to its origin device. |
+| `KIMI_MEM_CLOUD_SYNC_DEVICE_NAME` | machine hostname | Human-readable label for this device. |
 
 A Hub accepts at most 64 distinct device ids per account. Existing devices
 continue to sync normally at the limit; a new device receives
@@ -138,7 +138,7 @@ answers `200` rather than a `404` — callers can tell "not set up" apart from
 "worker down".
 
 ```bash
-curl -s "http://127.0.0.1:${CLAUDE_MEM_WORKER_PORT}/api/sync/status"
+curl -s "http://127.0.0.1:${KIMI_MEM_WORKER_PORT}/api/sync/status"
 ```
 
 Configured:

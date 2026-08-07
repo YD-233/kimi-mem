@@ -50,7 +50,7 @@ describe('mutation sites', () => {
   let tempDir: string;
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-mutation-sites-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-mutation-sites-'));
   });
 
   afterEach(() => {
@@ -210,7 +210,7 @@ describe('mutation sites', () => {
     let db: Database;
 
     beforeEach(() => {
-      dbPath = join(tempDir, 'claude-mem.db');
+      dbPath = join(tempDir, 'kimi-mem.db');
       const store = new SessionStore(dbPath);
       store.db.prepare(`
         INSERT INTO sdk_sessions (content_session_id, memory_session_id, project, started_at, started_at_epoch, status)
@@ -331,7 +331,7 @@ describe('mutation sites', () => {
 
     const dataDir = join(tempDir, 'data');
     mkdirSync(dataDir);
-    const dbPath = join(dataDir, 'claude-mem.db');
+    const dbPath = join(dataDir, 'kimi-mem.db');
     const store = new SessionStore(dbPath);
     store.db.prepare(`
       INSERT INTO sdk_sessions (content_session_id, memory_session_id, project, started_at, started_at_epoch, status)
@@ -382,7 +382,7 @@ describe('mutation sites', () => {
 
     const dataDir = join(tempDir, 'data');
     mkdirSync(dataDir);
-    const dbPath = join(dataDir, 'claude-mem.db');
+    const dbPath = join(dataDir, 'kimi-mem.db');
     const store = new SessionStore(dbPath);
     store.db.prepare(`
       INSERT INTO sdk_sessions (content_session_id, memory_session_id, project, started_at, started_at_epoch, status)

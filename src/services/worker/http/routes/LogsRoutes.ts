@@ -69,14 +69,14 @@ export function readLastLines(filePath: string, lineCount: number): { lines: str
 
 export class LogsRoutes extends BaseRouteHandler {
   private getLogFilePath(): string {
-    const dataDir = SettingsDefaultsManager.get('CLAUDE_MEM_DATA_DIR');
+    const dataDir = SettingsDefaultsManager.get('KIMI_MEM_DATA_DIR');
     const logsDir = join(dataDir, 'logs');
     const date = new Date().toISOString().split('T')[0];
-    return join(logsDir, `claude-mem-${date}.log`);
+    return join(logsDir, `kimi-mem-${date}.log`);
   }
 
   private getLogsDir(): string {
-    const dataDir = SettingsDefaultsManager.get('CLAUDE_MEM_DATA_DIR');
+    const dataDir = SettingsDefaultsManager.get('KIMI_MEM_DATA_DIR');
     return join(dataDir, 'logs');
   }
 

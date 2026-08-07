@@ -10,7 +10,7 @@ const childScript = `
   import { generateContext } from './src/services/context/ContextBuilder.ts';
   import { ModeManager } from './src/services/domain/ModeManager.ts';
   ModeManager.getInstance().loadMode('code');
-  const dbPath = process.env.CLAUDE_MEM_DATA_DIR + '/claude-mem.db';
+  const dbPath = process.env.KIMI_MEM_DATA_DIR + '/kimi-mem.db';
   if (process.env.READONLY_CASE === 'missing') {
     const text = await generateContext({ projects: ['readonly-parent'] });
     console.log(JSON.stringify({ text, exists: await Bun.file(dbPath).exists() }));
@@ -122,9 +122,9 @@ function runChild(dataDir: string, extraEnv: Record<string, string>): Record<str
     cwd: repoRoot,
     env: {
       ...process.env,
-      CLAUDE_MEM_DATA_DIR: dataDir,
+      KIMI_MEM_DATA_DIR: dataDir,
       CLAUDE_CONFIG_DIR: dataDir,
-      CLAUDE_MEM_MODES_DIR: join(repoRoot, 'plugin', 'modes'),
+      KIMI_MEM_MODES_DIR: join(repoRoot, 'plugin', 'modes'),
       ...extraEnv,
     },
   });
@@ -136,7 +136,7 @@ function runChild(dataDir: string, extraEnv: Record<string, string>): Record<str
 
 describe('context database ownership', () => {
   it('does not create a database for an absent context store', () => {
-    const dataDir = mkdtempSync(join(tmpdir(), 'claude-mem-context-'));
+    const dataDir = mkdtempSync(join(tmpdir(), 'kimi-mem-context-'));
     try {
       const result = runChild(dataDir, { READONLY_CASE: 'missing' });
       expect(result.text).toBe('');
@@ -147,7 +147,7 @@ describe('context database ownership', () => {
   });
 
   it('reads committed native and adopted records without changing database state', () => {
-    const dataDir = mkdtempSync(join(tmpdir(), 'claude-mem-context-'));
+    const dataDir = mkdtempSync(join(tmpdir(), 'kimi-mem-context-'));
     try {
       const result = runChild(dataDir, {});
       expect(result.text).toContain('NATIVE_READONLY_RECORD');
@@ -163,7 +163,7 @@ describe('context database ownership', () => {
   });
 
   it('waits through a temporary exclusive lock on the read-only connection', () => {
-    const dataDir = mkdtempSync(join(tmpdir(), 'claude-mem-context-'));
+    const dataDir = mkdtempSync(join(tmpdir(), 'kimi-mem-context-'));
     try {
       const readyPath = join(dataDir, 'lock-ready');
       const result = runChild(dataDir, { READONLY_CASE: 'exclusive-lock', LOCK_READY: readyPath });
@@ -175,18 +175,18 @@ describe('context database ownership', () => {
   });
 
   it('keeps SessionStore responsible for fresh database schema creation', () => {
-    const dataDir = mkdtempSync(join(tmpdir(), 'claude-mem-context-'));
+    const dataDir = mkdtempSync(join(tmpdir(), 'kimi-mem-context-'));
     try {
       const result = runChild(dataDir, { READONLY_CASE: 'missing' });
       expect(result.exists).toBe(false);
       const workerResult = Bun.spawnSync(['bun', '-e', `
         import { SessionStore } from './src/services/sqlite/SessionStore.ts';
-        const store = new SessionStore(process.env.CLAUDE_MEM_DATA_DIR + '/claude-mem.db');
+        const store = new SessionStore(process.env.KIMI_MEM_DATA_DIR + '/kimi-mem.db');
         console.log(JSON.stringify({ versions: (store.db.prepare('SELECT COUNT(*) as count FROM schema_versions').get() as { count: number }).count }));
         store.close();
       `], {
         cwd: repoRoot,
-        env: { ...process.env, CLAUDE_MEM_DATA_DIR: dataDir },
+        env: { ...process.env, KIMI_MEM_DATA_DIR: dataDir },
       });
       expect(workerResult.exitCode).toBe(0);
       expect(JSON.parse(new TextDecoder().decode(workerResult.stdout).trim()).versions).toBeGreaterThan(0);

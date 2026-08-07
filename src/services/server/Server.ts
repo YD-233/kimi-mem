@@ -228,7 +228,7 @@ export class Server {
         version: BUILT_IN_VERSION,
         workerPath: this.options.workerPath,
         uptime: getUptimeSeconds(this.startTime),
-        managed: process.env.CLAUDE_MEM_MANAGED === 'true',
+        managed: process.env.KIMI_MEM_MANAGED === 'true',
         hasIpc: typeof process.send === 'function',
         platform: process.platform,
         pid: process.pid,
@@ -290,7 +290,7 @@ export class Server {
 
     this.app.post('/api/admin/restart', requireLocalhost, async (_req: Request, res: Response) => {
       const isWindowsManaged = process.platform === 'win32' &&
-        process.env.CLAUDE_MEM_MANAGED === 'true' &&
+        process.env.KIMI_MEM_MANAGED === 'true' &&
         process.send;
 
       if (isWindowsManaged) {
@@ -308,7 +308,7 @@ export class Server {
       // anything else stays 'stop'.
       const shutdownReason: 'stop' | 'restart' = req.query.reason === 'restart' ? 'restart' : 'stop';
       const isWindowsManaged = process.platform === 'win32' &&
-        process.env.CLAUDE_MEM_MANAGED === 'true' &&
+        process.env.KIMI_MEM_MANAGED === 'true' &&
         process.send;
 
       if (isWindowsManaged) {

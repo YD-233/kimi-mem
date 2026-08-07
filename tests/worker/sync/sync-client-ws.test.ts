@@ -175,7 +175,7 @@ describe('SyncClient advisory WebSocket', () => {
   }
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'claude-mem-sync-ws-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'kimi-mem-sync-ws-'));
     db = new Database(':memory:');
     new SessionStore(db);
     apply = new SyncApply(db, { deviceId: SELF });

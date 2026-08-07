@@ -5,7 +5,7 @@
 
 **Design in one paragraph:** Every memory row gets a `synced_at` column (NULL = not in the cloud). The worker — which already performs every write and is already kept alive by hooks — nudges a debounced flusher after each write. The flusher drains `WHERE synced_at IS NULL` in batches, POSTs to cmem.ai, and stamps rows on success. That single mechanism IS live sync, backfill, offline catch-up, and retry. No second process, no polling, no pid files, no JSON cursor files. Config is a token in settings.json like every other API key. The skill shrinks to: paste token → restart worker → show status.
 
-**Wire contract (fixed — the cmem.ai server is already deployed):** POST `{observations,summaries,prompts}/batch` with camelCase row mappers, headers `Authorization: Bearer`, `X-User-Id`, `X-Device-Id`, `X-Device-Name`; server upserts on `(user_id, device_id, local_id)`; ≤2MB body, ≤200KB field clamps; `GET /pull?kind=&afterId=&limit=`. The reference implementation for all mappers/clamps is the vetted standalone client at `~/.claude-mem/cloud-sync.mjs` (source-reviewed 2026-07-08; verified live against production — 129,777 rows). **Port its `toCloud` mappers, `selectCols` prompt-clamp, and body-size batching verbatim; do not redesign the wire format.**
+**Wire contract (fixed — the cmem.ai server is already deployed):** POST `{observations,summaries,prompts}/batch` with camelCase row mappers, headers `Authorization: Bearer`, `X-User-Id`, `X-Device-Id`, `X-Device-Name`; server upserts on `(user_id, device_id, local_id)`; ≤2MB body, ≤200KB field clamps; `GET /pull?kind=&afterId=&limit=`. The reference implementation for all mappers/clamps is the vetted standalone client at `~/.kimi-mem/cloud-sync.mjs` (source-reviewed 2026-07-08; verified live against production — 129,777 rows). **Port its `toCloud` mappers, `selectCols` prompt-clamp, and body-size batching verbatim; do not redesign the wire format.**
 
 ---
 
@@ -20,11 +20,11 @@
 | Service accessor | `getChromaSync(): ChromaSync \| null` | `src/services/worker/DatabaseManager.ts:62` |
 | Sibling service class | `ChromaSync` (constructor, per-write methods, `static backfillAllProjects`) | `src/services/sync/ChromaSync.ts:83,89,361,914` |
 | Background wiring point | `WorkerService.initializeBackground()` — settings loaded at `:460`, Chroma gate `:504`, backfill `:604` | `src/services/worker-service.ts:452–622` |
-| Settings keys | `SettingsDefaults` interface + `DEFAULTS`; Chroma remote group (`CLAUDE_MEM_CHROMA_HOST/PORT/API_KEY/...`) is the endpoint+credential precedent; file mode 0600 | `src/shared/SettingsDefaultsManager.ts:27–130, 133–236, 101–106, 9–25` |
+| Settings keys | `SettingsDefaults` interface + `DEFAULTS`; Chroma remote group (`KIMI_MEM_CHROMA_HOST/PORT/API_KEY/...`) is the endpoint+credential precedent; file mode 0600 | `src/shared/SettingsDefaultsManager.ts:27–130, 133–236, 101–106, 9–25` |
 | HTTP route | `LogsRoutes` extends `BaseRouteHandler`; late registration like SearchRoutes | `src/services/worker/http/routes/LogsRoutes.ts:70–137`, `src/services/worker-service.ts:528` |
 | Tests | `bun test` over `tests/` (subdirs: `tests/sqlite/`, `tests/worker/...`) | root `package.json:99–105` |
 | Skill authoring | auto-discovered from `plugin/skills/<name>/SKILL.md`; frontmatter `name/description/allowed-tools`; shipped verbatim by `scripts/sync-marketplace.cjs:126–167` | `plugin/skills/standup/SKILL.md` |
-| Wire mappers to port | `KINDS[].toCloud`, prompts `selectCols` (SQL-side `substr(prompt_text,1,200000)` — 7MB prompts OOM node if clamped post-read), `MAX_BODY_BYTES`/`clampRow` | `~/.claude-mem/cloud-sync.mjs:132–281` |
+| Wire mappers to port | `KINDS[].toCloud`, prompts `selectCols` (SQL-side `substr(prompt_text,1,200000)` — 7MB prompts OOM node if clamped post-read), `MAX_BODY_BYTES`/`clampRow` | `~/.kimi-mem/cloud-sync.mjs:132–281` |
 
 **Anti-patterns (do NOT):** invent a `skills` key in plugin.json (auto-discovery); use `${CLAUDE_PLUGIN_ROOT}` (the real var is `${CLAUDE_SKILL_DIR}`, and this skill no longer bundles a script anyway); use `node:sqlite`/`better-sqlite3` (repo is `bun:sqlite`); block the write path on network I/O (Chroma calls are local-fast; cloud is not — nudge, don't await); edit CHANGELOG; add pm2/launchd anything; **mint a new device id when a legacy one exists** (server keys on device_id — a new id forks every cloud row into a duplicate).
 
@@ -37,7 +37,7 @@
 1. `ALTER TABLE observations ADD COLUMN synced_at INTEGER` — same for `session_summaries`, `user_prompts`. (NULL = unsynced; value = epoch ms of successful upload.)
 2. Partial indexes so the drain query stays O(pending): `CREATE INDEX IF NOT EXISTS idx_<table>_unsynced ON <table>(id) WHERE synced_at IS NULL`.
 
-**Legacy adoption (same migration, runs once):** if `~/.claude-mem/cloud-sync-state.json` exists (standalone client's state — format: `{deviceId, lastId, lastSummaryId, lastPromptId, ...}`):
+**Legacy adoption (same migration, runs once):** if `~/.kimi-mem/cloud-sync-state.json` exists (standalone client's state — format: `{deviceId, lastId, lastSummaryId, lastPromptId, ...}`):
 - Stamp already-pushed rows: `UPDATE observations SET synced_at = <now> WHERE id <= lastId AND synced_at IS NULL` (and the two analogs). Skipping this is *safe* (server upserts) but re-uploads ~130k rows — stamp them.
 - Leave the state file in place; Phase 2 adopts `deviceId` from it, and the skill (Phase 4) retires it.
 
@@ -51,7 +51,7 @@
 
 **What:** New `src/services/sync/CloudSync.ts`, structurally a sibling of `ChromaSync.ts`. Core:
 
-- **Config** (new keys in `SettingsDefaultsManager` interface + DEFAULTS, mirroring the Chroma group at `:101–106`): `CLAUDE_MEM_CLOUD_SYNC_TOKEN` (default `''`), `CLAUDE_MEM_CLOUD_SYNC_USER_ID` (`''`), `CLAUDE_MEM_CLOUD_SYNC_URL` (`https://cmem.ai/api/pro/sync`), `CLAUDE_MEM_CLOUD_SYNC_DEVICE_ID` (`''` — resolved at first start: adopt from legacy `cloud-sync-state.json` if present, else `randomUUID()`, then persisted back to settings), `CLAUDE_MEM_CLOUD_SYNC_DEVICE_NAME` (default `hostname()`). **Active ⇔ token AND user id are non-empty.** No separate enabled flag — credentials present = on, blank token = off.
+- **Config** (new keys in `SettingsDefaultsManager` interface + DEFAULTS, mirroring the Chroma group at `:101–106`): `KIMI_MEM_CLOUD_SYNC_TOKEN` (default `''`), `KIMI_MEM_CLOUD_SYNC_USER_ID` (`''`), `KIMI_MEM_CLOUD_SYNC_URL` (`https://cmem.ai/api/pro/sync`), `KIMI_MEM_CLOUD_SYNC_DEVICE_ID` (`''` — resolved at first start: adopt from legacy `cloud-sync-state.json` if present, else `randomUUID()`, then persisted back to settings), `KIMI_MEM_CLOUD_SYNC_DEVICE_NAME` (default `hostname()`). **Active ⇔ token AND user id are non-empty.** No separate enabled flag — credentials present = on, blank token = off.
 - **`notify()`** — called by write sites; debounce ~1500ms trailing; coalesces write bursts into one flush.
 - **`flush()`** — single-flight (skip if already running). Per kind: `SELECT ... WHERE synced_at IS NULL ORDER BY id LIMIT 200` (prompts use the ported SQL clamp), map with the ported `toCloud` mappers, pack into ≤2MB bodies, POST with `AbortSignal.timeout(30_000)` (**fixes the standalone client's no-timeout hang**), on 2xx stamp that batch: `UPDATE <table> SET synced_at = ? WHERE id IN (...)`. Loop until drained. On failure: log via the repo logger, leave rows NULL, retry on next notify + a capped exponential backoff timer (30s → 10min, `.unref()`).
 - **`start()`** — kick one `flush()` (non-blocking). This IS backfill: a never-synced install simply has everything NULL.
@@ -81,10 +81,10 @@
 **What:** `plugin/skills/cloud-sync/SKILL.md` (auto-discovered; no bundled script). Frontmatter: `name: cloud-sync`, `allowed-tools: [Bash, Read, AskUserQuestion]`, description triggering on "set up cloud sync / sync my memories / cmem pro / cloud backup / sync status".
 
 Runbook the skill encodes:
-1. `GET /api/sync/status` (worker port from `~/.claude-mem/settings.json` → `CLAUDE_MEM_WORKER_PORT`).
+1. `GET /api/sync/status` (worker port from `~/.kimi-mem/settings.json` → `KIMI_MEM_WORKER_PORT`).
 2. **Configured** → report pending counts + last error, done.
-3. **Not configured** → obtain credentials, in priority order: (a) legacy `~/.claude-mem/.cloud-sync.env` exists → read token/user-id from it, tell the user they're being migrated; (b) else ask the user to paste token + user id from **cmem.ai → Connect**. Write both into `~/.claude-mem/settings.json` (preserve 0600; never echo the token, never put it on a command line).
-4. **Legacy daemon retirement:** if `~/.claude-mem/cloud-sync.pid` holds a live pid → kill it; then archive the standalone artifacts (`cloud-sync.mjs`, `.cloud-sync.env`, `cloud-sync.pid` → rename with `.retired` suffix; keep `cloud-sync-state.json` untouched — the Phase 1 migration and Phase 2 device-id adoption read it).
+3. **Not configured** → obtain credentials, in priority order: (a) legacy `~/.kimi-mem/.cloud-sync.env` exists → read token/user-id from it, tell the user they're being migrated; (b) else ask the user to paste token + user id from **cmem.ai → Connect**. Write both into `~/.kimi-mem/settings.json` (preserve 0600; never echo the token, never put it on a command line).
+4. **Legacy daemon retirement:** if `~/.kimi-mem/cloud-sync.pid` holds a live pid → kill it; then archive the standalone artifacts (`cloud-sync.mjs`, `.cloud-sync.env`, `cloud-sync.pid` → rename with `.retired` suffix; keep `cloud-sync-state.json` untouched — the Phase 1 migration and Phase 2 device-id adoption read it).
 5. `POST /api/admin/restart`, then poll `/api/sync/status` until pending counts drain; report.
 6. First-time setup only: one-line privacy note (sync uploads observation narratives + full prompt text to the user's cmem.ai account).
 

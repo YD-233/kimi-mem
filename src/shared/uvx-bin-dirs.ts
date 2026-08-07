@@ -18,7 +18,7 @@ function defaultIsFile(filePath: string): boolean {
 }
 
 export function getUvxBinDirs(options: UvxBinDirOptions = {}): string[] {
-  const override = options.override ?? process.env.CLAUDE_MEM_CHROMA_UVX_PATH;
+  const override = options.override ?? process.env.KIMI_MEM_CHROMA_UVX_PATH;
   const homedir = options.homedir ?? os.homedir;
   const platform = options.platform ?? process.platform;
   const isFile = options.isFile ?? defaultIsFile;

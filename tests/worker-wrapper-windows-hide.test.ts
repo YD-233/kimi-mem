@@ -10,9 +10,9 @@ const WINDOWS_HIDE = /windowsHide\s*:\s*(?:true|!0)/;
 describe('plugin/scripts/worker-wrapper.cjs Windows hide (#3170)', () => {
   it('hides the inner worker spawn console window', () => {
     // Nested env:{...} braces break a naive \{[^}]*\} match; pin the spawn options
-    // by the CLAUDE_MEM_MANAGED marker that only appears on this call.
+    // by the KIMI_MEM_MANAGED marker that only appears on this call.
     const spawnOptsMatch = source.match(
-      /CLAUDE_MEM_MANAGED:"true"\},cwd:p\.default\.dirname\(l\)(?:,windowsHide:(?:true|!0))?\}/,
+      /KIMI_MEM_MANAGED:"true"\},cwd:p\.default\.dirname\(l\)(?:,windowsHide:(?:true|!0))?\}/,
     );
     expect(spawnOptsMatch).not.toBeNull();
     expect(WINDOWS_HIDE.test(spawnOptsMatch![0])).toBe(true);

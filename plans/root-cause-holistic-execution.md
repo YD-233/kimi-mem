@@ -1,8 +1,8 @@
 # Root Cause Holistic Fixes Execution Notes
 
 Branch: `plan/root-cause-holistic-fixes`
-Plan issue: https://github.com/thedotmack/claude-mem/issues/3138
-Local draft read: `/tmp/claude-mem-three-track/plan-root-cause.md`
+Plan issue: https://github.com/YD-233/kimi-mem/issues/3138
+Local draft read: `/tmp/kimi-mem-three-track/plan-root-cause.md`
 
 ## Phase 0 Intake
 
@@ -12,7 +12,7 @@ plans #2779 and #2782 remain source material, not duplicates to close.
 Current PR state was checked with:
 
 ```bash
-gh api 'repos/thedotmack/claude-mem/pulls?state=all&per_page=100' --paginate
+gh api 'repos/YD-233/kimi-mem/pulls?state=all&per_page=100' --paginate
 ```
 
 All queried PRs named by the plan are still open as of this execution note.

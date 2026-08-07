@@ -1,4 +1,4 @@
-# claude-mem Production Guide
+# kimi-mem Production Guide
 
 Practical guide based on 23 days of production usage with 3,400+ observations across two physical servers and 8 projects.
 
@@ -6,10 +6,10 @@ Practical guide based on 23 days of production usage with 3,400+ observations ac
 
 | Setting | Default | Recommended | Why |
 |---------|---------|-------------|-----|
-| CLAUDE_MEM_MAX_CONCURRENT_AGENTS | 2 | 3 | Better throughput without overload |
-| CLAUDE_MEM_SEMANTIC_INJECT | true | true | Relevant context >> recent context |
-| CLAUDE_MEM_SEMANTIC_INJECT_LIMIT | 5 | 5 | Sweet spot for token cost vs coverage |
-| CLAUDE_MEM_TIER_ROUTING_ENABLED | true | true | ~52% cost savings, no quality loss |
+| KIMI_MEM_MAX_CONCURRENT_AGENTS | 2 | 3 | Better throughput without overload |
+| KIMI_MEM_SEMANTIC_INJECT | true | true | Relevant context >> recent context |
+| KIMI_MEM_SEMANTIC_INJECT_LIMIT | 5 | 5 | Sweet spot for token cost vs coverage |
+| KIMI_MEM_TIER_ROUTING_ENABLED | true | true | ~52% cost savings, no quality loss |
 
 ## Health Monitoring
 
@@ -31,7 +31,7 @@ Practical guide based on 23 days of production usage with 3,400+ observations ac
 curl -s http://127.0.0.1:37777/api/health | python3 -m json.tool
 
 # Check database stats
-sqlite3 ~/.claude-mem/claude-mem.db "
+sqlite3 ~/.kimi-mem/kimi-mem.db "
   SELECT 'observations' as metric, COUNT(*) as value FROM observations
   UNION ALL SELECT 'summaries', COUNT(*) FROM session_summaries
   UNION ALL SELECT 'pending', COUNT(*) FROM pending_messages WHERE status='pending'
@@ -41,13 +41,13 @@ sqlite3 ~/.claude-mem/claude-mem.db "
 
 ## Multi-Machine Setup
 
-If running claude-mem on multiple machines, use `claude-mem-sync` to keep observations in sync:
+If running kimi-mem on multiple machines, use `kimi-mem-sync` to keep observations in sync:
 
 ```bash
-claude-mem-sync push <remote-host>    # local -> remote
-claude-mem-sync pull <remote-host>    # remote -> local
-claude-mem-sync sync <remote-host>    # bidirectional
-claude-mem-sync status <remote-host>  # compare counts
+kimi-mem-sync push <remote-host>    # local -> remote
+kimi-mem-sync pull <remote-host>    # remote -> local
+kimi-mem-sync sync <remote-host>    # bidirectional
+kimi-mem-sync status <remote-host>  # compare counts
 ```
 
 Deduplication is by `(created_at, title)` — safe to run repeatedly.
@@ -99,13 +99,13 @@ Based on active daily development usage:
 
 ```bash
 # Count errors by day
-grep '\[ERROR\]' ~/.claude-mem/logs/claude-mem-*.log | \
+grep '\[ERROR\]' ~/.kimi-mem/logs/kimi-mem-*.log | \
   sed 's/\[20[0-9][0-9]-[0-9][0-9]-/\n&/g' | \
   grep -oP '^\[20\d{2}-\d{2}-\d{2}' | sort | uniq -c
 
 # Find circuit-breaker trips
-grep 'circuit\|Circuit\|ABANDONED\|abandoned' ~/.claude-mem/logs/claude-mem-*.log
+grep 'circuit\|Circuit\|ABANDONED\|abandoned' ~/.kimi-mem/logs/kimi-mem-*.log
 
 # Check pending message health
-grep 'CLAIMED\|CONFIRMED\|FAILED\|ABANDONED' ~/.claude-mem/logs/claude-mem-$(date +%Y-%m-%d).log | tail -20
+grep 'CLAIMED\|CONFIRMED\|FAILED\|ABANDONED' ~/.kimi-mem/logs/kimi-mem-$(date +%Y-%m-%d).log | tail -20
 ```

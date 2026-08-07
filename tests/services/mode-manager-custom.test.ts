@@ -8,7 +8,7 @@ const projectRoot = path.resolve(import.meta.dir, '../..');
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), 'claude-mem-mode-manager-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'kimi-mem-mode-manager-'));
   tempDirs.push(dir);
   return dir;
 }
@@ -31,7 +31,7 @@ function runModeProbe(dataDir: string, modeId: string) {
   `;
   const result = spawnSync('bun', ['-e', probe], {
     cwd: projectRoot,
-    env: { ...process.env, CLAUDE_MEM_DATA_DIR: dataDir },
+    env: { ...process.env, KIMI_MEM_DATA_DIR: dataDir },
     encoding: 'utf8',
   });
   expect(result.status, result.stderr).toBe(0);

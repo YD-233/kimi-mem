@@ -4,20 +4,20 @@ import { SettingsDefaultsManager } from '../src/shared/SettingsDefaultsManager.j
 import { USER_SETTINGS_PATH } from '../src/shared/paths.js';
 
 const workerSettings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-const DEFAULT_WORKER_HOST = workerSettings.CLAUDE_MEM_WORKER_HOST;
-const DEFAULT_WORKER_PORT = workerSettings.CLAUDE_MEM_WORKER_PORT;
+const DEFAULT_WORKER_HOST = workerSettings.KIMI_MEM_WORKER_HOST;
+const DEFAULT_WORKER_PORT = workerSettings.KIMI_MEM_WORKER_PORT;
 
 function resolveWorkerHost(): string {
-  return process.env.CLAUDE_MEM_WORKER_HOST || DEFAULT_WORKER_HOST;
+  return process.env.KIMI_MEM_WORKER_HOST || DEFAULT_WORKER_HOST;
 }
 
 function resolveWorkerPort(): string {
-  const raw = process.env.CLAUDE_MEM_WORKER_PORT;
+  const raw = process.env.KIMI_MEM_WORKER_PORT;
   if (raw === undefined || raw === '') return DEFAULT_WORKER_PORT;
   const parsed = parseInt(raw, 10);
   if (!Number.isInteger(parsed) || parsed < 1 || parsed > 65535) {
     console.warn(
-      `[check-pending-queue] Invalid CLAUDE_MEM_WORKER_PORT=${JSON.stringify(raw)}; ` +
+      `[check-pending-queue] Invalid KIMI_MEM_WORKER_PORT=${JSON.stringify(raw)}; ` +
         `falling back to ${DEFAULT_WORKER_PORT}`
     );
     return DEFAULT_WORKER_PORT;
@@ -125,7 +125,7 @@ async function main() {
 
   if (args.includes('--help') || args.includes('-h')) {
     console.log(`
-Claude-Mem Pending Queue Manager
+Kimi-Mem Pending Queue Manager
 
 Check current processing status and queue depth, optionally trigger processing.
 
@@ -137,8 +137,8 @@ Options:
   --process      Trigger processing without prompting
 
 Environment:
-  CLAUDE_MEM_WORKER_HOST  Worker host (default: ${DEFAULT_WORKER_HOST})
-  CLAUDE_MEM_WORKER_PORT  Worker port (default: ${DEFAULT_WORKER_PORT})
+  KIMI_MEM_WORKER_HOST  Worker host (default: ${DEFAULT_WORKER_HOST})
+  KIMI_MEM_WORKER_PORT  Worker port (default: ${DEFAULT_WORKER_PORT})
 
 Examples:
   # Check queue status interactively
@@ -148,7 +148,7 @@ Examples:
   bun scripts/check-pending-queue.ts --process
 
 What is this for?
-  If the claude-mem worker has unprocessed observations queued, this script
+  If the kimi-mem worker has unprocessed observations queued, this script
   reports the current queue depth and lets you trigger processing.
 `);
     process.exit(0);
@@ -156,12 +156,12 @@ What is this for?
 
   const autoProcess = args.includes('--process');
 
-  console.log('\n=== Claude-Mem Pending Queue Status ===\n');
+  console.log('\n=== Kimi-Mem Pending Queue Status ===\n');
 
   const healthy = await checkWorkerHealth();
   if (!healthy) {
     console.log(`Worker is not running at ${WORKER_URL}. Start it with:`);
-    console.log('  cd ~/.claude/plugins/marketplaces/thedotmack && npm run worker:start\n');
+    console.log('  cd ~/.claude/plugins/marketplaces/YD-233 && npm run worker:start\n');
     process.exit(1);
   }
   console.log(`Worker status: Running at ${WORKER_URL}\n`);

@@ -567,7 +567,7 @@ export class SessionRoutes extends BaseRouteHandler {
 
   private async applyTierRouting(session: NonNullable<ReturnType<typeof this.sessionManager.getSession>>): Promise<void> {
     const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-    if (settings.CLAUDE_MEM_TIER_ROUTING_ENABLED === 'false') {
+    if (settings.KIMI_MEM_TIER_ROUTING_ENABLED === 'false') {
       session.modelOverride = undefined;
       return;
     }
@@ -587,7 +587,7 @@ export class SessionRoutes extends BaseRouteHandler {
     );
 
     if (hasSummarize) {
-      const summaryModel = settings.CLAUDE_MEM_TIER_SUMMARY_MODEL;
+      const summaryModel = settings.KIMI_MEM_TIER_SUMMARY_MODEL;
       if (summaryModel) {
         session.modelOverride = summaryModel;
         logger.debug('SESSION', `Tier routing: summary model`, {
@@ -595,7 +595,7 @@ export class SessionRoutes extends BaseRouteHandler {
         });
       }
     } else if (allSimple) {
-      const simpleModel = settings.CLAUDE_MEM_TIER_SIMPLE_MODEL;
+      const simpleModel = settings.KIMI_MEM_TIER_SIMPLE_MODEL;
       if (simpleModel) {
         session.modelOverride = simpleModel;
         logger.debug('SESSION', `Tier routing: simple model`, {

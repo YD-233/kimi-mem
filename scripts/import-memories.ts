@@ -5,8 +5,8 @@ import { SettingsDefaultsManager } from '../src/shared/SettingsDefaultsManager.j
 import { USER_SETTINGS_PATH } from '../src/shared/paths.js';
 
 const workerSettings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
-const WORKER_HOST = process.env.CLAUDE_MEM_WORKER_HOST || workerSettings.CLAUDE_MEM_WORKER_HOST;
-const WORKER_PORT = process.env.CLAUDE_MEM_WORKER_PORT || workerSettings.CLAUDE_MEM_WORKER_PORT;
+const WORKER_HOST = process.env.KIMI_MEM_WORKER_HOST || workerSettings.KIMI_MEM_WORKER_HOST;
+const WORKER_PORT = process.env.KIMI_MEM_WORKER_PORT || workerSettings.KIMI_MEM_WORKER_PORT;
 const WORKER_URL = `http://${WORKER_HOST}:${WORKER_PORT}`;
 
 async function importMemories(inputFile: string) {
@@ -34,7 +34,7 @@ async function importMemories(inputFile: string) {
     }
   } catch (error) {
     console.error(`❌ Worker not running at ${WORKER_URL}`);
-    console.error('   Please ensure the claude-mem worker is running.');
+    console.error('   Please ensure the kimi-mem worker is running.');
     process.exit(1);
   }
 

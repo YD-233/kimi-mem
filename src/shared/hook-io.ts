@@ -57,7 +57,7 @@ let bufferInstalled = false;
  * Replace process.stderr.write with a buffered writer. Direct
  * process.stderr.write calls (including unsolicited third-party library noise)
  * are captured into a buffer; emitDiagnostic / emitBlockingError write through
- * the bypass channel (realStderrWrite). The buffer is flushed when claude-mem
+ * the bypass channel (realStderrWrite). The buffer is flushed when kimi-mem
  * chooses to surface, and dropped on graceful success.
  */
 export function installHookStderrBuffer(): HookStderrBuffer {
@@ -113,6 +113,11 @@ export function emitDiagnostic(line: string): void {
  *
  * Uses console.log (not process.stdout.write) on purpose: the trailing newline
  * is what Claude Code's / Codex's hook parser expects.
+ *
+ * A formatOutput return of undefined/null means "no model-bound payload" and
+ * nothing is printed (the emit-once guard still trips). Kimi Code appends ANY
+ * non-empty UserPromptSubmit stdout to the model context, so its adapter uses
+ * this instead of emitting a noise `{}` no-op envelope.
  */
 export function emitModelContext(adapter: PlatformAdapter, result: HookResult): void {
   if (moduleHasEmitted) {
@@ -120,6 +125,9 @@ export function emitModelContext(adapter: PlatformAdapter, result: HookResult): 
   }
   moduleHasEmitted = true;
   const output = adapter.formatOutput(result);
+  if (output === undefined || output === null) {
+    return;
+  }
   console.log(JSON.stringify(output));
 }
 

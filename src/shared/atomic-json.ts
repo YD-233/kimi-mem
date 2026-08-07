@@ -55,7 +55,7 @@ export function writeJsonFileAtomic(filepath: string, data: any): void {
         resolved = realpathSync(filepath);
       } catch (realpathErr) {
         const realpathError = realpathErr instanceof Error ? realpathErr : new Error(String(realpathErr));
-        emitDiagnostic(`claude-mem: realpathSync failed for ${filepath}, resolving symlink manually: ${realpathError.message}\n`);
+        emitDiagnostic(`kimi-mem: realpathSync failed for ${filepath}, resolving symlink manually: ${realpathError.message}\n`);
         const linkTarget = readlinkSync(filepath);
         resolved = resolve(dirname(filepath), linkTarget);
       }
@@ -106,7 +106,7 @@ export function writeJsonFileAtomic(filepath: string, data: any): void {
         fsyncSync(dirFd);
       } catch (dirSyncErr) {
         const dirSyncError = dirSyncErr instanceof Error ? dirSyncErr : new Error(String(dirSyncErr));
-        emitDiagnostic(`claude-mem: directory fsync failed for ${dir}: ${dirSyncError.message}\n`);
+        emitDiagnostic(`kimi-mem: directory fsync failed for ${dir}: ${dirSyncError.message}\n`);
       } finally {
         if (dirFd !== undefined) {
           try { closeSync(dirFd); } catch { /* ignore */ }

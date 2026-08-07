@@ -57,7 +57,7 @@ export const contextHandler: EventHandler = {
   async execute(input: NormalizedHookInput): Promise<HookResult> {
     const cwd = input.cwd ?? process.cwd();
 
-    // Honor CLAUDE_MEM_EXCLUDED_PROJECTS on the inject/read path too. The
+    // Honor KIMI_MEM_EXCLUDED_PROJECTS on the inject/read path too. The
     // write path (ingestObservation) already skips excluded projects, but the
     // SessionStart summary was injected regardless — so an excluded dir (e.g.
     // "~") still got a context dump on every new session. Suppress it here.
@@ -76,7 +76,7 @@ export const contextHandler: EventHandler = {
     // it as systemMessage can push SessionStart stdout past Codex's hook-output
     // limit, causing Codex to discard the entire payload (including context).
     const showTerminalOutput =
-      settings.CLAUDE_MEM_CONTEXT_SHOW_TERMINAL_OUTPUT === 'true'
+      settings.KIMI_MEM_CONTEXT_SHOW_TERMINAL_OUTPUT === 'true'
       && input.platform !== 'codex';
 
     const projectsParam = context.allProjects.join(',');
@@ -125,7 +125,7 @@ export const contextHandler: EventHandler = {
     // a previous worker spawn detected an expired keychain entry.
     const staleReason = readStaleMarker();
     if (staleReason) {
-      const hint = `[claude-mem] Claude Desktop OAuth token is stale: ${staleReason}\nPlease re-login via Claude Desktop to refresh the token.`;
+      const hint = `[kimi-mem] Claude Desktop OAuth token is stale: ${staleReason}\nPlease re-login via Claude Desktop to refresh the token.`;
       additionalContext = additionalContext
         ? `${hint}\n\n${additionalContext}`
         : hint;

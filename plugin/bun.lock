@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "claude-mem-plugin",
+      "name": "kimi-mem-plugin",
       "dependencies": {
         "@derekstride/tree-sitter-sql": "^0.3.11",
         "@tree-sitter-grammars/tree-sitter-lua": "^0.4.1",

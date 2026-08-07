@@ -1,11 +1,11 @@
 {
-  "name": "claude-mem-local",
+  "name": "kimi-mem-local",
   "interface": {
-    "displayName": "claude-mem (local)"
+    "displayName": "kimi-mem (local)"
   },
   "plugins": [
     {
-      "name": "claude-mem",
+      "name": "kimi-mem",
       "source": {
         "source": "local",
         "path": "./plugin"

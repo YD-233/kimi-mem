@@ -5,8 +5,8 @@ const { existsSync, readFileSync } = require('fs');
 const path = require('path');
 const os = require('os');
 
-const INSTALLED_PATH = path.join(os.homedir(), '.claude', 'plugins', 'marketplaces', 'thedotmack');
-const CACHE_BASE_PATH = path.join(os.homedir(), '.claude', 'plugins', 'cache', 'thedotmack', 'claude-mem');
+const INSTALLED_PATH = path.join(os.homedir(), '.claude', 'plugins', 'marketplaces', 'YD-233');
+const CACHE_BASE_PATH = path.join(os.homedir(), '.claude', 'plugins', 'cache', 'YD-233', 'kimi-mem');
 
 function getCurrentBranch() {
   try {
@@ -51,7 +51,7 @@ if (branch && branch !== 'main' && !isForce) {
   console.log('\x1b[33m%s\x1b[0m', 'Running rsync would overwrite beta code.');
   console.log('');
   console.log('Options:');
-  console.log('  1. Use the claude-mem UI on the configured worker port to update beta');
+  console.log('  1. Use the kimi-mem UI on the configured worker port to update beta');
   console.log('  2. Switch to stable in UI first, then run sync');
   console.log('  3. Force rsync: npm run sync-marketplace:force');
   console.log('');
@@ -75,13 +75,13 @@ try {
   const gitignoreExcludes = getGitignoreExcludes(rootDir);
 
   execSync(
-    `rsync -av --delete --exclude=.git --exclude=bun.lock --exclude=package-lock.json --exclude=scripts/package.json --exclude=scripts/node_modules --exclude=/workers ${gitignoreExcludes} ./ ~/.claude/plugins/marketplaces/thedotmack/`,
+    `rsync -av --delete --exclude=.git --exclude=bun.lock --exclude=package-lock.json --exclude=scripts/package.json --exclude=scripts/node_modules --exclude=/workers ${gitignoreExcludes} ./ ~/.claude/plugins/marketplaces/YD-233/`,
     { stdio: 'inherit' }
   );
 
   console.log('Running bun install in marketplace...');
   execSync(
-    'cd ~/.claude/plugins/marketplaces/thedotmack/ && bun install',
+    'cd ~/.claude/plugins/marketplaces/YD-233/ && bun install',
     { stdio: 'inherit' }
   );
 

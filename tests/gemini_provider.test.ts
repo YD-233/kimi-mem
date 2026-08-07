@@ -43,10 +43,10 @@ function makeSession(overrides: Record<string, unknown> = {}) {
 function mockGeminiConfig() {
   loadFromFileSpy.mockImplementation(() => ({
     ...SettingsDefaultsManager.getAllDefaults(),
-    CLAUDE_MEM_GEMINI_API_KEY: 'test-api-key',
-    CLAUDE_MEM_GEMINI_MODEL: 'gemini-flash-latest',
-    CLAUDE_MEM_GEMINI_RATE_LIMITING_ENABLED: 'false',
-    CLAUDE_MEM_DATA_DIR: '/tmp/claude-mem-test',
+    KIMI_MEM_GEMINI_API_KEY: 'test-api-key',
+    KIMI_MEM_GEMINI_MODEL: 'gemini-flash-latest',
+    KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED: 'false',
+    KIMI_MEM_DATA_DIR: '/tmp/kimi-mem-test',
   }));
 }
 
@@ -99,17 +99,17 @@ describe('GeminiProvider', () => {
 
     loadFromFileSpy = spyOn(SettingsDefaultsManager, 'loadFromFile').mockImplementation(() => ({
       ...SettingsDefaultsManager.getAllDefaults(),
-      CLAUDE_MEM_GEMINI_API_KEY: 'test-api-key',
-      CLAUDE_MEM_GEMINI_MODEL: 'gemini-flash-latest',
-      CLAUDE_MEM_GEMINI_RATE_LIMITING_ENABLED: rateLimitingEnabled,
-      CLAUDE_MEM_DATA_DIR: '/tmp/claude-mem-test',
+      KIMI_MEM_GEMINI_API_KEY: 'test-api-key',
+      KIMI_MEM_GEMINI_MODEL: 'gemini-flash-latest',
+      KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED: rateLimitingEnabled,
+      KIMI_MEM_DATA_DIR: '/tmp/kimi-mem-test',
     }));
 
     getSpy = spyOn(SettingsDefaultsManager, 'get').mockImplementation((key: string) => {
-      if (key === 'CLAUDE_MEM_GEMINI_API_KEY') return 'test-api-key';
-      if (key === 'CLAUDE_MEM_GEMINI_MODEL') return 'gemini-flash-latest';
-      if (key === 'CLAUDE_MEM_GEMINI_RATE_LIMITING_ENABLED') return rateLimitingEnabled;
-      if (key === 'CLAUDE_MEM_DATA_DIR') return '/tmp/claude-mem-test';
+      if (key === 'KIMI_MEM_GEMINI_API_KEY') return 'test-api-key';
+      if (key === 'KIMI_MEM_GEMINI_MODEL') return 'gemini-flash-latest';
+      if (key === 'KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED') return rateLimitingEnabled;
+      if (key === 'KIMI_MEM_DATA_DIR') return '/tmp/kimi-mem-test';
       return SettingsDefaultsManager.getAllDefaults()[key as keyof ReturnType<typeof SettingsDefaultsManager.getAllDefaults>] ?? '';
     });
 

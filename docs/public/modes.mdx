@@ -1,11 +1,11 @@
 ---
 title: "Modes & Languages"
-description: "Configure Claude-Mem behavior and language with the Mode System"
+description: "Configure Kimi-Mem behavior and language with the Mode System"
 ---
 
 # Modes & Languages
 
-Claude-Mem uses a flexible **Mode System** to adapt its behavior, observation types, and output language. This allows you to switch between different workflows (like coding vs. email investigation) or languages without reinstalling the plugin.
+Kimi-Mem uses a flexible **Mode System** to adapt its behavior, observation types, and output language. This allows you to switch between different workflows (like coding vs. email investigation) or languages without reinstalling the plugin.
 
 ## What is a Mode?
 
@@ -17,18 +17,18 @@ A "mode" is a configuration profile that defines:
 
 ## Configuration
 
-Set the active mode using the `CLAUDE_MEM_MODE` setting in `~/.claude-mem/settings.json`:
+Set the active mode using the `KIMI_MEM_MODE` setting in `~/.kimi-mem/settings.json`:
 
 ```json
 {
-  "CLAUDE_MEM_MODE": "code--es"
+  "KIMI_MEM_MODE": "code--es"
 }
 ```
 
 Or via environment variable:
 
 ```bash
-export CLAUDE_MEM_MODE="code--fr"
+export KIMI_MEM_MODE="code--fr"
 ```
 
 The active mode is shown in the startup context injected into each new session, for example:
@@ -39,12 +39,12 @@ Mode: Code Development (code)
 
 ## Creating a Custom Mode
 
-Run `/mode-creator` to design a domain-specific note system through an interactive interview. It helps choose observation types and concept tags, writes and validates the mode, installs it under `~/.claude-mem/modes/`, activates it, optionally configures Telegram alerts, restarts the worker, and verifies the active mode in startup context.
+Run `/mode-creator` to design a domain-specific note system through an interactive interview. It helps choose observation types and concept tags, writes and validates the mode, installs it under `~/.kimi-mem/modes/`, activates it, optionally configures Telegram alerts, restarts the worker, and verifies the active mode in startup context.
 
 Custom modes in the data directory are durable across plugin upgrades. The worker searches user modes before bundled modes, while inherited custom modes can still use a bundled parent such as `code`:
 
 ```text
-~/.claude-mem/modes/code--architecture-practice.json
+~/.kimi-mem/modes/code--architecture-practice.json
 ```
 
 Avoid editing files inside the plugin cache because a plugin update can replace them.

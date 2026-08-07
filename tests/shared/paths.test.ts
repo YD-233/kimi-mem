@@ -44,7 +44,7 @@ describe('expandHome', () => {
   });
 
   it('leaves an absolute path untouched', () => {
-    const abs = join(homedir(), '.claude-mem');
+    const abs = join(homedir(), '.kimi-mem');
     expect(expandHome(abs)).toBe(abs);
   });
 
@@ -63,33 +63,33 @@ describe('expandHome', () => {
 });
 
 describe('resolveDataDir tilde expansion', () => {
-  // resolveDataDir consults process.env.CLAUDE_MEM_DATA_DIR first, so we can
+  // resolveDataDir consults process.env.KIMI_MEM_DATA_DIR first, so we can
   // exercise the expansion without touching the real settings.json on disk.
-  const sentinel = '/__claude_mem_test_no_real_dir__';
-  const origEnv = process.env.CLAUDE_MEM_DATA_DIR;
+  const sentinel = '/__kimi_mem_test_no_real_dir__';
+  const origEnv = process.env.KIMI_MEM_DATA_DIR;
 
   afterEach(() => {
-    if (origEnv === undefined) delete process.env.CLAUDE_MEM_DATA_DIR;
-    else process.env.CLAUDE_MEM_DATA_DIR = origEnv;
+    if (origEnv === undefined) delete process.env.KIMI_MEM_DATA_DIR;
+    else process.env.KIMI_MEM_DATA_DIR = origEnv;
   });
 
   it('returns an absolute path when the env var is a literal ~ (no stray ~ dir)', () => {
-    process.env.CLAUDE_MEM_DATA_DIR = '~/.claude-mem';
+    process.env.KIMI_MEM_DATA_DIR = '~/.kimi-mem';
     const resolved = resolveDataDir();
-    expect(resolved).toBe(join(homedir(), '.claude-mem'));
+    expect(resolved).toBe(join(homedir(), '.kimi-mem'));
     // the regression: a non-absolute, ~-prefixed value used to slip through and
     // become a cwd-relative path → a literal `~` directory on disk.
     expect(resolved.startsWith('~')).toBe(false);
-    expect(join(resolved, 'logs')).toBe(join(homedir(), '.claude-mem', 'logs'));
+    expect(join(resolved, 'logs')).toBe(join(homedir(), '.kimi-mem', 'logs'));
   });
 
   it('returns the home dir when the env var is a bare ~', () => {
-    process.env.CLAUDE_MEM_DATA_DIR = '~';
+    process.env.KIMI_MEM_DATA_DIR = '~';
     expect(resolveDataDir()).toBe(homedir());
   });
 
   it('still returns a real env-var value when it is already absolute', () => {
-    process.env.CLAUDE_MEM_DATA_DIR = sentinel;
+    process.env.KIMI_MEM_DATA_DIR = sentinel;
     expect(resolveDataDir()).toBe(sentinel);
   });
 });

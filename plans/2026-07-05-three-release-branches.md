@@ -1,6 +1,6 @@
 # Plan: Three Long-Lived Release Branches (stable / core-dev / community-edge)
 
-Owner: solo maintainer (thedotmack). Repo: github.com/thedotmack/claude-mem.
+Owner: solo maintainer (thedotmack). Repo: github.com/YD-233/kimi-mem.
 Goal: turn the three plan PRs into three permanent release lines, document the
 strategy in one place, and give clone/run instructions for the non-stable lines.
 
@@ -8,7 +8,7 @@ strategy in one place, and give clone/run instructions for the non-stable lines.
 
 | Line            | Branch           | For                                          | Published to npm? |
 |-----------------|------------------|----------------------------------------------|-------------------|
-| Stable          | `main`           | Everyone. The `npx claude-mem` install.      | Yes (only line)   |
+| Stable          | `main`           | Everyone. The `npx kimi-mem` install.      | Yes (only line)   |
 | Core Dev        | `core-dev`       | Maintainer + testers wanting root-cause fixes | No — run from source |
 | Community Edge  | `community-edge` | Bleeding edge, integrated community PRs       | No — run from source |
 
@@ -71,13 +71,13 @@ Create `docs/public/branches.mdx`. Contents (copy this structure, don't invent):
   integrations (least stable).
 - Section "Run a non-stable line locally":
   ```bash
-  git clone https://github.com/thedotmack/claude-mem.git
-  cd claude-mem
+  git clone https://github.com/YD-233/kimi-mem.git
+  cd kimi-mem
   git checkout core-dev          # or: community-edge
   npm install
   npm run build-and-sync         # builds + syncs to local marketplace + restarts worker
   ```
-  Note: only `main` is published to npm, so `npx claude-mem@latest` always = stable.
+  Note: only `main` is published to npm, so `npx kimi-mem@latest` always = stable.
   To go back to stable: `git checkout main && npm run build-and-sync`.
 - Section "Releasing" (maintainer): releases (`npm run release`, tags, publish)
   happen from `main` only. Edge lines are source-run and never published.
@@ -90,8 +90,8 @@ ones: `build-and-sync`, `release`, `release:patch|minor|major`).
 1. `docs/public/docs.json`: add `"branches"` to the "Configuration & Development"
    group pages array (after `"development"`). Keep JSON valid.
 2. `README.md` contributing section (~line 374): add a short line pointing to the
-   Release Branches doc — "claude-mem ships from three branches: `main` (stable),
-   `core-dev`, `community-edge`. See [Release Branches](https://docs.claude-mem.ai/branches)."
+   Release Branches doc — "kimi-mem ships from three branches: `main` (stable),
+   `core-dev`, `community-edge`. See [Release Branches](https://docs.kimi-mem.ai/branches)."
 
 **Verify:** `node -e "JSON.parse(require('fs').readFileSync('docs/public/docs.json','utf8'))"`
 exits clean. README renders the link.

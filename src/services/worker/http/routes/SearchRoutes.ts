@@ -38,11 +38,11 @@ const cachedOnboardingExplainer: string | null = (() => {
 // TTL-cached settings reader. handleContextInject runs on every hook callback
 // (PostToolUse fires after every Read/Edit), so re-parsing settings.json from
 // disk on every request would mean a sync read per tool call. 5s is short
-// enough that toggling CLAUDE_MEM_WELCOME_HINT_ENABLED is responsive in
+// enough that toggling KIMI_MEM_WELCOME_HINT_ENABLED is responsive in
 // practice and long enough to absorb hook bursts.
 const SETTINGS_CACHE_TTL_MS = 5000;
 
-const WELCOME_HINT_TEMPLATE = `# claude-mem status
+const WELCOME_HINT_TEMPLATE = `# kimi-mem status
 
 This project has no memory yet. The current session will seed it; subsequent sessions will receive auto-injected context for relevant past work.
 
@@ -302,14 +302,14 @@ export class SearchRoutes extends BaseRouteHandler {
     // applyEnvOverrides semantics). Reading process.env is free, so honoring it
     // here keeps the welcome-hint toggle responsive without waiting out the
     // settings cache TTL.
-    const hintEnabledRaw = process.env.CLAUDE_MEM_WELCOME_HINT_ENABLED ?? settings.CLAUDE_MEM_WELCOME_HINT_ENABLED;
+    const hintEnabledRaw = process.env.KIMI_MEM_WELCOME_HINT_ENABLED ?? settings.KIMI_MEM_WELCOME_HINT_ENABLED;
     const hintEnabled = String(hintEnabledRaw ?? '').toLowerCase() === 'true';
     if (hintEnabled && !full) {
       const sessionStore = this.searchManager.getSessionStore();
       // Memoized: skips the COUNT(*) query once any project in the set has
       // observations. Hot-path: PostToolUse fires after every Read/Edit.
       if (!this.projectsHaveObservations(sessionStore, projects, platformSource)) {
-        const port = process.env.CLAUDE_MEM_WORKER_PORT ?? settings.CLAUDE_MEM_WORKER_PORT;
+        const port = process.env.KIMI_MEM_WORKER_PORT ?? settings.KIMI_MEM_WORKER_PORT;
         const viewerUrl = `http://localhost:${port}`;
         const hintBody = WELCOME_HINT_TEMPLATE.replace('{viewer_url}', viewerUrl);
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -363,8 +363,8 @@ export class SearchRoutes extends BaseRouteHandler {
       telemetryBuffer.record('context_injected', null, {
         outcome: 'ok',
         duration_ms: Date.now() - injectStartedAt,
-        mode: settingsSnapshot.CLAUDE_MEM_MODE,
-        provider: settingsSnapshot.CLAUDE_MEM_PROVIDER,
+        mode: settingsSnapshot.KIMI_MEM_MODE,
+        provider: settingsSnapshot.KIMI_MEM_PROVIDER,
         ...contextResult.stats,
       });
     }

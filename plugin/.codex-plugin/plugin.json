@@ -1,15 +1,17 @@
 {
-  "name": "claude-mem",
+  "name": "kimi-mem",
   "version": "13.13.1",
-  "description": "Memory compression system for Claude Code - persist context across sessions",
+  "description": "Memory compression system for Kimi Code and Claude Code - persist context across sessions",
   "author": {
     "name": "Alex Newman",
     "url": "https://github.com/thedotmack"
   },
-  "homepage": "https://github.com/thedotmack/claude-mem#readme",
-  "repository": "https://github.com/thedotmack/claude-mem",
+  "homepage": "https://github.com/YD-233/kimi-mem#readme",
+  "repository": "https://github.com/YD-233/kimi-mem",
   "license": "Apache-2.0",
   "keywords": [
+    "kimi",
+    "kimi-code",
     "claude",
     "claude-code",
     "claude-agent-sdk",
@@ -26,16 +28,16 @@
   "mcpServers": "./.mcp.json",
   "hooks": "./hooks/codex-hooks.json",
   "interface": {
-    "displayName": "claude-mem",
+    "displayName": "kimi-mem",
     "shortDescription": "Persistent memory and context compression across coding sessions.",
-    "longDescription": "claude-mem captures coding-session activity, compresses it into reusable observations, and injects relevant context back into future Claude Code and Codex-compatible sessions.",
+    "longDescription": "kimi-mem captures coding-session activity, compresses it into reusable observations, and injects relevant context back into future Claude Code and Codex-compatible sessions.",
     "developerName": "Alex Newman",
     "category": "Productivity",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "websiteURL": "https://github.com/thedotmack/claude-mem",
+    "websiteURL": "https://github.com/YD-233/kimi-mem",
     "defaultPrompt": [
       "Find what I already learned about this codebase before I start a new task.",
       "Show recent observations related to the files I am editing right now.",
