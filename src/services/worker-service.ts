@@ -74,7 +74,7 @@ import {
 } from './integrations/CursorHooksInstaller.js';
 import {
   handleKimiCommand
-} from './integrations/KimiHooksInstaller.js';
+} from './integrations/KimiInstaller.js';
 import {
   handleAntigravityCliCommand
 } from './integrations/AntigravityCliHooksInstaller.js';

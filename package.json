@@ -46,6 +46,7 @@
     "plugin/bun.lock",
     "plugin/hooks",
     "plugin/modes",
+    "plugin/commands",
     "plugin/scripts/*.js",
     "plugin/scripts/*.cjs",
     "plugin/sqlite",

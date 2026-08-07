@@ -326,17 +326,17 @@ function makeIDETask(ideId: string, summary: InstallSummary): TaskDescriptor | n
 
     case 'kimi': {
       return {
-        title: 'Kimi Code: installing hooks + MCP',
+        title: 'Kimi Code: installing plugin',
         task: async (message) => {
           message('Loading Kimi Code installer…');
-          const { installKimiHooks } = await import('../../services/integrations/KimiHooksInstaller.js');
-          message('Installing Kimi Code hooks + MCP…');
-          const { result, output } = await bufferConsole(() => installKimiHooks());
+          const { installKimiIntegration } = await import('../../services/integrations/KimiInstaller.js');
+          message('Installing Kimi Code plugin…');
+          const { result, output } = await bufferConsole(() => installKimiIntegration());
           if (result !== 0) {
-            recordFailure('Kimi Code: hooks + MCP installation failed', output);
-            return `Kimi Code: hooks + MCP installation failed ${styleText('red', 'FAIL')}`;
+            recordFailure('Kimi Code: plugin installation failed', output);
+            return `Kimi Code: plugin installation failed ${styleText('red', 'FAIL')}`;
           }
-          return `Kimi Code: hooks + MCP installed ${styleText('green', 'OK')}`;
+          return `Kimi Code: plugin installed ${styleText('green', 'OK')}`;
         },
       };
     }

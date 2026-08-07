@@ -15,6 +15,7 @@
   "skills": [
     "./skills/"
   ],
+  "commands": "./commands/",
   "mcpServers": {
     "mcp-search": {
       "command": "node",

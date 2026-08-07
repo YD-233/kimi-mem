@@ -81,6 +81,7 @@ describe('Plugin Distribution - Required Files', () => {
     'plugin/.codex-plugin/plugin.json',
     'plugin/.mcp.json',
     'plugin/kimi.plugin.json',
+    'plugin/commands/model.md',
     'plugin/sqlite/SessionStore.js',
     'plugin/sqlite/observations/files.js',
     'plugin/skills/mem-search/SKILL.md',
