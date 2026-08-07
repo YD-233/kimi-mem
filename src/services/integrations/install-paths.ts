@@ -30,17 +30,28 @@ function firstExisting(candidates: string[]): string | null {
 /**
  * Absolute path to the installed plugin root (the directory that contains
  * `scripts/`). Probes, in order: CLAUDE_PLUGIN_ROOT env, PLUGIN_ROOT env,
- * the Claude marketplace cache root, then the current working directory's
- * `plugin/` (repo/dev checkout) and the cwd itself.
+ * the Claude marketplace cache root, the running script's own location
+ * (`<root>/plugin/scripts/<bundle>` → `<root>/plugin`, so one-click
+ * `curl | bash` installs work from any cwd), then the current working
+ * directory's `plugin/` (repo/dev checkout) and the cwd itself.
  *
  * Returns null when no candidate contains `scripts/` — callers surface a
  * "could not find" install error.
  */
 export function getPluginRootAbsolutePath(): string | null {
+  // Anchor on the running bundle itself. When executed as
+  // `<root>/plugin/scripts/worker-service.cjs`, the plugin root is one level
+  // up from the script's directory — independent of process.cwd(). Under the
+  // npx CLI (dist/npx-cli/index.js) this candidate simply fails the
+  // `scripts/` existence check below and probing falls through.
+  const scriptAnchor = process.argv[1]
+    ? path.resolve(path.dirname(process.argv[1]), '..')
+    : '';
   const candidates = [
     process.env.CLAUDE_PLUGIN_ROOT,
     process.env.PLUGIN_ROOT,
     path.join(MARKETPLACE_ROOT, 'plugin'),
+    scriptAnchor,
     path.join(process.cwd(), 'plugin'),
     process.cwd(),
   ].filter((value): value is string => Boolean(value));

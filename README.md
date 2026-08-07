@@ -169,6 +169,24 @@ To view or change the compression model later, use the slash command inside Kimi
 
 Manage the integration with `kimi-mem kimi install|uninstall|status` (or `npm run kimi:install` etc. from a repo checkout).
 
+**Uninstall** — stops the worker, removes the plugin (managed copy + `installed.json` record; other plugins and your own config files are never touched), and deletes the repo checkout. Your memory data and settings in `~/.kimi-mem` are kept unless you explicitly purge:
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.ps1 | iex
+# add -Purge to also delete ~/.kimi-mem (memory database + API key):
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.ps1))) -Purge
+```
+
+**Linux / macOS:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.sh | bash
+# add --purge to also delete ~/.kimi-mem (memory database + API key):
+curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.sh | bash -s -- --purge
+```
+
 Or install from the plugin marketplace inside Claude Code:
 
 ```bash
