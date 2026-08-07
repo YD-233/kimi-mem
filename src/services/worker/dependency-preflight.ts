@@ -3,11 +3,13 @@ import os from 'os';
 import fs from 'fs';
 import { sanitizeEnv } from '../../supervisor/env-sanitizer.js';
 import { findClaudeExecutable as defaultFindClaudeExecutable } from '../../shared/find-claude-executable.js';
+import { findKimiExecutable as defaultFindKimiExecutable } from '../../shared/find-kimi-executable.js';
 import { getUvxBinDirs } from '../../shared/uvx-bin-dirs.js';
 import { logger } from '../../utils/logger.js';
 import {
   clearDependencyStatus,
   recordClaudeCliSetupRequired,
+  recordKimiCliSetupRequired,
   recordUvxVectorSearchUnavailable,
   snapshotDependencyHealth,
   type DependencyHealthSnapshot,
@@ -27,6 +29,7 @@ export interface WorkerDependencyPreflightOptions {
   settings: DependencyPreflightSettings;
   classifyClaudeError: (error: unknown) => ClassifiedClaudeSetupError;
   findClaudeExecutable?: () => string;
+  findKimiExecutable?: () => string;
   env?: Record<string, string | undefined>;
   platform?: NodeJS.Platform;
   homedir?: () => string;
@@ -171,6 +174,20 @@ export function runWorkerDependencyPreflight(options: WorkerDependencyPreflightO
     }
   } else {
     clearDependencyStatus('claude_cli');
+  }
+
+  if (provider === 'kimi') {
+    const findKimiExecutable = options.findKimiExecutable ?? (() => defaultFindKimiExecutable('WORKER'));
+    try {
+      findKimiExecutable();
+      clearDependencyStatus('kimi_cli');
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.warn('WORKER', 'kimi CLI dependency preflight failed', {}, err);
+      recordKimiCliSetupRequired(err.message);
+    }
+  } else {
+    clearDependencyStatus('kimi_cli');
   }
 
   if (chromaEnabled) {

@@ -38,13 +38,10 @@ import {
 
 const KIMI_PLUGIN_ID = 'kimi-mem';
 const KIMI_PLUGIN_MANIFEST = 'kimi.plugin.json';
+// Example values for the optional independent-API fallback shown in the
+// post-install hint — not written to settings by default.
 const MOONSHOT_BASE_URL = 'https://api.moonshot.cn/v1';
 const MOONSHOT_DEFAULT_MODEL = 'kimi-k2.6';
-const OPENROUTER_FALLBACK_DEFAULT_MODEL = 'xiaomi/mimo-v2-flash:free';
-// Factory tier defaults are Claude aliases ('haiku'/'sonnet') or empty. Sent
-// verbatim to Moonshot's API they fail, so the installer pins them to the
-// Moonshot model — but never overwrites a tier model the user customized.
-const CLAUDE_TIER_ALIAS_DEFAULTS = new Set(['haiku', 'sonnet']);
 
 const WORKER_HEALTH_TIMEOUT_MS = 1500;
 
@@ -170,32 +167,23 @@ function removeInstallRecord(installedJsonPath: string): boolean {
 }
 
 /**
- * Kimi users do not have the `claude` CLI the default compression provider
- * spawns. When nothing is configured yet (provider untouched at the 'claude'
- * default and no OpenRouter key present), point the OpenAI-compatible provider
- * at Moonshot's API and leave the API key for the user to fill in. Never
- * overwrites an explicit provider choice or an existing key/model/base URL.
+ * Kimi Code installs already carry a logged-in `kimi` CLI, so the kimi
+ * compression provider (which spawns it headlessly and reuses its configured
+ * model + auth) is the zero-config default — no API key anywhere. Only
+ * written when the provider is untouched at the 'claude' factory default and
+ * no OpenRouter key is present; an explicit provider choice or existing key
+ * is never overwritten.
  */
-function ensureMoonshotProviderDefaults(): boolean {
+function ensureKimiProviderDefaults(): boolean {
   const settingsPath = paths.settings();
   const settings = SettingsDefaultsManager.loadFromFile(settingsPath, false);
 
   if (settings.KIMI_MEM_PROVIDER !== 'claude') return false;
   if (settings.KIMI_MEM_OPENROUTER_API_KEY) return false;
 
-  const model = settings.KIMI_MEM_OPENROUTER_MODEL;
-  const tierSimple = settings.KIMI_MEM_TIER_SIMPLE_MODEL;
-  const tierSummary = settings.KIMI_MEM_TIER_SUMMARY_MODEL;
   writeJsonFileAtomic(settingsPath, {
     ...settings,
-    KIMI_MEM_PROVIDER: 'openrouter',
-    KIMI_MEM_OPENROUTER_BASE_URL: settings.KIMI_MEM_OPENROUTER_BASE_URL || MOONSHOT_BASE_URL,
-    KIMI_MEM_OPENROUTER_MODEL:
-      !model || model === OPENROUTER_FALLBACK_DEFAULT_MODEL ? MOONSHOT_DEFAULT_MODEL : model,
-    KIMI_MEM_TIER_SIMPLE_MODEL:
-      !tierSimple || CLAUDE_TIER_ALIAS_DEFAULTS.has(tierSimple) ? MOONSHOT_DEFAULT_MODEL : tierSimple,
-    KIMI_MEM_TIER_SUMMARY_MODEL:
-      !tierSummary || CLAUDE_TIER_ALIAS_DEFAULTS.has(tierSummary) ? MOONSHOT_DEFAULT_MODEL : tierSummary,
+    KIMI_MEM_PROVIDER: 'kimi',
   });
   return true;
 }
@@ -220,7 +208,7 @@ export async function installKimiIntegration(): Promise<number> {
     upsertInstallRecord(getInstalledJsonPath(), managedRoot);
     console.log(`  Registered plugin "${KIMI_PLUGIN_ID}" in ${getInstalledJsonPath()}`);
 
-    const providerConfigured = ensureMoonshotProviderDefaults();
+    const providerConfigured = ensureKimiProviderDefaults();
 
     console.log(`
 Installation complete!
@@ -232,22 +220,20 @@ The plugin provides: SessionStart (warm worker), UserPromptSubmit (session-init 
 
 Next steps:
   1. Restart Kimi Code (or run /reload) so the plugin is loaded
-  2. Set your Moonshot API key: KIMI_MEM_OPENROUTER_API_KEY in ${paths.settings()}
-  3. Optional: change the compression model inside Kimi Code with /kimi-mem:model <model>
+  2. Optional: change the compression model inside Kimi Code with /kimi-mem:model <model>
 `);
 
     if (providerConfigured) {
       console.log(`Compression provider:
-  kimi-mem's default provider spawns the Claude CLI, which Kimi Code setups
-  usually lack. ${paths.settings()} was preconfigured for Moonshot's
-  OpenAI-compatible API:
+  ${paths.settings()} was preconfigured with
+    KIMI_MEM_PROVIDER=kimi
+  Memory compression reuses your logged-in Kimi Code CLI and its default
+  model — no API key or extra config needed.
+  Prefer an independent OpenAI-compatible API instead? Set:
     KIMI_MEM_PROVIDER=openrouter
+    KIMI_MEM_OPENROUTER_API_KEY=<your key>  (https://platform.moonshot.cn/)
     KIMI_MEM_OPENROUTER_BASE_URL=${MOONSHOT_BASE_URL}
     KIMI_MEM_OPENROUTER_MODEL=${MOONSHOT_DEFAULT_MODEL}
-    KIMI_MEM_TIER_SIMPLE_MODEL=${MOONSHOT_DEFAULT_MODEL}
-    KIMI_MEM_TIER_SUMMARY_MODEL=${MOONSHOT_DEFAULT_MODEL}
-  Set your Moonshot API key to enable memory compression:
-    KIMI_MEM_OPENROUTER_API_KEY=<your key>  (https://platform.moonshot.cn/)
 `);
     } else {
       console.log(`Compression provider: existing settings left untouched
@@ -328,9 +314,14 @@ export async function checkKimiIntegrationStatus(): Promise<number> {
   const settings = SettingsDefaultsManager.loadFromFile(paths.settings(), false);
   const provider = settings.KIMI_MEM_PROVIDER;
   const hasKey = Boolean(settings.KIMI_MEM_OPENROUTER_API_KEY);
-  console.log(`Provider: ${provider}${provider === 'openrouter' ? ` (model: ${settings.KIMI_MEM_OPENROUTER_MODEL || 'default'}, base URL: ${settings.KIMI_MEM_OPENROUTER_BASE_URL || 'openrouter.ai default'}, API key: ${hasKey ? 'set' : 'MISSING'})` : ''}`);
-  if (provider === 'openrouter' && !hasKey) {
-    console.log('  Hint: set KIMI_MEM_OPENROUTER_API_KEY in the settings file above to enable compression.');
+  if (provider === 'kimi') {
+    const model = settings.KIMI_MEM_MODEL;
+    console.log(`Provider: kimi (uses your logged-in Kimi Code CLI; model setting: ${model || 'default'})`);
+  } else {
+    console.log(`Provider: ${provider}${provider === 'openrouter' ? ` (model: ${settings.KIMI_MEM_OPENROUTER_MODEL || 'default'}, base URL: ${settings.KIMI_MEM_OPENROUTER_BASE_URL || 'openrouter.ai default'}, API key: ${hasKey ? 'set' : 'MISSING'})` : ''}`);
+    if (provider === 'openrouter' && !hasKey) {
+      console.log('  Hint: set KIMI_MEM_OPENROUTER_API_KEY in the settings file above to enable compression.');
+    }
   }
 
   console.log('');

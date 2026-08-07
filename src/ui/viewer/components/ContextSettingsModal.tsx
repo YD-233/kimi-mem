@@ -332,17 +332,32 @@ export function ContextSettingsModal({
             >
               <FormField
                 label="AI Provider"
-                tooltip="Choose between Claude (via Agent SDK) or Gemini (via REST API)"
+                tooltip="Choose between Claude (via Agent SDK), Kimi Code CLI, Gemini (via REST API), or an OpenAI-compatible API"
               >
                 <select
                   value={formState.KIMI_MEM_PROVIDER || 'claude'}
                   onChange={(e) => updateSetting('KIMI_MEM_PROVIDER', e.target.value)}
                 >
                   <option value="claude">Claude (uses your Claude account)</option>
+                  <option value="kimi">Kimi Code CLI (uses your kimi login)</option>
                   <option value="gemini">Gemini (uses API key)</option>
                   <option value="openrouter">OpenRouter (multi-model)</option>
                 </select>
               </FormField>
+
+              {formState.KIMI_MEM_PROVIDER === 'kimi' && (
+                <FormField
+                  label="Kimi Model"
+                  tooltip="Model alias passed to the kimi CLI as `kimi -m <alias>` (e.g. kimi-code/kimi-for-coding). Empty or a claude-style value (haiku/sonnet/opus/claude-*) uses the CLI's own default_model from ~/.kimi-code/config.toml."
+                >
+                  <input
+                    type="text"
+                    value={formState.KIMI_MEM_MODEL || ''}
+                    onChange={(e) => updateSetting('KIMI_MEM_MODEL', e.target.value)}
+                    placeholder="kimi default_model"
+                  />
+                </FormField>
+              )}
 
               {formState.KIMI_MEM_PROVIDER === 'claude' && (
                 <FormField

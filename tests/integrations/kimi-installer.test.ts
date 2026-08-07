@@ -4,14 +4,12 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 
 import { paths } from '../../src/shared/paths.js';
+import { SettingsDefaultsManager } from '../../src/shared/SettingsDefaultsManager.js';
 import {
   installKimiIntegration,
   uninstallKimiIntegration,
   checkKimiIntegrationStatus,
 } from '../../src/services/integrations/KimiInstaller.js';
-
-const MOONSHOT_MODEL = 'kimi-k2.6';
-const MOONSHOT_BASE_URL = 'https://api.moonshot.cn/v1';
 
 /**
  * Minimal fake plugin root so installs copy a few bytes instead of the real
@@ -117,16 +115,20 @@ describe('KimiInstaller (plugin-based)', () => {
       expect(existsSync(join(kimiHome, 'mcp.json'))).toBe(false);
     });
 
-    it('writes Moonshot provider defaults (kimi-k2.6 incl. tier models) to a fresh settings.json', async () => {
+    it('writes provider=kimi to a fresh settings.json without forcing openrouter keys', async () => {
       const result = await installKimiIntegration();
       expect(result).toBe(0);
 
+      const defaults = SettingsDefaultsManager.getAllDefaults();
       const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
-      expect(settings.KIMI_MEM_PROVIDER).toBe('openrouter');
-      expect(settings.KIMI_MEM_OPENROUTER_BASE_URL).toBe(MOONSHOT_BASE_URL);
-      expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe(MOONSHOT_MODEL);
-      expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe(MOONSHOT_MODEL);
-      expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe(MOONSHOT_MODEL);
+      expect(settings.KIMI_MEM_PROVIDER).toBe('kimi');
+      // The independent-API fallback stays at factory defaults — the
+      // installer no longer pins Moonshot base URL/model/tier values.
+      expect(settings.KIMI_MEM_OPENROUTER_API_KEY ?? '').toBe('');
+      expect(settings.KIMI_MEM_OPENROUTER_BASE_URL).toBe(defaults.KIMI_MEM_OPENROUTER_BASE_URL);
+      expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe(defaults.KIMI_MEM_OPENROUTER_MODEL);
+      expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe(defaults.KIMI_MEM_TIER_SIMPLE_MODEL);
+      expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe(defaults.KIMI_MEM_TIER_SUMMARY_MODEL);
     });
 
     it('leaves settings untouched when an API key is already configured', async () => {
@@ -141,11 +143,12 @@ describe('KimiInstaller (plugin-based)', () => {
       expect(result).toBe(0);
 
       const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
+      expect(settings.KIMI_MEM_PROVIDER).toBe('openrouter');
       expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe('custom-model');
       expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe('custom-tier');
     });
 
-    it('keeps customized model/tier values when writing defaults', async () => {
+    it('keeps customized openrouter model/tier values when writing provider=kimi', async () => {
       writeFileSync(settingsPath, JSON.stringify({
         KIMI_MEM_OPENROUTER_MODEL: 'custom-model',
         KIMI_MEM_TIER_SIMPLE_MODEL: 'custom-tier',
@@ -155,11 +158,9 @@ describe('KimiInstaller (plugin-based)', () => {
       expect(result).toBe(0);
 
       const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
-      expect(settings.KIMI_MEM_PROVIDER).toBe('openrouter');
+      expect(settings.KIMI_MEM_PROVIDER).toBe('kimi');
       expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe('custom-model');
       expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe('custom-tier');
-      // Untouched tier summary (factory default '') is pinned to Moonshot.
-      expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe(MOONSHOT_MODEL);
     });
 
     it('preserves other plugin records and keeps installedAt on re-install', async () => {

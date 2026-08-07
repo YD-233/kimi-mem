@@ -121,4 +121,75 @@ describe('worker dependency preflight', () => {
     });
     expect(getDependencyStatus('claude_cli')?.remediation).toContain('Claude Code CLI');
   });
+
+  it('checks the kimi CLI instead of Claude when provider=kimi', () => {
+    let claudeChecked = false;
+
+    const snapshot = runWorkerDependencyPreflight({
+      settings: {
+        KIMI_MEM_PROVIDER: 'kimi',
+        KIMI_MEM_CHROMA_ENABLED: 'false',
+      },
+      classifyClaudeError: classifier,
+      findClaudeExecutable: () => {
+        claudeChecked = true;
+        throw new Error('Claude should not be checked for kimi');
+      },
+      findKimiExecutable: () => '/usr/local/bin/kimi',
+      env: { PATH: '' },
+      platform: 'linux',
+      homedir: () => '/tmp/home',
+      pathExists: () => false,
+      isFile: () => false,
+    });
+
+    expect(claudeChecked).toBe(false);
+    expect(getDependencyStatus('kimi_cli')).toBeNull();
+    expect(getDependencyStatus('claude_cli')).toBeNull();
+    expect(snapshot.degraded).toBe(false);
+  });
+
+  it('records kimi_cli setup_required when kimi is selected and discovery fails', () => {
+    runWorkerDependencyPreflight({
+      settings: {
+        KIMI_MEM_PROVIDER: 'kimi',
+        KIMI_MEM_CHROMA_ENABLED: 'false',
+      },
+      classifyClaudeError: classifier,
+      findKimiExecutable: () => {
+        throw new Error('Kimi executable not found. Please install Kimi Code.');
+      },
+      env: { PATH: '' },
+      platform: 'linux',
+      homedir: () => '/tmp/home',
+      pathExists: () => false,
+      isFile: () => false,
+    });
+
+    expect(getDependencyStatus('kimi_cli')).toMatchObject({
+      dependency: 'kimi_cli',
+      kind: 'setup_required',
+      message: 'Kimi executable not found. Please install Kimi Code.',
+    });
+    expect(getDependencyStatus('kimi_cli')?.remediation).toContain('kimi');
+  });
+
+  it('clears a stale kimi_cli status when a non-kimi provider is selected', () => {
+    recordDependencyStatus('kimi_cli', 'setup_required', 'old failure');
+
+    runWorkerDependencyPreflight({
+      settings: {
+        KIMI_MEM_PROVIDER: 'openrouter',
+        KIMI_MEM_CHROMA_ENABLED: 'false',
+      },
+      classifyClaudeError: classifier,
+      env: { PATH: '' },
+      platform: 'linux',
+      homedir: () => '/tmp/home',
+      pathExists: () => false,
+      isFile: () => false,
+    });
+
+    expect(getDependencyStatus('kimi_cli')).toBeNull();
+  });
 });

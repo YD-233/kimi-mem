@@ -40,6 +40,7 @@ export interface SettingsDefaults {
   KIMI_MEM_LOG_LEVEL: string;
   KIMI_MEM_PYTHON_VERSION: string;
   CLAUDE_CODE_PATH: string;
+  KIMI_CLI_PATH: string;
   KIMI_MEM_MODE: string;
   KIMI_MEM_CONTEXT_SHOW_READ_TOKENS: string;
   KIMI_MEM_CONTEXT_SHOW_WORK_TOKENS: string;
@@ -135,6 +136,7 @@ export class SettingsDefaultsManager {
     KIMI_MEM_LOG_LEVEL: 'INFO',
     KIMI_MEM_PYTHON_VERSION: '3.13',
     CLAUDE_CODE_PATH: '', // Empty means auto-detect via 'which claude'
+    KIMI_CLI_PATH: '', // Empty means auto-detect via 'which kimi' (kimi compression provider)
     KIMI_MEM_MODE: 'code', // Default mode profile
     KIMI_MEM_CONTEXT_SHOW_READ_TOKENS: 'false',
     KIMI_MEM_CONTEXT_SHOW_WORK_TOKENS: 'false',

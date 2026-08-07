@@ -10,6 +10,7 @@ import { DatabaseManager } from '../../DatabaseManager.js';
 import { ClaudeProvider } from '../../ClaudeProvider.js';
 import { GeminiProvider, isGeminiSelected, isGeminiAvailable } from '../../GeminiProvider.js';
 import { OpenRouterProvider, isOpenRouterSelected, isOpenRouterAvailable } from '../../OpenRouterProvider.js';
+import { KimiProvider, isKimiSelected } from '../../KimiProvider.js';
 import type { WorkerService } from '../../../worker-service.js';
 import { BaseRouteHandler } from '../BaseRouteHandler.js';
 import { SessionEventBroadcaster } from '../../events/SessionEventBroadcaster.js';
@@ -27,8 +28,10 @@ import {
   getDependencyStatus,
   isDependencyStatusInCooldown,
   recordClaudeCliSetupRequired,
+  recordKimiCliSetupRequired,
 } from '../../../../shared/dependency-health.js';
 import { findClaudeExecutable } from '../../../../shared/find-claude-executable.js';
+import { findKimiExecutable } from '../../../../shared/find-kimi-executable.js';
 import { isClassified } from '../../provider-errors.js';
 import { classifyClaudeError } from '../../ClaudeProvider.js';
 
@@ -59,6 +62,7 @@ export class SessionRoutes extends BaseRouteHandler {
     private sdkAgent: ClaudeProvider,
     private geminiAgent: GeminiProvider,
     private openRouterAgent: OpenRouterProvider,
+    private kimiAgent: KimiProvider,
     private eventBroadcaster: SessionEventBroadcaster,
     private workerService: WorkerService,
     private completionHandler: SessionCompletionHandler,
@@ -66,7 +70,15 @@ export class SessionRoutes extends BaseRouteHandler {
     super();
   }
 
-  private getSelectedProvider(): 'claude' | 'gemini' | 'openrouter' {
+  private getSelectedProvider(): 'claude' | 'gemini' | 'openrouter' | 'kimi' {
+    // kimi is selected without an availability check: its "credential" is the
+    // local CLI, and when that is missing the kimi branch below surfaces a
+    // kimi-specific setup_required instead of silently falling back to claude
+    // (which Kimi Code installs usually lack — the fallback error would point
+    // at the wrong CLI).
+    if (isKimiSelected()) {
+      return 'kimi';
+    }
     if (isOpenRouterSelected() && isOpenRouterAvailable()) {
       return 'openrouter';
     }
@@ -116,6 +128,39 @@ export class SessionRoutes extends BaseRouteHandler {
           }
         }
       }
+      if (selectedProvider === 'kimi') {
+        const kimiStatus = getDependencyStatus('kimi_cli');
+        if (kimiStatus?.kind === 'setup_required') {
+          if (isDependencyStatusInCooldown(kimiStatus, CLAUDE_CLI_SETUP_RECHECK_COOLDOWN_MS)) {
+            logger.warn('SESSION', 'Skipping kimi generator start until setup is repaired', {
+              sessionId: sessionDbId,
+              source,
+              dependency: kimiStatus.dependency,
+              status: kimiStatus.kind,
+              message: kimiStatus.message,
+            });
+            return;
+          }
+
+          try {
+            findKimiExecutable('SDK');
+            clearDependencyStatus('kimi_cli');
+            logger.info('SESSION', 'kimi CLI setup dependency repaired; resuming generator start', {
+              sessionId: sessionDbId,
+              source,
+            });
+          } catch (error) {
+            const err = error instanceof Error ? error : new Error(String(error));
+            recordKimiCliSetupRequired(err.message);
+            logger.warn('SESSION', 'kimi CLI setup dependency still unavailable after cooldown', {
+              sessionId: sessionDbId,
+              source,
+              error: err.message,
+            }, err);
+            return;
+          }
+        }
+      }
       await this.applyTierRouting(session);
       await this.startGeneratorWithProvider(session, selectedProvider, source);
       return;
@@ -135,7 +180,7 @@ export class SessionRoutes extends BaseRouteHandler {
 
   private async startGeneratorWithProvider(
     session: ReturnType<typeof this.sessionManager.getSession>,
-    provider: 'claude' | 'gemini' | 'openrouter',
+    provider: 'claude' | 'gemini' | 'openrouter' | 'kimi',
     source: string
   ): Promise<void> {
     if (!session) return;
@@ -147,8 +192,12 @@ export class SessionRoutes extends BaseRouteHandler {
       session.abortController = new AbortController();
     }
 
-    const agent = provider === 'openrouter' ? this.openRouterAgent : (provider === 'gemini' ? this.geminiAgent : this.sdkAgent);
-    const agentName = provider === 'openrouter' ? 'OpenRouter' : (provider === 'gemini' ? 'Gemini' : 'Claude SDK');
+    const agent = provider === 'kimi' ? this.kimiAgent
+      : provider === 'openrouter' ? this.openRouterAgent
+      : (provider === 'gemini' ? this.geminiAgent : this.sdkAgent);
+    const agentName = provider === 'kimi' ? 'kimi CLI'
+      : provider === 'openrouter' ? 'OpenRouter'
+      : (provider === 'gemini' ? 'Gemini' : 'Claude SDK');
 
     const actualQueueDepth = this.sessionManager.getMessageBuffer().getPendingCount(session.sessionDbId);
 
@@ -181,6 +230,17 @@ export class SessionRoutes extends BaseRouteHandler {
           skipGeneratorExitFinalization = true;
           recordClaudeCliSetupRequired(error.message);
           logger.warn('SESSION', 'Claude generator start requires setup; future Claude starts will be skipped until repaired', {
+            sessionId: session.sessionDbId,
+            provider,
+            error: error.message,
+          });
+          return;
+        }
+
+        if (provider === 'kimi' && isClassified(error) && error.kind === 'setup_required') {
+          skipGeneratorExitFinalization = true;
+          recordKimiCliSetupRequired(error.message);
+          logger.warn('SESSION', 'kimi generator start requires setup; future kimi starts will be skipped until repaired', {
             sessionId: session.sessionDbId,
             provider,
             error: error.message,

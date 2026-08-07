@@ -14,8 +14,9 @@ Settings are managed in `~/.kimi-mem/settings.json`. The file is auto-created wi
 | Setting                       | Default                         | Description                           |
 |-------------------------------|---------------------------------|---------------------------------------|
 | `KIMI_MEM_MODEL`            | `claude-haiku-4-5-20251001`     | Claude model used to compress observations (when using the Claude provider) |
-| `KIMI_MEM_PROVIDER`         | `claude`                        | AI provider: `claude`, `gemini`, or `openrouter` |
+| `KIMI_MEM_PROVIDER`         | `claude`                        | AI provider: `claude`, `kimi`, `gemini`, or `openrouter` |
 | `KIMI_MEM_CLAUDE_AUTH_METHOD` | `subscription`                | Claude provider auth mode: `subscription`, `api-key`, or `gateway` |
+| `KIMI_CLI_PATH`             | —                               | Optional explicit path to the `kimi` CLI (kimi provider; empty = auto-detect via PATH and `~/.kimi-code/bin`) |
 | `KIMI_MEM_MODE`             | `code`                          | Active mode profile (e.g., `code--es`, `email-investigation`) |
 | `KIMI_MEM_CONTEXT_OBSERVATIONS` | `50`                        | Number of observations to inject      |
 | `KIMI_MEM_WORKER_PORT`      | `37700 + (uid % 100)`           | Worker service port (per-user default; override for fixed port) |
@@ -31,6 +32,10 @@ Settings are managed in `~/.kimi-mem/settings.json`. The file is auto-created wi
 | `KIMI_MEM_GEMINI_MODEL`     | `gemini-flash-latest`          | Gemini model: `gemini-flash-latest`, `gemini-flash-lite-latest`, `gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-3-flash-preview` |
 
 See [Gemini Provider](usage/gemini-provider) for detailed configuration and free tier information.
+
+### Kimi Provider Settings (Kimi Code installs)
+
+The `kimi` provider spawns your local, logged-in Kimi Code CLI (`kimi -p …`) for compression — no API key needed. `KIMI_MEM_MODEL` is reused: empty or a claude-style value (`haiku`/`sonnet`/`opus`/`claude-*`, e.g. the factory defaults) means the CLI's own `default_model` from `~/.kimi-code/config.toml`; any other value is passed as `kimi -m <alias>` (e.g. `kimi-code/kimi-for-coding`). `KIMI_CLI_PATH` overrides CLI discovery.
 
 ### OpenRouter Provider Settings
 

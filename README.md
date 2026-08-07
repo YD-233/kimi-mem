@@ -157,15 +157,18 @@ Equivalent manual step from a repo checkout: `bun plugin/scripts/worker-service.
 
 This installs the bundled Kimi Code plugin: the repo's `plugin/` directory is copied to `~/.kimi-code/plugins/managed/kimi-mem/` and registered in `~/.kimi-code/plugins/installed.json` (both honor `KIMI_CODE_HOME`). The plugin supplies all hooks, the `mcp-search` MCP server, and the `/kimi-mem:model` slash command. Restart Kimi Code (or run `/reload`) after installing so the plugin is loaded. Kimi Code only injects hook output into the model context on `UserPromptSubmit`, so session context is injected once per session on your first prompt; `PostToolUse` observations and `Stop` summaries work as usual.
 
-Memory compression needs an LLM provider, and the default provider spawns the Claude CLI — which Kimi Code setups usually lack. If you have no provider configured, the installer pre-fills `~/.kimi-mem/settings.json` for Moonshot's OpenAI-compatible API; just add your key from [platform.moonshot.cn](https://platform.moonshot.cn/):
+Memory compression needs an LLM provider. For Kimi Code installs the default is `KIMI_MEM_PROVIDER=kimi` (written by the installer when nothing is configured yet): the worker spawns your local `kimi` CLI headlessly (`kimi -p …`), so compression reuses your logged-in Kimi Code session and its `default_model` from `~/.kimi-code/config.toml` — **no API key and no extra config needed**. `KIMI_MEM_MODEL` stays meaningful: leave it empty (or at a claude-style factory default like `haiku`/`claude-*`) to use the CLI's `default_model`, or set it to a Kimi model alias (e.g. `kimi-code/kimi-for-coding`) to pass `kimi -m <alias>`.
+
+An independently-configured OpenAI-compatible API remains available as an optional alternative — set these in `~/.kimi-mem/settings.json` (example: Moonshot's API; use `https://api.moonshot.ai/v1` for the international platform):
 
 ```json
-"KIMI_MEM_OPENROUTER_API_KEY": "<your Moonshot API key>"
+"KIMI_MEM_PROVIDER": "openrouter",
+"KIMI_MEM_OPENROUTER_API_KEY": "<your Moonshot API key>",
+"KIMI_MEM_OPENROUTER_BASE_URL": "https://api.moonshot.cn/v1",
+"KIMI_MEM_OPENROUTER_MODEL": "kimi-k2.6"
 ```
 
-(`KIMI_MEM_PROVIDER=openrouter`, `KIMI_MEM_OPENROUTER_BASE_URL=https://api.moonshot.cn/v1`, `KIMI_MEM_OPENROUTER_MODEL=kimi-k2.6` — plus `KIMI_MEM_TIER_SIMPLE_MODEL`/`KIMI_MEM_TIER_SUMMARY_MODEL=kimi-k2.6` — are written for you. Use `https://api.moonshot.ai/v1` for the international platform.)
-
-To view or change the compression model later, use the slash command inside Kimi Code — `/kimi-mem:model` reports the current configuration, `/kimi-mem:model kimi-k2.6` (or any other model id) updates it. The worker re-reads settings on every request, so no restart is needed.
+To view or change the compression model later, use the slash command inside Kimi Code — `/kimi-mem:model` reports the current configuration, `/kimi-mem:model kimi-code/kimi-for-coding` (or any other alias) updates it. The worker re-reads settings on every request, so no restart is needed.
 
 Manage the integration with `kimi-mem kimi install|uninstall|status` (or `npm run kimi:install` etc. from a repo checkout).
 
