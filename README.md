@@ -139,11 +139,21 @@ npx kimi-mem install --ide antigravity
 
 ### Kimi Code
 
-Install for [Kimi Code](https://github.com/MoonshotAI/kimi-code) (MoonshotAI's CLI):
+One-click install for [Kimi Code](https://github.com/MoonshotAI/kimi-code) (MoonshotAI's CLI) — checks node/bun (auto-installs bun), clones the repo to `~/.kimi-mem/repo`, and installs the plugin:
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/YD-233/kimi-mem/main/install.ps1 | iex
+```
+
+**Linux / macOS:**
 
 ```bash
-npx kimi-mem install --ide kimi
+curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/install.sh | bash
 ```
+
+Equivalent manual step from a repo checkout: `bun plugin/scripts/worker-service.cjs kimi install` (or `npx kimi-mem install --ide kimi` once the package is published).
 
 This installs the bundled Kimi Code plugin: the repo's `plugin/` directory is copied to `~/.kimi-code/plugins/managed/kimi-mem/` and registered in `~/.kimi-code/plugins/installed.json` (both honor `KIMI_CODE_HOME`). The plugin supplies all hooks, the `mcp-search` MCP server, and the `/kimi-mem:model` slash command. Restart Kimi Code (or run `/reload`) after installing so the plugin is loaded. Kimi Code only injects hook output into the model context on `UserPromptSubmit`, so session context is injected once per session on your first prompt; `PostToolUse` observations and `Stop` summaries work as usual.
 
