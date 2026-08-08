@@ -33,7 +33,7 @@ export function useSettings() {
     });
 
     if (!response.ok) {
-      setSaveStatus(`✗ Error: ${response.status === 401 ? 'Unauthorized' : response.statusText}`);
+      setSaveStatus(`✗ 错误：${response.status === 401 ? '未授权' : response.statusText}`);
       setIsSaving(false);
       return;
     }
@@ -42,22 +42,22 @@ export function useSettings() {
 
     if (result.success) {
       setSettings(newSettings);
-      setSaveStatus('✓ Saved');
+      setSaveStatus('✓ 已保存');
       setTimeout(() => setSaveStatus(''), TIMING.SAVE_STATUS_DISPLAY_DURATION_MS);
     } else {
-      setSaveStatus(`✗ Error: ${result.error}`);
+      setSaveStatus(`✗ 错误：${result.error}`);
     }
   };
 
   const saveSettings = async (newSettings: Settings) => {
     setIsSaving(true);
-    setSaveStatus('Saving...');
+    setSaveStatus('保存中...');
 
     try {
       await submitSettings(newSettings);
     } catch (error) {
       console.error('Failed to save settings:', error);
-      setSaveStatus(`✗ Error: ${error instanceof Error ? error.message : 'Network error'}`);
+      setSaveStatus(`✗ 错误：${error instanceof Error ? error.message : '网络错误'}`);
     }
 
     setIsSaving(false);

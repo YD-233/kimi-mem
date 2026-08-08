@@ -14,10 +14,10 @@ interface ParsedLogLine {
 }
 
 const LOG_LEVELS: { key: LogLevel; label: string; icon: string; color: string }[] = [
-  { key: 'DEBUG', label: 'Debug', icon: '🔍', color: '#8b8b8b' },
-  { key: 'INFO', label: 'Info', icon: 'ℹ️', color: '#58a6ff' },
-  { key: 'WARN', label: 'Warn', icon: '⚠️', color: '#d29922' },
-  { key: 'ERROR', label: 'Error', icon: '❌', color: '#f85149' },
+  { key: 'DEBUG', label: '调试', icon: '🔍', color: '#8b8b8b' },
+  { key: 'INFO', label: '信息', icon: 'ℹ️', color: '#58a6ff' },
+  { key: 'WARN', label: '警告', icon: '⚠️', color: '#d29922' },
+  { key: 'ERROR', label: '错误', icon: '❌', color: '#f85149' },
 ];
 
 const LOG_COMPONENTS: { key: LogComponent; label: string; icon: string; color: string }[] = [
@@ -121,12 +121,12 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
     try {
       const response = await fetch('/api/logs');
       if (!response.ok) {
-        throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        throw new Error(`获取日志失败：${response.statusText}`);
       }
       const data = await response.json();
       setLogs(data.logs || '');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : '未知错误');
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +137,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
   }, [logs, scrollToBottom]);
 
   const handleClearLogs = useCallback(async () => {
-    if (!confirm('Are you sure you want to clear all logs?')) {
+    if (!confirm('确定要清空所有日志吗？')) {
       return;
     }
     setIsLoading(true);
@@ -145,11 +145,11 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
     try {
       const response = await fetch('/api/logs/clear', { method: 'POST' });
       if (!response.ok) {
-        throw new Error(`Failed to clear logs: ${response.statusText}`);
+        throw new Error(`清空日志失败：${response.statusText}`);
       }
       setLogs('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : '未知错误');
     } finally {
       setIsLoading(false);
     }
@@ -317,7 +317,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
 
       <div className="console-header">
         <div className="console-tabs">
-          <div className="console-tab active">Console</div>
+          <div className="console-tab active">控制台</div>
         </div>
         <div className="console-controls">
           <label className="console-auto-refresh">
@@ -326,13 +326,13 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
             />
-            Auto-refresh
+            自动刷新
           </label>
           <button
             className="console-control-btn"
             onClick={fetchLogs}
             disabled={isLoading}
-            title="Refresh logs"
+            title="刷新日志"
           >
             ↻
           </button>
@@ -342,7 +342,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
               wasAtBottomRef.current = true;
               scrollToBottom();
             }}
-            title="Scroll to bottom"
+            title="滚动到底部"
           >
             ⬇
           </button>
@@ -350,14 +350,14 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
             className="console-control-btn console-clear-btn"
             onClick={handleClearLogs}
             disabled={isLoading}
-            title="Clear logs"
+            title="清空日志"
           >
             🗑
           </button>
           <button
             className="console-control-btn"
             onClick={onClose}
-            title="Close console"
+            title="关闭控制台"
           >
             ✕
           </button>
@@ -367,7 +367,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
       {/* Filter Bar */}
       <div className="console-filters">
         <div className="console-filter-section">
-          <span className="console-filter-label">Quick:</span>
+          <span className="console-filter-label">快捷：</span>
           <div className="console-filter-chips">
             <button
               className={`console-filter-chip ${alignmentOnly ? 'active' : ''}`}
@@ -375,14 +375,14 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
               style={{
                 '--chip-color': '#f0883e',
               } as React.CSSProperties}
-              title="Show only session alignment logs"
+              title="仅显示会话对齐日志"
             >
-              🔗 Alignment
+              🔗 对齐
             </button>
           </div>
         </div>
         <div className="console-filter-section">
-          <span className="console-filter-label">Levels:</span>
+          <span className="console-filter-label">级别：</span>
           <div className="console-filter-chips">
             {LOG_LEVELS.map(level => (
               <button
@@ -400,14 +400,14 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
             <button
               className="console-filter-action"
               onClick={() => setAllLevels(activeLevels.size === 0)}
-              title={activeLevels.size === LOG_LEVELS.length ? 'Select none' : 'Select all'}
+              title={activeLevels.size === LOG_LEVELS.length ? '全不选' : '全选'}
             >
               {activeLevels.size === LOG_LEVELS.length ? '○' : '●'}
             </button>
           </div>
         </div>
         <div className="console-filter-section">
-          <span className="console-filter-label">Components:</span>
+          <span className="console-filter-label">组件：</span>
           <div className="console-filter-chips">
             {LOG_COMPONENTS.map(comp => (
               <button
@@ -425,7 +425,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
             <button
               className="console-filter-action"
               onClick={() => setAllComponents(activeComponents.size === 0)}
-              title={activeComponents.size === LOG_COMPONENTS.length ? 'Select none' : 'Select all'}
+              title={activeComponents.size === LOG_COMPONENTS.length ? '全不选' : '全选'}
             >
               {activeComponents.size === LOG_COMPONENTS.length ? '○' : '●'}
             </button>
@@ -442,7 +442,7 @@ export function LogsDrawer({ isOpen, onClose }: LogsDrawerProps) {
       <div className="console-content" ref={contentRef}>
         <div className="console-logs">
           {filteredLines.length === 0 ? (
-            <div className="log-line log-line-empty">No logs available</div>
+            <div className="log-line log-line-empty">暂无日志</div>
           ) : (
             filteredLines.map((line, index) => renderLogLine(line, index))
           )}

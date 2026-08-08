@@ -3,12 +3,6 @@
   "name": "Kimi-Mem",
   "description": "Persistent memory compression system that preserves context across Claude Code sessions",
   "theme": "mint",
-  "favicon": "/kimi-mem-logomark.webp",
-  "logo": {
-    "light": "/kimi-mem-logo-for-light-mode.webp",
-    "dark": "/kimi-mem-logo-for-dark-mode.webp",
-    "href": "https://github.com/YD-233/kimi-mem"
-  },
   "colors": {
     "primary": "#3B82F6",
     "light": "#EFF6FF",

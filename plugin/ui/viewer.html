@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>kimi-mem viewer</title>
-  <link rel="icon" type="image/webp" href="kimi-mem-logomark.webp">
+  <title>kimi-mem 查看器</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
   <style>
     @font-face {
       font-family: 'Monaspace Radon';
@@ -338,15 +338,6 @@
       align-items: center;
       gap: 12px;
       line-height: 1;
-    }
-
-    .logomark {
-      height: 32px;
-      width: auto;
-    }
-
-    .logomark.spinning {
-      animation: spin 1.5s linear infinite;
     }
 
     .queue-bubble {
@@ -1149,7 +1140,10 @@
     .welcome-modal-logo {
       width: clamp(72px, 7.5vw, 104px);
       height: clamp(72px, 7.5vw, 104px);
-      object-fit: contain;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(48px, 5vw, 72px);
       filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.18));
     }
 
@@ -1420,10 +1414,6 @@
 
       .header-main {
         gap: 10px;
-      }
-
-      .logomark {
-        height: 28px;
       }
 
       .logo-text {

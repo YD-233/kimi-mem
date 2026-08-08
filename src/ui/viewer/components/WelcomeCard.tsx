@@ -35,8 +35,8 @@ function DismissButton({ onClick }: { onClick: () => void }) {
       type="button"
       className="welcome-modal-dismiss"
       onClick={onClick}
-      aria-label="Close welcome"
-      title="Close (Esc)"
+      aria-label="关闭欢迎卡片"
+      title="关闭 (Esc)"
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -142,20 +142,20 @@ const FEATURES: Feature[] = [
   {
     kind: 'stream',
     illustration: <StreamIllustration />,
-    title: 'Live feed',
-    description: 'Observations, summaries, and prompts stream in live.',
+    title: '实时动态',
+    description: '观察记录、会话摘要和提问实时流入。',
   },
   {
     kind: 'tune',
     illustration: <TuneIllustration />,
-    title: 'Tune it',
-    description: 'The gear in the top-right tunes memory injection.',
+    title: '随心调整',
+    description: '点击右上角的齿轮图标调整记忆注入。',
   },
   {
     kind: 'recall',
     illustration: <RecallIllustration />,
-    title: 'Recall it',
-    description: 'Ask Claude or run /mem-search to find past work.',
+    title: '随时召回',
+    description: '直接向 Kimi Code 提问，或运行 /mem-search 查找历史工作。',
   },
 ];
 
@@ -186,9 +186,9 @@ export function WelcomeCard({ onDismiss }: WelcomeCardProps) {
         <DismissButton onClick={handleDismiss} />
 
         <header className="welcome-modal-header">
-          <img className="welcome-modal-logo" src="kimi-mem-logo-stylized.png" alt="" width="96" height="96" />
-          <h2 id="welcome-modal-title">Welcome to kimi-mem</h2>
-          <p>Persistent memory for Claude Code.</p>
+          <span className="welcome-modal-logo" aria-hidden="true">🧠</span>
+          <h2 id="welcome-modal-title">欢迎使用 kimi-mem</h2>
+          <p>跨会话的持久化记忆。</p>
         </header>
 
         <div className="welcome-modal-grid">
@@ -205,11 +205,11 @@ export function WelcomeCard({ onDismiss }: WelcomeCardProps) {
 
         <footer className="welcome-modal-footer">
           <a href={EXPLAINER_URL} target="_blank" rel="noopener noreferrer">
-            How it works
+            工作原理
           </a>
           <span className="welcome-modal-footer-sep">{'·'}</span>
           <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
-            Read the docs
+            阅读文档
           </a>
         </footer>
       </article>

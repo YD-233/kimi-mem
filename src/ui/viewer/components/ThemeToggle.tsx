@@ -51,12 +51,12 @@ export function ThemeToggle({ preference, onThemeChange }: ThemeToggleProps) {
   const getTitle = () => {
     switch (preference) {
       case 'light':
-        return 'Theme: Light (click for Dark)';
+        return '主题：浅色（点击切换为深色）';
       case 'dark':
-        return 'Theme: Dark (click for System)';
+        return '主题：深色（点击切换为跟随系统）';
       case 'system':
       default:
-        return 'Theme: System (click for Light)';
+        return '主题：跟随系统（点击切换为浅色）';
     }
   };
 

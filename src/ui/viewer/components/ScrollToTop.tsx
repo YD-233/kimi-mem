@@ -38,7 +38,7 @@ export function ScrollToTop({ targetRef }: ScrollToTopProps) {
     <button
       onClick={scrollToTop}
       className="scroll-to-top"
-      aria-label="Scroll to top"
+      aria-label="回到顶部"
     >
       <svg
         width="20"

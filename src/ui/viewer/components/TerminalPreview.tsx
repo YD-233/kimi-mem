@@ -108,9 +108,9 @@ export function TerminalPreview({ content, isLoading = false, className = '' }: 
             e.currentTarget.style.borderColor = wordWrap ? 'var(--color-border-primary)' : 'var(--color-accent-primary)';
             e.currentTarget.style.color = wordWrap ? 'var(--color-text-secondary)' : 'var(--color-accent-primary)';
           }}
-          title={wordWrap ? 'Disable word wrap (scroll horizontally)' : 'Enable word wrap'}
+          title={wordWrap ? '关闭自动换行（横向滚动）' : '开启自动换行'}
         >
-          {wordWrap ? '⤢ Wrap' : '⇄ Scroll'}
+          {wordWrap ? '⤢ 换行' : '⇄ 滚动'}
         </button>
       </div>
 
@@ -124,7 +124,7 @@ export function TerminalPreview({ content, isLoading = false, className = '' }: 
             color: 'var(--color-text-secondary)'
           }}
         >
-          Loading preview...
+          正在加载预览...
         </div>
       ) : (
         <div style={{ position: 'relative', flex: 1, overflow: 'hidden' }}>

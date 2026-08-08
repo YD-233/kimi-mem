@@ -176,10 +176,10 @@ export function ContextSettingsModal({
       <div className="context-settings-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="modal-header">
-          <h2>Settings</h2>
+          <h2>设置</h2>
           <div className="header-controls">
             <label className="preview-selector">
-              Source:
+              来源：
               <select
                 value={selectedSource || ''}
                 onChange={(e) => setSelectedSource(e.target.value)}
@@ -191,7 +191,7 @@ export function ContextSettingsModal({
               </select>
             </label>
             <label className="preview-selector">
-              Project:
+              项目：
               <select
                 value={selectedProject || ''}
                 onChange={(e) => setSelectedProject(e.target.value)}
@@ -205,7 +205,7 @@ export function ContextSettingsModal({
             <button
               onClick={onClose}
               className="modal-close-btn"
-              title="Close (Esc)"
+              title="关闭 (Esc)"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -222,7 +222,7 @@ export function ContextSettingsModal({
             <div className="preview-content">
               {error ? (
                 <div style={{ color: '#ff6b6b' }}>
-                  Error loading preview: {error}
+                  加载预览失败：{error}
                 </div>
               ) : (
                 <TerminalPreview content={preview} isLoading={isLoading} />
@@ -234,12 +234,12 @@ export function ContextSettingsModal({
           <div className="settings-column">
             {/* Section 1: Loading */}
             <CollapsibleSection
-              title="Loading"
-              description="How many observations to inject"
+              title="加载"
+              description="注入多少条观察记录"
             >
               <FormField
-                label="Observations"
-                tooltip="Number of recent observations to include in context (1-200)"
+                label="观察记录数"
+                tooltip="上下文中包含的最近观察记录数量（1-200）"
               >
                 <input
                   type="number"
@@ -250,8 +250,8 @@ export function ContextSettingsModal({
                 />
               </FormField>
               <FormField
-                label="Sessions"
-                tooltip="Number of recent sessions to pull observations from (1-50)"
+                label="会话数"
+                tooltip="提取观察记录的最近会话数量（1-50）"
               >
                 <input
                   type="number"
@@ -265,14 +265,14 @@ export function ContextSettingsModal({
 
             {/* Section 2: Display */}
             <CollapsibleSection
-              title="Display"
-              description="What to show in context tables"
+              title="显示"
+              description="上下文表格中显示哪些内容"
             >
               <div className="display-subsection">
-                <span className="subsection-label">Full Observations</span>
+                <span className="subsection-label">完整观察记录</span>
                 <FormField
-                  label="Count"
-                  tooltip="How many observations show expanded details (0-20)"
+                  label="数量"
+                  tooltip="显示完整详情的观察记录数量（0-20）"
                 >
                   <input
                     type="number"
@@ -283,40 +283,40 @@ export function ContextSettingsModal({
                   />
                 </FormField>
                 <FormField
-                  label="Field"
-                  tooltip="Which field to expand for full observations"
+                  label="字段"
+                  tooltip="完整观察记录要展开的字段"
                 >
                   <select
                     value={formState.KIMI_MEM_CONTEXT_FULL_FIELD || 'narrative'}
                     onChange={(e) => updateSetting('KIMI_MEM_CONTEXT_FULL_FIELD', e.target.value)}
                   >
-                    <option value="narrative">Narrative</option>
-                    <option value="facts">Facts</option>
+                    <option value="narrative">叙述</option>
+                    <option value="facts">事实</option>
                   </select>
                 </FormField>
               </div>
 
               <div className="display-subsection">
-                <span className="subsection-label">Token Economics</span>
+                <span className="subsection-label">Token 统计</span>
                 <div className="toggle-group">
                   <ToggleSwitch
                     id="show-read-tokens"
-                    label="Read cost"
-                    description="Tokens to read this observation"
+                    label="读取成本"
+                    description="读取这条观察记录所需的 token 数"
                     checked={formState.KIMI_MEM_CONTEXT_SHOW_READ_TOKENS === 'true'}
                     onChange={() => toggleBoolean('KIMI_MEM_CONTEXT_SHOW_READ_TOKENS')}
                   />
                   <ToggleSwitch
                     id="show-work-tokens"
-                    label="Work investment"
-                    description="Tokens spent creating this observation"
+                    label="工作投入"
+                    description="生成这条观察记录消耗的 token 数"
                     checked={formState.KIMI_MEM_CONTEXT_SHOW_WORK_TOKENS === 'true'}
                     onChange={() => toggleBoolean('KIMI_MEM_CONTEXT_SHOW_WORK_TOKENS')}
                   />
                   <ToggleSwitch
                     id="show-savings-amount"
-                    label="Savings"
-                    description="Total tokens saved by reusing context"
+                    label="节省量"
+                    description="复用上下文累计节省的 token 总数"
                     checked={formState.KIMI_MEM_CONTEXT_SHOW_SAVINGS_AMOUNT === 'true'}
                     onChange={() => toggleBoolean('KIMI_MEM_CONTEXT_SHOW_SAVINGS_AMOUNT')}
                   />
@@ -326,29 +326,29 @@ export function ContextSettingsModal({
 
             {/* Section 4: Advanced */}
             <CollapsibleSection
-              title="Advanced"
-              description="AI provider and model selection"
+              title="高级"
+              description="AI provider 与模型选择"
               defaultOpen={false}
             >
               <FormField
                 label="AI Provider"
-                tooltip="Choose between Claude (via Agent SDK), Kimi Code CLI, Gemini (via REST API), or an OpenAI-compatible API"
+                tooltip="在 Claude（通过 Agent SDK）、Kimi Code CLI、Gemini（通过 REST API）或 OpenAI 兼容 API 之间选择"
               >
                 <select
                   value={formState.KIMI_MEM_PROVIDER || 'claude'}
                   onChange={(e) => updateSetting('KIMI_MEM_PROVIDER', e.target.value)}
                 >
-                  <option value="claude">Claude (uses your Claude account)</option>
-                  <option value="kimi">Kimi Code CLI (uses your kimi login)</option>
-                  <option value="gemini">Gemini (uses API key)</option>
-                  <option value="openrouter">OpenRouter (multi-model)</option>
+                  <option value="claude">Claude（使用你的 Claude 账号）</option>
+                  <option value="kimi">Kimi Code CLI（使用你的 kimi 登录）</option>
+                  <option value="gemini">Gemini（使用 API key）</option>
+                  <option value="openrouter">OpenRouter（多模型）</option>
                 </select>
               </FormField>
 
               {formState.KIMI_MEM_PROVIDER === 'kimi' && (
                 <FormField
-                  label="Kimi Model"
-                  tooltip="Model alias passed to the kimi CLI as `kimi -m <alias>` (e.g. kimi-code/kimi-for-coding). Empty or a claude-style value (haiku/sonnet/opus/claude-*) uses the CLI's own default_model from ~/.kimi-code/config.toml."
+                  label="Kimi 模型"
+                  tooltip="以 `kimi -m <alias>` 的形式传给 kimi CLI 的模型别名（如 kimi-code/kimi-for-coding）。留空或填写 claude 风格的值（haiku/sonnet/opus/claude-*）时，使用 CLI 自身 ~/.kimi-code/config.toml 中的 default_model。"
                 >
                   <input
                     type="text"
@@ -361,16 +361,16 @@ export function ContextSettingsModal({
 
               {formState.KIMI_MEM_PROVIDER === 'claude' && (
                 <FormField
-                  label="Claude Model"
-                  tooltip="Claude model used for generating observations"
+                  label="Claude 模型"
+                  tooltip="用于生成观察记录的 Claude 模型"
                 >
                   <select
                     value={formState.KIMI_MEM_MODEL || 'haiku'}
                     onChange={(e) => updateSetting('KIMI_MEM_MODEL', e.target.value)}
                   >
-                    <option value="haiku">haiku (fastest)</option>
-                    <option value="sonnet">sonnet (balanced)</option>
-                    <option value="opus">opus (highest quality)</option>
+                    <option value="haiku">haiku（最快）</option>
+                    <option value="sonnet">sonnet（均衡）</option>
+                    <option value="opus">opus（最高质量）</option>
                   </select>
                 </FormField>
               )}
@@ -379,35 +379,35 @@ export function ContextSettingsModal({
                 <>
                   <FormField
                     label="Gemini API Key"
-                    tooltip="Your Google AI Studio API key (or set GEMINI_API_KEY env var)"
+                    tooltip="你的 Google AI Studio API key（或设置 GEMINI_API_KEY 环境变量）"
                   >
                     <input
                       type="password"
                       value={formState.KIMI_MEM_GEMINI_API_KEY || ''}
                       onChange={(e) => updateSetting('KIMI_MEM_GEMINI_API_KEY', e.target.value)}
-                      placeholder="Enter Gemini API key..."
+                      placeholder="输入 Gemini API key..."
                     />
                   </FormField>
                   <FormField
-                    label="Gemini Model"
-                    tooltip="Gemini model used for generating observations"
+                    label="Gemini 模型"
+                    tooltip="用于生成观察记录的 Gemini 模型"
                   >
                     <select
                       value={formState.KIMI_MEM_GEMINI_MODEL || 'gemini-flash-latest'}
                       onChange={(e) => updateSetting('KIMI_MEM_GEMINI_MODEL', e.target.value)}
                     >
-                      <option value="gemini-flash-latest">gemini-flash-latest (default, latest GA Flash)</option>
-                      <option value="gemini-flash-lite-latest">gemini-flash-lite-latest (latest GA Flash-Lite)</option>
+                      <option value="gemini-flash-latest">gemini-flash-latest（默认，最新 GA Flash）</option>
+                      <option value="gemini-flash-lite-latest">gemini-flash-lite-latest（最新 GA Flash-Lite）</option>
                       <option value="gemini-3.5-flash">gemini-3.5-flash</option>
                       <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
-                      <option value="gemini-3-flash-preview">gemini-3-flash-preview (preview)</option>
+                      <option value="gemini-3-flash-preview">gemini-3-flash-preview（预览版）</option>
                     </select>
                   </FormField>
                   <div className="toggle-group" style={{ marginTop: '8px' }}>
                     <ToggleSwitch
                       id="gemini-rate-limiting"
-                      label="Rate Limiting"
-                      description="Enable for free tier (10-30 RPM). Disable if you have billing set up (1000+ RPM)."
+                      label="速率限制"
+                      description="免费额度建议开启（10-30 RPM）；已开通计费可关闭（1000+ RPM）。"
                       checked={formState.KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED === 'true'}
                       onChange={(checked) => updateSetting('KIMI_MEM_GEMINI_RATE_LIMITING_ENABLED', checked ? 'true' : 'false')}
                     />
@@ -419,29 +419,29 @@ export function ContextSettingsModal({
                 <>
                   <FormField
                     label="OpenRouter API Key"
-                    tooltip="Your OpenRouter API key from openrouter.ai (or set OPENROUTER_API_KEY env var)"
+                    tooltip="你的 OpenRouter API key（来自 openrouter.ai，或设置 OPENROUTER_API_KEY 环境变量）"
                   >
                     <input
                       type="password"
                       value={formState.KIMI_MEM_OPENROUTER_API_KEY || ''}
                       onChange={(e) => updateSetting('KIMI_MEM_OPENROUTER_API_KEY', e.target.value)}
-                      placeholder="Enter OpenRouter API key..."
+                      placeholder="输入 OpenRouter API key..."
                     />
                   </FormField>
                   <FormField
-                    label="OpenRouter Model"
-                    tooltip="Model identifier from OpenRouter (e.g., anthropic/claude-3.5-sonnet, google/gemini-2.0-flash-thinking-exp)"
+                    label="OpenRouter 模型"
+                    tooltip="OpenRouter 的模型标识符（如 anthropic/claude-3.5-sonnet、google/gemini-2.0-flash-thinking-exp）"
                   >
                     <input
                       type="text"
                       value={formState.KIMI_MEM_OPENROUTER_MODEL || 'xiaomi/mimo-v2-flash:free'}
                       onChange={(e) => updateSetting('KIMI_MEM_OPENROUTER_MODEL', e.target.value)}
-                      placeholder="e.g., xiaomi/mimo-v2-flash:free"
+                      placeholder="例如 xiaomi/mimo-v2-flash:free"
                     />
                   </FormField>
                   <FormField
-                    label="Site URL (Optional)"
-                    tooltip="Your site URL for OpenRouter analytics (optional)"
+                    label="站点 URL（可选）"
+                    tooltip="用于 OpenRouter 统计的站点 URL（可选）"
                   >
                     <input
                       type="text"
@@ -451,8 +451,8 @@ export function ContextSettingsModal({
                     />
                   </FormField>
                   <FormField
-                    label="App Name (Optional)"
-                    tooltip="Your app name for OpenRouter analytics (optional)"
+                    label="应用名称（可选）"
+                    tooltip="用于 OpenRouter 统计的应用名称（可选）"
                   >
                     <input
                       type="text"
@@ -465,8 +465,8 @@ export function ContextSettingsModal({
               )}
 
               <FormField
-                label="Worker Port"
-                tooltip="Port for the background worker service"
+                label="Worker 端口"
+                tooltip="后台 worker 服务使用的端口"
               >
                 <input
                   type="number"
@@ -480,15 +480,15 @@ export function ContextSettingsModal({
               <div className="toggle-group" style={{ marginTop: '12px' }}>
                 <ToggleSwitch
                   id="show-last-summary"
-                  label="Include last summary"
-                  description="Add previous session's summary to context"
+                  label="包含上次摘要"
+                  description="将上一个会话的摘要加入上下文"
                   checked={formState.KIMI_MEM_CONTEXT_SHOW_LAST_SUMMARY === 'true'}
                   onChange={() => toggleBoolean('KIMI_MEM_CONTEXT_SHOW_LAST_SUMMARY')}
                 />
                 <ToggleSwitch
                   id="show-last-message"
-                  label="Include last message"
-                  description="Add previous session's final message"
+                  label="包含最后一条消息"
+                  description="加入上一个会话的最后一条消息"
                   checked={formState.KIMI_MEM_CONTEXT_SHOW_LAST_MESSAGE === 'true'}
                   onChange={() => toggleBoolean('KIMI_MEM_CONTEXT_SHOW_LAST_MESSAGE')}
                 />
@@ -507,7 +507,7 @@ export function ContextSettingsModal({
             onClick={handleSave}
             disabled={isSaving}
           >
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? '保存中...' : '保存'}
           </button>
         </div>
       </div>

@@ -74,13 +74,13 @@ export function Feed({ observations, summaries, prompts, onLoadMore, isLoading, 
         })}
         {items.length === 0 && !isLoading && (
           <div style={{ textAlign: 'center', padding: '40px', color: '#8b949e' }}>
-            No items to display
+            暂无内容可显示
           </div>
         )}
         {isLoading && (
           <div style={{ textAlign: 'center', padding: '20px', color: '#8b949e' }}>
             <div className="spinner" style={{ display: 'inline-block', marginRight: '10px' }}></div>
-            Loading more...
+            加载中...
           </div>
         )}
         {hasMore && !isLoading && items.length > 0 && (
@@ -88,7 +88,7 @@ export function Feed({ observations, summaries, prompts, onLoadMore, isLoading, 
         )}
         {!hasMore && items.length > 0 && (
           <div style={{ textAlign: 'center', padding: '20px', color: '#8b949e', fontSize: '14px' }}>
-            No more items to load
+            没有更多内容了
           </div>
         )}
       </div>
