@@ -122,13 +122,18 @@ describe('KimiInstaller (plugin-based)', () => {
       const defaults = SettingsDefaultsManager.getAllDefaults();
       const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
       expect(settings.KIMI_MEM_PROVIDER).toBe('kimi');
+      // Claude-style factory defaults are normalized to '' so the file never
+      // shows a misleading claude-haiku model under the kimi provider.
+      expect(settings.KIMI_MEM_MODEL).toBe('');
+      expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe('');
+      expect(settings.KIMI_MEM_TIER_FAST_MODEL).toBe('');
+      expect(settings.KIMI_MEM_TIER_SMART_MODEL).toBe('');
+      expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe('');
       // The independent-API fallback stays at factory defaults — the
-      // installer no longer pins Moonshot base URL/model/tier values.
+      // installer no longer pins Moonshot base URL/model values.
       expect(settings.KIMI_MEM_OPENROUTER_API_KEY ?? '').toBe('');
       expect(settings.KIMI_MEM_OPENROUTER_BASE_URL).toBe(defaults.KIMI_MEM_OPENROUTER_BASE_URL);
       expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe(defaults.KIMI_MEM_OPENROUTER_MODEL);
-      expect(settings.KIMI_MEM_TIER_SIMPLE_MODEL).toBe(defaults.KIMI_MEM_TIER_SIMPLE_MODEL);
-      expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe(defaults.KIMI_MEM_TIER_SUMMARY_MODEL);
     });
 
     it('leaves settings untouched when an API key is already configured', async () => {

@@ -167,12 +167,26 @@ function removeInstallRecord(installedJsonPath: string): boolean {
 }
 
 /**
+ * Matches the Claude-oriented factory defaults (empty counts as unset): these
+ * are meaningless to the kimi CLI and are normalized away on kimi installs so
+ * settings.json never misleadingly shows "claude-haiku" as the model.
+ */
+const CLAUDE_STYLE_MODEL_DEFAULT = /^(|haiku|sonnet|opus|claude-.*)$/;
+const blankIfClaudeDefault = (value: string | undefined): string =>
+  CLAUDE_STYLE_MODEL_DEFAULT.test(value ?? '') ? '' : (value as string);
+
+/**
  * Kimi Code installs already carry a logged-in `kimi` CLI, so the kimi
  * compression provider (which spawns it headlessly and reuses its configured
  * model + auth) is the zero-config default — no API key anywhere. Only
  * written when the provider is untouched at the 'claude' factory default and
  * no OpenRouter key is present; an explicit provider choice or existing key
  * is never overwritten.
+ *
+ * Model keys holding claude-style factory defaults (haiku/sonnet/claude-*)
+ * are normalized to '' at the same time: with provider=kimi they are ignored
+ * in favor of the CLI's own default_model, and blanking them keeps
+ * settings.json honest. User-set kimi aliases are preserved.
  */
 function ensureKimiProviderDefaults(): boolean {
   const settingsPath = paths.settings();
@@ -184,6 +198,11 @@ function ensureKimiProviderDefaults(): boolean {
   writeJsonFileAtomic(settingsPath, {
     ...settings,
     KIMI_MEM_PROVIDER: 'kimi',
+    KIMI_MEM_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_MODEL),
+    KIMI_MEM_TIER_SIMPLE_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SIMPLE_MODEL),
+    KIMI_MEM_TIER_FAST_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_FAST_MODEL),
+    KIMI_MEM_TIER_SMART_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SMART_MODEL),
+    KIMI_MEM_TIER_SUMMARY_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SUMMARY_MODEL),
   });
   return true;
 }
