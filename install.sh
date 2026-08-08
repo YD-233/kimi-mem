@@ -56,6 +56,12 @@ fi
 say "Installing the kimi-mem plugin into Kimi Code ..."
 bun "$REPO_DIR/plugin/scripts/worker-service.cjs" kimi install
 
+# --- restart a running worker so it picks up the updated code -----------------
+if bun "$REPO_DIR/plugin/scripts/worker-service.cjs" status 2>/dev/null | grep -q "Worker is running"; then
+  say "Restarting the worker to pick up updates ..."
+  bun "$REPO_DIR/plugin/scripts/worker-service.cjs" restart >/dev/null 2>&1 || true
+fi
+
 cat <<EOF
 
 [kimi-mem] Done. Next steps:

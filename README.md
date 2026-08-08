@@ -45,6 +45,10 @@ curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/install.sh | b
 
 装完**重启 Kimi Code（或 `/reload`）**，之后正常使用即可——记忆会自动积累。第二个会话起就能看到注入的历史上下文。
 
+### 更新
+
+重新跑一遍一键安装命令即可：脚本会自动 `git pull` 最新代码、刷新插件文件，并重启 worker 生效。
+
 ### 卸载
 
 **Windows（PowerShell）：**

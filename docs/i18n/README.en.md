@@ -45,6 +45,10 @@ The script: checks node (≥20) → auto-installs bun if missing → clones the 
 
 **Restart Kimi Code (or `/reload`)** after installing, then just use Kimi Code normally — memory accumulates automatically. From your second session onward you'll see injected history.
 
+### Updating
+
+Re-run the one-click install command: the script pulls the latest code, refreshes the plugin files, and restarts the worker so updates take effect.
+
 ### Uninstall
 
 **Windows (PowerShell):**

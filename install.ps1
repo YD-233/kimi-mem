@@ -58,6 +58,13 @@ Say 'Installing the kimi-mem plugin into Kimi Code ...'
 & bun (Join-Path $RepoDir 'plugin\scripts\worker-service.cjs') kimi install
 if ($LASTEXITCODE -ne 0) { Fail "kimi install exited with code $LASTEXITCODE" }
 
+# --- restart a running worker so it picks up the updated code -----------------
+$ws = Join-Path $RepoDir 'plugin\scripts\worker-service.cjs'
+if ((& bun $ws status 2>$null | Out-String) -match 'Worker is running') {
+  Say 'Restarting the worker to pick up updates ...'
+  try { & bun $ws restart 2>&1 | Out-Null } catch {}
+}
+
 Write-Host @"
 
 [kimi-mem] Done. Next steps:
