@@ -77,7 +77,7 @@ curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.sh |
 
 在 Kimi Code 会话中：
 
-- `/kimi-mem:model` — 查看当前压缩配置，并列出 `~/.kimi-code/config.toml` 里所有可用的模型别名（`default_model`、`[secondary_model]` 第二模型、全部 `[models.*]`，含 deepseek 等第三方 provider）
+- `/kimi-mem:model` — 弹出交互式选择器，列出 `~/.kimi-code/config.toml` 里所有可用的模型别名（`default_model`、`[secondary_model]` 第二模型、全部 `[models.*]`，含 deepseek 等第三方 provider），点选即完成切换
 - `/kimi-mem:model 火山方舟/ark-code-latest` — 切换压缩模型为该别名，立即生效无需重启
 - `/kimi-mem:model` 置空（或填 `haiku`/`claude-*` 这类值）= 跟随 Kimi Code 的 `default_model`
 

@@ -77,7 +77,7 @@ Your memory data and settings in `~/.kimi-mem` are kept by default; add `--purge
 
 Inside a Kimi Code session:
 
-- `/kimi-mem:model` — show the current compression configuration and list every model alias configured in `~/.kimi-code/config.toml` (`default_model`, `[secondary_model]`, all `[models.*]` entries, including third-party providers like deepseek)
+- `/kimi-mem:model` — pops up an interactive picker with every model alias configured in `~/.kimi-code/config.toml` (`default_model`, `[secondary_model]`, all `[models.*]` entries, including third-party providers like deepseek); pick one to switch
 - `/kimi-mem:model kimi-code/kimi-for-coding` — switch compression to that alias; takes effect immediately, no restart
 - Empty (or a claude-style value like `haiku`/`claude-*`) = follow Kimi Code's `default_model`
 
