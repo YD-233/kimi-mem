@@ -168,7 +168,7 @@ An independently-configured OpenAI-compatible API remains available as an option
 "KIMI_MEM_OPENROUTER_MODEL": "kimi-k2.6"
 ```
 
-To view or change the compression model later, use the slash command inside Kimi Code — `/kimi-mem:model` reports the current configuration, `/kimi-mem:model kimi-code/kimi-for-coding` (or any other alias) updates it. The worker re-reads settings on every request, so no restart is needed.
+To view or change the compression model later, use the slash command inside Kimi Code — `/kimi-mem:model` reports the current configuration and lists every model alias configured in `~/.kimi-code/config.toml` (`default_model`, `[secondary_model]`, and all `[models."<alias>"]` entries, including third-party providers like `deepseek/...`); `/kimi-mem:model kimi-code/kimi-for-coding` (or any other alias) updates it. The worker re-reads settings on every request, so no restart is needed.
 
 Manage the integration with `kimi-mem kimi install|uninstall|status` (or `npm run kimi:install` etc. from a repo checkout).
 
