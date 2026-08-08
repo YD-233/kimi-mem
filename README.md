@@ -1,14 +1,4 @@
-<h1 align="center">
-  <br>
-  <a href="https://github.com/YD-233/kimi-mem">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-dark-mode.webp">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp">
-      <img src="https://raw.githubusercontent.com/YD-233/kimi-mem/main/docs/public/kimi-mem-logo-for-light-mode.webp" alt="kimi-mem" width="400">
-    </picture>
-  </a>
-  <br>
-</h1>
+<h1 align="center">kimi-mem</h1>
 
 <h4 align="center">为 <a href="https://github.com/MoonshotAI/kimi-code">Kimi Code</a> 打造的跨会话持久记忆系统</h4>
 
