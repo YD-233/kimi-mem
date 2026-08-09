@@ -24,6 +24,23 @@ PURGE=0
 
 say() { printf '[kimi-mem] %s\n' "$*"; }
 
+# Safety: never rm -rf a directory whose basename doesn't match the shape we
+# expect — a stray KIMI_MEM_DATA_DIR=$HOME (or /) with --purge would
+# otherwise delete the user's home directory. basename collapses trailing
+# slashes; a root path yields '/' and is refused.
+REFUSED=0
+guard_basename() {
+  # $1 = target dir, $2 = expected basename, $3 = human label
+  local base
+  base="$(basename "$1")"
+  if [ "$base" != "$2" ]; then
+    say "REFUSING to remove $3: '$1' is not a '$2' directory. Fix the env override and re-run."
+    REFUSED=1
+    return 1
+  fi
+  return 0
+}
+
 # Locate a worker-service.cjs we can run: prefer the repo checkout, fall back
 # to the managed plugin copy inside Kimi Code.
 WS=""
@@ -48,20 +65,28 @@ else
 fi
 
 # Belt and braces: the managed copy should be gone already; make sure.
-if [ -d "$KIMI_HOME/plugins/managed/kimi-mem" ]; then
-  rm -rf "$KIMI_HOME/plugins/managed/kimi-mem" && say "Removed leftover managed plugin copy."
+MANAGED_DIR="$KIMI_HOME/plugins/managed/kimi-mem"
+if [ -d "$MANAGED_DIR" ]; then
+  if guard_basename "$MANAGED_DIR" "kimi-mem" "managed plugin copy"; then
+    rm -rf "$MANAGED_DIR" && say "Removed leftover managed plugin copy."
+  fi
 fi
 
 if [ -d "$REPO_DIR" ]; then
-  rm -rf "$REPO_DIR" && say "Removed repo checkout $REPO_DIR."
+  if guard_basename "$REPO_DIR" "repo" "repo checkout"; then
+    rm -rf "$REPO_DIR" && say "Removed repo checkout $REPO_DIR."
+  fi
 fi
 
 if [ "$PURGE" -eq 1 ]; then
   if [ -d "$DATA_DIR" ]; then
-    rm -rf "$DATA_DIR" && say "Purged data directory $DATA_DIR."
+    if guard_basename "$DATA_DIR" ".kimi-mem" "data directory"; then
+      rm -rf "$DATA_DIR" && say "Purged data directory $DATA_DIR."
+    fi
   fi
 else
   [ -d "$DATA_DIR" ] && say "Kept data directory $DATA_DIR (memory database + settings). Re-run with --purge to delete it."
 fi
 
 say "Done. Restart Kimi Code (or run /reload) to unload the plugin."
+exit "$REFUSED"

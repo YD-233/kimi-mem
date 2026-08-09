@@ -41,7 +41,7 @@ export function Header({
       </div>
       <div className="status">
         <a
-          href="https://docs.kimi-mem.ai"
+          href="https://github.com/YD-233/kimi-mem"
           target="_blank"
           rel="noopener noreferrer"
           className="icon-link"

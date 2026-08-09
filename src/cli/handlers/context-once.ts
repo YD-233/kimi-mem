@@ -2,7 +2,7 @@
 // HookResult and MUST NOT call process.stderr.write / process.stdout.write /
 // console.* / process.exit. logger.* calls are DIAGNOSTIC; thrown errors are
 // caught by hookCommand and routed through emitBlockingError.
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs';
 import { createHash } from 'crypto';
 import { join } from 'path';
 import type { EventHandler, NormalizedHookInput, HookResult } from '../types.js';
@@ -29,6 +29,37 @@ import { logger } from '../../utils/logger.js';
  * session_id cannot escape the state dir.
  */
 const SAFE_MARKER_KEY_RE = /^[A-Za-z0-9_-]+$/;
+
+/**
+ * Markers are written once per session and never read again after the
+ * session ends — without a sweep they accumulate in the state dir forever.
+ * On each marker write, delete kimi-context-* markers older than 7 days
+ * (best-effort, sync, one readdir per write).
+ */
+const MARKER_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** Exported for tests; the handler calls it on every marker write. */
+export function sweepStaleMarkers(stateDir: string): void {
+  let entries: string[];
+  try {
+    entries = readdirSync(stateDir);
+  } catch {
+    return; // state dir not readable — nothing to sweep
+  }
+  const now = Date.now();
+  for (const entry of entries) {
+    if (!entry.startsWith('kimi-context-')) continue;
+    try {
+      const full = join(stateDir, entry);
+      const stat = statSync(full);
+      if (stat.isFile() && now - stat.mtimeMs > MARKER_MAX_AGE_MS) {
+        rmSync(full, { force: true });
+      }
+    } catch {
+      // best-effort: a vanished/unreadable marker never fails the hook
+    }
+  }
+}
 
 function markerPathFor(sessionId: string): string {
   const key = SAFE_MARKER_KEY_RE.test(sessionId)
@@ -69,6 +100,7 @@ export const contextOnceHandler: EventHandler = {
         // 'wx' keeps the check-and-create atomic against a duplicated hook
         // entry racing the same session; EEXIST simply means we lost the race.
         writeFileSync(markerPath, '', { flag: 'wx' });
+        sweepStaleMarkers(join(DATA_DIR, 'state'));
       } catch (error) {
         if ((error as NodeJS.ErrnoException)?.code !== 'EEXIST') {
           logger.warn('HOOK', `context-once: failed to write marker ${markerPath}: ${error instanceof Error ? error.message : error}`);

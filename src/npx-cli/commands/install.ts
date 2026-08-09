@@ -1,8 +1,6 @@
 import * as p from '@clack/prompts';
 import { styleText } from 'node:util';
-import { randomUUID } from 'crypto';
 import { spawnSync } from 'child_process';
-import { loadTelemetryConfig, saveTelemetryConfig } from '../../services/telemetry/consent.js';
 import { captureCliEvent } from '../../services/telemetry/cli-telemetry.js';
 import { buildSpawnSyncInvocation, lookupWindowsCommand, spawnHidden } from '../../shared/spawn.js';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
@@ -1278,177 +1276,6 @@ async function promptClaudeModel(options: InstallOptions): Promise<void> {
   }
 }
 
-// --- CMEM Online email opt-in ----------------------------------------------
-// Interactive, optional. The CLI POSTs the email + optional note to the live
-// waitlist endpoint (cmem.ai/api/waitlist), which handles persistence, dedup,
-// and the confirmation email server-side. KIMI_MEM_SIGNUP_URL overrides the
-// default for testing/staging. No API keys ever ship in the npx package — the
-// endpoint is unauthenticated and the secret (Resend) stays server-side.
-// Anything that goes wrong here is swallowed — a marketing opt-in must never
-// block or fail the install.
-
-const DEFAULT_SIGNUP_ENDPOINT = 'https://cmem.ai/api/waitlist';
-const SIGNUP_ENDPOINT = process.env.KIMI_MEM_SIGNUP_URL?.trim() || DEFAULT_SIGNUP_ENDPOINT;
-const SIGNUP_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-interface StoredSignup {
-  email: string;
-  note: string;
-  sent: boolean;
-}
-
-function parseStoredSignup(): StoredSignup | null {
-  const flat = readFlatSettings(USER_SETTINGS_PATH);
-  if (!flat) return null;
-  const email = typeof flat.KIMI_MEM_ONLINE_SIGNUP_EMAIL === 'string' ? flat.KIMI_MEM_ONLINE_SIGNUP_EMAIL : '';
-  if (!email) return null;
-  return {
-    email,
-    note: typeof flat.KIMI_MEM_ONLINE_SIGNUP_NOTE === 'string' ? flat.KIMI_MEM_ONLINE_SIGNUP_NOTE : '',
-    sent: flat.KIMI_MEM_ONLINE_SIGNUP_SENT === 'true',
-  };
-}
-
-function readStoredSignup(): StoredSignup | null {
-  try {
-    return parseStoredSignup();
-  } catch {
-    // [ANTI-PATTERN IGNORED]: settings.json is optional and may be missing or hand-edited into invalid JSON; treating that as "no stored signup" simply re-asks the opt-in, the designed recovery for this never-blocking marketing flow.
-    return null;
-  }
-}
-
-async function postSignup(payload: { email: string; note: string; version: string }, signal: AbortSignal): Promise<boolean> {
-  const res = await fetch(SIGNUP_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: payload.email,
-      note: payload.note,
-      version: payload.version,
-      platform: process.platform,
-      source: 'npx-installer',
-    }),
-    signal,
-  });
-  return res.ok;
-}
-
-async function submitOnlineSignup(payload: { email: string; note: string; version: string }): Promise<boolean> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
-  try {
-    return await postSignup(payload, controller.signal);
-  } catch {
-    // [ANTI-PATTERN IGNORED]: network/timeout failures of this optional waitlist POST are expected offline; the caller persists the email locally and retries silently on the next install run.
-    return false;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/**
- * Final step of the install flow: tell the user telemetry is on by default
- * (opt-out) and let them decide. Asked ONCE — a telemetry.json with a recorded
- * enabled decision means the user already chose, and we never re-nag. An
- * installId-only config (written by the worker's ID bootstrap) does NOT count
- * as a decision. Respects DO_NOT_TRACK (skip entirely: they already answered),
- * CI, and non-TTY. See docs/public/telemetry.mdx for what is/isn't collected.
- */
-async function promptTelemetryOptIn(): Promise<void> {
-  if (!isInteractive) return;
-  if (process.env.CI) return;
-  const dnt = process.env.DO_NOT_TRACK;
-  if (dnt !== undefined && dnt !== '' && dnt !== '0' && dnt !== 'false') return;
-  const existing = loadTelemetryConfig();
-  if (existing?.enabled !== undefined) return;
-
-  p.log.message(styleText('dim', 
-    'Anonymous install ID only — no prompts, file paths, code, or project names, ever.\n'
-    + 'Details: https://docs.kimi-mem.ai/telemetry · Change anytime: kimi-mem telemetry disable',
-  ));
-  const consent = await p.confirm({
-    message: 'Share anonymized usage data with CMEM? It is on by default and helps us make the product better.',
-    initialValue: true,
-  });
-  if (p.isCancel(consent)) return;
-
-  saveTelemetryConfig({
-    enabled: consent === true,
-    installId: existing?.installId || randomUUID(),
-    decidedAt: new Date().toISOString(),
-  });
-  log.success(consent ? 'Thanks! Anonymized usage sharing is on.' : 'No problem — telemetry is off.');
-}
-
-async function promptCmemOnlineOptIn(version: string): Promise<void> {
-  // Interactive-only, and easy to turn off for CI / scripted installs.
-  if (!isInteractive) return;
-  if (process.env.CI) return;
-  if (String(process.env.KIMI_MEM_ONLINE_OPTIN ?? '').trim().toLowerCase() === 'false') return;
-
-  const prior = readStoredSignup();
-  if (prior) {
-    // We already captured this email — don't re-nag. If a previous send never
-    // reached the service, quietly retry once now and record the result.
-    if (!prior.sent) {
-      const ok = await submitOnlineSignup({ email: prior.email, note: prior.note, version });
-      if (ok) mergeSettings({ KIMI_MEM_ONLINE_SIGNUP_SENT: 'true' });
-    }
-    return;
-  }
-
-  p.note(
-    [
-      styleText(['bold', 'cyan'], 'New! CMEM Online: every mem everywhere all at once.'),
-      '',
-      "Share your email and we'll send you a link. We're rolling this out to our",
-      'top users first, then everyone ASAP.',
-    ].join('\n'),
-    'CMEM Online',
-  );
-
-  const emailResult = await p.text({
-    message: 'Your work email (press Enter to skip):',
-    placeholder: 'you@company.com',
-    defaultValue: '',
-    validate: (v?: string) => {
-      const value = (v ?? '').trim();
-      if (value.length === 0) return undefined; // empty = skip, not an error
-      if (!SIGNUP_EMAIL_RE.test(value)) return "That doesn't look like an email — fix it, or clear the field to skip.";
-      return undefined;
-    },
-  });
-
-  if (p.isCancel(emailResult)) return;
-  const email = String(emailResult).trim();
-  if (email.length === 0) return;
-
-  const noteResult = await p.text({
-    message: 'Optionally: what are you working on, or how can we help you and your team? (Enter to skip)',
-    placeholder: 'e.g. migrating a monorepo, onboarding a 5-dev team…',
-    defaultValue: '',
-  });
-  const note = p.isCancel(noteResult) ? '' : String(noteResult).trim();
-
-  const spin = p.spinner();
-  spin.start('Signing you up for CMEM Online…');
-  const ok = await submitOnlineSignup({ email, note, version });
-  // Persist locally regardless of the network result so we never re-prompt;
-  // a failed send is retried silently on the next install (see above).
-  mergeSettings({
-    KIMI_MEM_ONLINE_SIGNUP_EMAIL: email,
-    KIMI_MEM_ONLINE_SIGNUP_NOTE: note,
-    KIMI_MEM_ONLINE_SIGNUP_AT: new Date().toISOString(),
-    KIMI_MEM_ONLINE_SIGNUP_SENT: ok ? 'true' : 'false',
-  });
-  if (ok) {
-    spin.stop(`You're on the list — we'll email ${styleText('cyan', email)} your CMEM Online link.`);
-  } else {
-    spin.stop(styleText('yellow', `Saved ${email} — we'll finish signing you up next time you run the installer.`));
-  }
-}
-
 export interface InstallOptions {
   ide?: string;
   provider?: 'claude' | 'gemini' | 'openrouter';
@@ -1533,8 +1360,6 @@ async function runInstallCommandInner(options: InstallOptions, summary: InstallS
     segments.push(styleText('dim', 'reinstall'));
   }
   log.info(segments.join(` ${dot} `));
-
-  await promptCmemOnlineOptIn(version);
 
   if (alreadyInstalled) {
     if (process.stdin.isTTY) {
@@ -1877,9 +1702,6 @@ async function runInstallCommandInner(options: InstallOptions, summary: InstallS
 
   if (isInteractive) {
     p.note(nextSteps.join('\n'), 'Next Steps');
-    // Deliberately the last interaction of the flow: consent is asked after
-    // the product is installed and working, never as a gate in front of it.
-    await promptTelemetryOptIn();
     if (failedIDEs.length > 0) {
       p.outro(styleText('yellow', 'kimi-mem installed with some IDE setup failures.'));
     } else {
@@ -1896,7 +1718,6 @@ async function runInstallCommandInner(options: InstallOptions, summary: InstallS
     }
   }
 
-  // After promptTelemetryOptIn so a just-made consent choice is honored.
   // ide/provider/runtime_mode/install_method are installer enums, the
   // *_version values are tool version strings — never user data.
   await captureCliEvent('install_completed', {

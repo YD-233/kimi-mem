@@ -23,9 +23,9 @@
  */
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { cpSync, existsSync, mkdirSync, rmSync } from 'fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from 'fs';
 import { paths } from '../../shared/paths.js';
-import { writeJsonFileAtomic } from '../../shared/atomic-json.js';
+import { parseJsonWithBom, writeJsonFileAtomic } from '../../shared/atomic-json.js';
 import { SettingsDefaultsManager } from '../../shared/SettingsDefaultsManager.js';
 import { readJsonSafe } from '../../utils/json-utils.js';
 import { getKimiCodeHome } from '../../cli/adapters/kimi.js';
@@ -94,10 +94,20 @@ function findPluginSourceRoot(): string | null {
   ].filter((value): value is string => Boolean(value));
 
   for (const candidate of candidates) {
-    if (
-      existsSync(path.join(candidate, KIMI_PLUGIN_MANIFEST))
-      && existsSync(path.join(candidate, 'scripts'))
-    ) {
+    const manifestPath = path.join(candidate, KIMI_PLUGIN_MANIFEST);
+    if (!existsSync(manifestPath) || !existsSync(path.join(candidate, 'scripts'))) {
+      continue;
+    }
+    // A candidate reachable via cwd (a hostile repo's ./plugin dir) could
+    // carry a lookalike manifest; only accept a root whose manifest actually
+    // identifies as kimi-mem. A corrupt manifest just disqualifies the probe.
+    let manifest: { name?: unknown } | null = null;
+    try {
+      manifest = readJsonSafe<{ name?: unknown } | null>(manifestPath, null);
+    } catch {
+      continue;
+    }
+    if (manifest?.name === KIMI_PLUGIN_ID) {
       return candidate;
     }
   }
@@ -179,30 +189,58 @@ const blankIfClaudeDefault = (value: string | undefined): string =>
  * Kimi Code installs already carry a logged-in `kimi` CLI, so the kimi
  * compression provider (which spawns it headlessly and reuses its configured
  * model + auth) is the zero-config default — no API key anywhere. Only
- * written when the provider is untouched at the 'claude' factory default and
- * no OpenRouter key is present; an explicit provider choice or existing key
- * is never overwritten.
+ * written when the provider is untouched at the 'claude' factory default (or
+ * unset) and no OpenRouter key is present; an explicit provider choice or
+ * existing key is never overwritten.
  *
  * Model keys holding claude-style factory defaults (haiku/sonnet/claude-*)
  * are normalized to '' at the same time: with provider=kimi they are ignored
  * in favor of the CLI's own default_model, and blanking them keeps
  * settings.json honest. User-set kimi aliases are preserved.
+ *
+ * Surgical patch: the raw file is read and only the keys this installer owns
+ * are touched — loadFromFile()'s merged output must NOT be written back (it
+ * would silently drop unknown user keys), and an unparseable settings.json
+ * aborts the install with a clear error instead of being overwritten with
+ * factory defaults (matching installed.json's readJsonSafe refusal).
  */
 function ensureKimiProviderDefaults(): boolean {
   const settingsPath = paths.settings();
-  const settings = SettingsDefaultsManager.loadFromFile(settingsPath, false);
 
-  if (settings.KIMI_MEM_PROVIDER !== 'claude') return false;
-  if (settings.KIMI_MEM_OPENROUTER_API_KEY) return false;
+  let raw: Record<string, unknown> = {};
+  if (existsSync(settingsPath)) {
+    let parsed: unknown;
+    try {
+      parsed = parseJsonWithBom<unknown>(readFileSync(settingsPath, 'utf-8'));
+    } catch (error) {
+      throw new Error(
+        `${settingsPath} is not valid JSON — refusing to overwrite it. ` +
+        `Fix or remove the file and re-run the install. (${error instanceof Error ? error.message : error})`
+      );
+    }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error(
+        `${settingsPath} must contain a JSON object — refusing to overwrite it. ` +
+        `Fix or remove the file and re-run the install.`
+      );
+    }
+    raw = parsed as Record<string, unknown>;
+  }
+
+  const asString = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+  const provider = asString(raw.KIMI_MEM_PROVIDER);
+  if (provider !== '' && provider !== 'claude') return false;
+  if (asString(raw.KIMI_MEM_OPENROUTER_API_KEY).trim() !== '') return false;
 
   writeJsonFileAtomic(settingsPath, {
-    ...settings,
+    ...raw,
     KIMI_MEM_PROVIDER: 'kimi',
-    KIMI_MEM_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_MODEL),
-    KIMI_MEM_TIER_SIMPLE_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SIMPLE_MODEL),
-    KIMI_MEM_TIER_FAST_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_FAST_MODEL),
-    KIMI_MEM_TIER_SMART_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SMART_MODEL),
-    KIMI_MEM_TIER_SUMMARY_MODEL: blankIfClaudeDefault(settings.KIMI_MEM_TIER_SUMMARY_MODEL),
+    KIMI_MEM_MODEL: blankIfClaudeDefault(asString(raw.KIMI_MEM_MODEL)),
+    KIMI_MEM_TIER_SIMPLE_MODEL: blankIfClaudeDefault(asString(raw.KIMI_MEM_TIER_SIMPLE_MODEL)),
+    KIMI_MEM_TIER_FAST_MODEL: blankIfClaudeDefault(asString(raw.KIMI_MEM_TIER_FAST_MODEL)),
+    KIMI_MEM_TIER_SMART_MODEL: blankIfClaudeDefault(asString(raw.KIMI_MEM_TIER_SMART_MODEL)),
+    KIMI_MEM_TIER_SUMMARY_MODEL: blankIfClaudeDefault(asString(raw.KIMI_MEM_TIER_SUMMARY_MODEL)),
   });
   return true;
 }
@@ -234,7 +272,7 @@ Installation complete!
 
 Kimi Code home: ${kimiHome}
 The plugin provides: SessionStart (warm worker), UserPromptSubmit (session-init + context-once),
-       PostToolUse (observation), PreToolUse Read (file-context), Stop (summarize),
+       PostToolUse (observation), Stop (summarize),
        the mcp-search MCP server, and the /kimi-mem:model command.
 
 Next steps:

@@ -40,7 +40,7 @@ ${styleText('bold', 'Runtime Commands')} (requires Bun, delegates to installed p
   ${styleText('cyan', 'npx kimi-mem restart')}              Restart worker service
   ${styleText('cyan', 'npx kimi-mem status')}               Show worker status
   ${styleText('cyan', 'npx kimi-mem doctor')}               Diagnose install/runtime health (bun, uv, worker)
-  ${styleText('cyan', 'npx kimi-mem telemetry status|enable|disable')}   Manage anonymous telemetry (on by default, opt-out)
+  ${styleText('cyan', 'npx kimi-mem telemetry status|enable|disable')}   Manage anonymous telemetry (off by default, opt-in)
   ${styleText('cyan', 'npx kimi-mem server start')}         Start server service
   ${styleText('cyan', 'npx kimi-mem server stop')}          Stop server service
   ${styleText('cyan', 'npx kimi-mem server restart')}       Restart server service

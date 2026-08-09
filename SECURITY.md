@@ -14,7 +14,7 @@ Only the latest released version of `kimi-mem` receives security updates. Please
 If you discover a security vulnerability in kimi-mem, please report it by:
 
 1. **DO NOT** create a public GitHub issue, pull request, or discussion
-2. Email **alex@cmem.ai** with details, OR use GitHub's "Report a vulnerability" button under the Security tab to open a private security advisory
+2. Use GitHub's "Report a vulnerability" button under the Security tab of [YD-233/kimi-mem](https://github.com/YD-233/kimi-mem) to open a private security advisory
 3. Include steps to reproduce, impact assessment, affected version(s), and suggested fixes if possible
 
 **Scope:** This policy covers the `kimi-mem` plugin and its bundled components (hooks, worker service, SQLite/Chroma sync, viewer UI, search/planning skills). Issues in upstream dependencies should be reported to those projects directly, but feel free to flag them to us as well.
@@ -197,7 +197,7 @@ For security-related questions (non-vulnerabilities), please:
 
 1. Review code comments in security-critical files
 2. Open a GitHub Discussion (not an Issue) for general security questions
-3. For sensitive questions, email **alex@cmem.ai**
+3. For sensitive questions, open a GitHub issue at [YD-233/kimi-mem](https://github.com/YD-233/kimi-mem) (or a private security advisory)
 
 ---
 

@@ -4,7 +4,6 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 
 import { paths } from '../../src/shared/paths.js';
-import { SettingsDefaultsManager } from '../../src/shared/SettingsDefaultsManager.js';
 import {
   installKimiIntegration,
   uninstallKimiIntegration,
@@ -119,7 +118,6 @@ describe('KimiInstaller (plugin-based)', () => {
       const result = await installKimiIntegration();
       expect(result).toBe(0);
 
-      const defaults = SettingsDefaultsManager.getAllDefaults();
       const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
       expect(settings.KIMI_MEM_PROVIDER).toBe('kimi');
       // Claude-style factory defaults are normalized to '' so the file never
@@ -129,11 +127,57 @@ describe('KimiInstaller (plugin-based)', () => {
       expect(settings.KIMI_MEM_TIER_FAST_MODEL).toBe('');
       expect(settings.KIMI_MEM_TIER_SMART_MODEL).toBe('');
       expect(settings.KIMI_MEM_TIER_SUMMARY_MODEL).toBe('');
-      // The independent-API fallback stays at factory defaults — the
-      // installer no longer pins Moonshot base URL/model values.
+      // Surgical patch: unrelated keys are NOT materialized into the file —
+      // defaults apply at read time, so nothing here pins them on disk.
       expect(settings.KIMI_MEM_OPENROUTER_API_KEY ?? '').toBe('');
-      expect(settings.KIMI_MEM_OPENROUTER_BASE_URL).toBe(defaults.KIMI_MEM_OPENROUTER_BASE_URL);
-      expect(settings.KIMI_MEM_OPENROUTER_MODEL).toBe(defaults.KIMI_MEM_OPENROUTER_MODEL);
+      expect('KIMI_MEM_OPENROUTER_BASE_URL' in settings).toBe(false);
+      expect('KIMI_MEM_OPENROUTER_MODEL' in settings).toBe(false);
+    });
+
+    it('preserves unknown user keys when writing provider=kimi (surgical patch)', async () => {
+      writeFileSync(settingsPath, JSON.stringify({
+        KIMI_MEM_MODEL: 'haiku',
+        KIMI_MEM_LOG_LEVEL: 'DEBUG',
+        MY_OWN_UNKNOWN_KEY: 'keep-me',
+        nested: { anything: [1, 2, 3] },
+      }));
+
+      const result = await installKimiIntegration();
+      expect(result).toBe(0);
+
+      const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
+      expect(settings.KIMI_MEM_PROVIDER).toBe('kimi');
+      expect(settings.KIMI_MEM_MODEL).toBe(''); // claude-style default blanked
+      expect(settings.KIMI_MEM_LOG_LEVEL).toBe('DEBUG');
+      expect(settings.MY_OWN_UNKNOWN_KEY).toBe('keep-me');
+      expect(settings.nested).toEqual({ anything: [1, 2, 3] });
+    });
+
+    it('aborts the install instead of overwriting a corrupt settings.json', async () => {
+      writeFileSync(settingsPath, '{ not valid json ,,');
+
+      const result = await installKimiIntegration();
+      expect(result).toBe(1);
+
+      // The corrupt file is left exactly as found.
+      expect(readFileSync(settingsPath, 'utf-8')).toBe('{ not valid json ,,');
+      const errors = (console.error as any).mock.calls.flat().join('\n');
+      expect(errors).toContain('not valid JSON');
+    });
+
+    it('skips a plugin source root whose manifest is not kimi-mem', async () => {
+      writeFileSync(
+        join(fakePluginRoot, 'kimi.plugin.json'),
+        JSON.stringify({ name: 'evil-lookalike', version: '0.0.0-test' }),
+      );
+
+      // The lookalike root (CLAUDE_PLUGIN_ROOT, probed first) must be passed
+      // over; the install proceeds from the real bundled plugin instead.
+      const result = await installKimiIntegration();
+      expect(result).toBe(0);
+      const manifest = JSON.parse(readFileSync(join(managedRoot, 'kimi.plugin.json'), 'utf-8'));
+      expect(manifest.name).toBe('kimi-mem');
+      expect(manifest.version).not.toBe('0.0.0-test');
     });
 
     it('leaves settings untouched when an API key is already configured', async () => {

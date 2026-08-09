@@ -9,7 +9,7 @@ import type { DatabaseManager } from '../../DatabaseManager.js';
  *
  * Registered unconditionally: an unconfigured install (no token/user id →
  * DatabaseManager.getCloudSync() returns null) still answers 200 with
- * `{configured: false}` so callers (the /cloud-sync skill, dashboards) can
+ * `{configured: false}` so callers (dashboards, CLI status) can
  * distinguish "not set up" from "worker down" without special-casing a 404/500.
  */
 export class CloudSyncRoutes extends BaseRouteHandler {

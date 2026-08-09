@@ -94,6 +94,29 @@ export function deriveKimiTranscriptPath(cwd: string | undefined, sessionId: str
   return existsSync(candidate) ? candidate : undefined;
 }
 
+/**
+ * Kimi's UserPromptSubmit payload documents `prompt` as a string, but a
+ * future version could send ContentPart[] (like the model-facing message
+ * shape). A bare array would crash downstream on `.trim()` (TypeError →
+ * hook error path), so coerce here: join text parts, or drop the value.
+ */
+function coercePrompt(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    const text = value
+      .map((part) => {
+        if (part && typeof part === 'object' && typeof (part as { text?: unknown }).text === 'string') {
+          return (part as { text: string }).text;
+        }
+        return typeof part === 'string' ? part : '';
+      })
+      .filter((part) => part.length > 0)
+      .join('\n');
+    return text.length > 0 ? text : undefined;
+  }
+  return undefined;
+}
+
 export const kimiAdapter: PlatformAdapter = {
   normalizeInput(raw) {
     const r = (raw ?? {}) as any;
@@ -106,7 +129,7 @@ export const kimiAdapter: PlatformAdapter = {
     return {
       sessionId,
       cwd,
-      prompt: r.prompt,
+      prompt: coercePrompt(r.prompt),
       toolName: r.tool_name,
       toolInput: r.tool_input,
       // PostToolUse carries `tool_output` (string); accept tool_response too

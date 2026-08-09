@@ -30,10 +30,12 @@ if (!process.env.KIMI_MEM_DATA_DIR) {
  *     process, so a per-file mock.module registers too late once any earlier
  *     test file has touched those modules — the cached telemetry module keeps
  *     the real PostHog binding.
- *  2. Telemetry consent is default-on and the publishable key ships in the
- *     code, so without this mock a full-suite run constructs a REAL PostHog
- *     client and can flush fabricated test events into production analytics
- *     (flushAt: 20 / flushInterval: 10s vs a ~25s suite).
+ *  2. Telemetry consent is now default-off (opt-in) and this fork ships no
+ *     built-in endpoint, but tests that exercise the capture path set a fake
+ *     KIMI_MEM_TELEMETRY_KEY/HOST — without this mock a full-suite run would
+ *     construct a REAL PostHog client and could flush fabricated test events
+ *     to whatever endpoint the env points at (flushAt: 20 / flushInterval:
+ *     10s vs a ~25s suite).
  *
  * Tests assert against these recorded calls — see
  * tests/telemetry/telemetry-client.test.ts.

@@ -38,12 +38,15 @@ const mockMode = {
 class FakeChildProcess extends EventEmitter {
   stdout = new EventEmitter();
   stderr = new EventEmitter();
+  pid: number | undefined = undefined;
   killCalls: string[] = [];
 
   kill(signal?: string): boolean {
     this.killCalls.push(signal ?? 'SIGTERM');
     return true;
   }
+
+  unref(): void {}
 
   respond(stdout: string, exitCode = 0, stderr = ''): void {
     if (stdout) this.stdout.emit('data', Buffer.from(stdout));
@@ -189,6 +192,26 @@ describe('flattenHistoryForPrompt', () => {
     const prompt = flattenHistoryForPrompt(big, 50);
     expect(prompt).toContain('N'.repeat(500));
   });
+
+  it('budgets POSIX prompts by UTF-8 bytes, not chars (CJK E2BIG guard)', () => {
+    // 40k CJK chars ≈ 120KB of UTF-8 — inside a 120k CHAR budget but over
+    // the 100KB POSIX byte budget (MAX_ARG_STRLEN is bytes per arg).
+    const cjkTurn = '汉'.repeat(40_000);
+    const big: ConversationMessage[] = [
+      { role: 'user', content: cjkTurn },
+      { role: 'user', content: 'NEWEST' },
+    ];
+
+    const byBytes = flattenHistoryForPrompt(big, 100_000, 'bytes');
+    expect(byBytes).toContain('NEWEST');
+    expect(byBytes).toContain('elided');
+    expect(byBytes).not.toContain(cjkTurn);
+    expect(Buffer.byteLength(byBytes, 'utf8')).toBeLessThan(100_000 + 200); // budget + marker slack
+
+    // Char mode (Windows command-line cap is in UTF-16 code units) keeps it.
+    const byChars = flattenHistoryForPrompt(big, 120_000, 'chars');
+    expect(byChars).toContain(cjkTurn);
+  });
 });
 
 describe('parseStreamJsonStdout', () => {
@@ -226,6 +249,20 @@ describe('classifyKimiError', () => {
 
   it('maps auth wording to auth_invalid', () => {
     expect(classifyKimiError({ exitCode: 1, stderr: 'Error: 401 Unauthorized', cause: new Error('x') }).kind).toBe('auth_invalid');
+  });
+
+  it('does not misclassify lookalike numbers as auth/rate-limit statuses', () => {
+    // "1401 bytes", "4039 retries", "4290 bytes" etc. must stay transient.
+    expect(classifyKimiError({ exitCode: 1, stderr: 'wrote 1401 bytes to cache', cause: new Error('x') }).kind).toBe('transient');
+    expect(classifyKimiError({ exitCode: 1, stderr: '4039 requests replayed', cause: new Error('x') }).kind).toBe('transient');
+    expect(classifyKimiError({ exitCode: 1, stderr: 'received 4290 bytes', cause: new Error('x') }).kind).toBe('transient');
+    expect(classifyKimiError({ exitCode: 1, stderr: 'insufficient memory available', cause: new Error('x') }).kind).toBe('transient');
+  });
+
+  it('still matches real 401/403/429 statuses and quota wording when anchored', () => {
+    expect(classifyKimiError({ exitCode: 1, stderr: 'HTTP 403 Forbidden', cause: new Error('x') }).kind).toBe('auth_invalid');
+    expect(classifyKimiError({ exitCode: 1, stderr: 'error 429: slow down', cause: new Error('x') }).kind).toBe('rate_limit');
+    expect(classifyKimiError({ exitCode: 1, stderr: 'insufficient balance, please recharge', cause: new Error('x') }).kind).toBe('quota_exhausted');
   });
 
   it('maps quota/rate-limit/context wording', () => {
@@ -300,18 +337,66 @@ describe('KimiProvider CLI transport', () => {
     expect(String((call.options as { cwd?: string }).cwd ?? '')).toContain('observer-sessions');
   });
 
-  it('wraps .cmd shims in cmd.exe on win32', async () => {
+  it('spawns the resolved path directly on win32 — no cmd.exe wrapper (dead .cmd branch removed)', async () => {
     _internals.platform = () => 'win32';
     const provider = new TestKimiProvider({} as any, {} as any);
-    const promise = provider.callQuery(history, { ...config, cliPath: 'C:\\tools\\kimi.cmd' });
+    const promise = provider.callQuery(history, { ...config, cliPath: 'C:\\tools\\kimi.exe' });
     const call = spawnCalls[0];
     call.child.respond('{"role":"assistant","content":"ok"}\n');
     await promise;
-    expect(call.command).toBe(process.env.ComSpec ?? 'cmd.exe');
-    expect(call.args.slice(0, 3)).toEqual(['/d', '/s', '/c']);
-    expect(call.args[3]).toContain('kimi.cmd');
-    expect(call.args[3]).toContain('--output-format');
+    expect(call.command).toBe('C:\\tools\\kimi.exe');
+    expect(call.args.slice(0, 3)).not.toEqual(['/d', '/s', '/c']);
   });
+
+  it('spawns detached on POSIX so the timeout path can kill the process group', async () => {
+    const provider = new TestKimiProvider({} as any, {} as any);
+    const promise = provider.callQuery(history, config);
+    const call = spawnCalls[0];
+    call.child.respond('{"role":"assistant","content":"ok"}\n');
+    await promise;
+    expect((call.options as { detached?: boolean }).detached).toBe(true);
+  });
+
+  it('caps collected stdout at ~10MB so a runaway CLI cannot OOM the worker', async () => {
+    const provider = new TestKimiProvider({} as any, {} as any);
+    const promise = provider.callQuery(history, config);
+    const child = spawnCalls[0].child;
+    const nineMb = 'a'.repeat(9 * 1024 * 1024);
+    child.stdout.emit('data', Buffer.from(JSON.stringify({ role: 'assistant', content: nineMb }) + '\n'));
+    child.stdout.emit('data', Buffer.from('x'.repeat(3 * 1024 * 1024))); // crosses the cap, truncated
+    child.stdout.emit('data', Buffer.from('SECOND-MARKER')); // past the cap, dropped
+    child.emit('close', 0, null);
+
+    const result = await promise;
+    expect(result.content).toContain('a'.repeat(1024));
+    expect(result.content).not.toContain('SECOND-MARKER');
+  }, 15_000);
+
+  it('kills the whole tree via taskkill on a Windows timeout', async () => {
+    _internals.platform = () => 'win32';
+    _internals.perAttemptTimeoutMs = 50;
+    const provider = new TestKimiProvider({} as any, {} as any);
+    const promise = provider.callQuery(history, config);
+    spawnCalls[0].child.pid = 4321; // set before the first attempt times out
+    for (const call of spawnCalls) call.child.pid = 4321;
+
+    await expect(promise).rejects.toMatchObject({ kind: 'transient' });
+    const taskkillCalls = spawnCalls.filter(c => c.command === 'taskkill');
+    expect(taskkillCalls.length).toBeGreaterThan(0);
+    expect(taskkillCalls[0].args).toEqual(['/PID', '4321', '/T', '/F']);
+  }, 10_000);
+
+  it('kills the process group with a negative-pid signal on a POSIX timeout', async () => {
+    const kills: Array<[number, string]> = [];
+    _internals.processKill = (pid: number, signal: string) => { kills.push([pid, signal]); };
+    _internals.perAttemptTimeoutMs = 50;
+    const provider = new TestKimiProvider({} as any, {} as any);
+    const promise = provider.callQuery(history, config);
+    spawnCalls[0].child.pid = 5000;
+
+    await expect(promise).rejects.toMatchObject({ kind: 'transient' });
+    expect(kills).toContainEqual([-5000, 'SIGTERM']);
+  }, 10_000);
 
   it('classifies a non-zero exit via stderr wording (auth → no retry)', async () => {
     const provider = new TestKimiProvider({} as any, {} as any);

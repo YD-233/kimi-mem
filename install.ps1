@@ -68,11 +68,14 @@ if ((& bun $ws status 2>$null | Out-String) -match 'Worker is running') {
 Write-Host @"
 
 [kimi-mem] Done. Next steps:
-  1. Add your Moonshot API key to ~\.kimi-mem\settings.json:
-       "KIMI_MEM_OPENROUTER_API_KEY": "<your key>"   (https://platform.moonshot.cn/)
-  2. Restart Kimi Code (or run /reload) so the plugin loads.
-  3. Optional: change the compression model inside Kimi Code with
-       /kimi-mem:model <model-id>   (default: kimi-k2.6)
+  1. Restart Kimi Code (or run /reload) so the plugin loads.
+  2. Compression uses your logged-in Kimi Code CLI by default — no API key
+     needed. Optional: switch the model with /kimi-mem:model <alias>.
+  3. Optional: use an independent OpenAI-compatible API instead — set
+       "KIMI_MEM_PROVIDER": "openrouter",
+       "KIMI_MEM_OPENROUTER_API_KEY": "<your key>"
+     (plus KIMI_MEM_OPENROUTER_BASE_URL / KIMI_MEM_OPENROUTER_MODEL if needed)
+     in ~\.kimi-mem\settings.json.
 
 Manage later with:
   bun "$RepoDir\plugin\scripts\worker-service.cjs" kimi status|uninstall

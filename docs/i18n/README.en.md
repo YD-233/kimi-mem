@@ -88,14 +88,13 @@ Inside a Kimi Code session:
 bun plugin/scripts/worker-service.cjs kimi status        # plugin + worker status
 bun plugin/scripts/worker-service.cjs kimi uninstall     # remove the plugin (keeps data)
 bun plugin/scripts/worker-service.cjs start|stop|restart|status   # worker management
-bun plugin/scripts/worker-service.cjs search "<query>"             # search memory from the CLI
 ```
 
 ## How It Works
 
 ```
 Kimi Code session
-   │  hooks (declared by the plugin: SessionStart / UserPromptSubmit / PostToolUse / PreToolUse(Read) / Stop)
+   │  hooks (declared by the plugin: SessionStart / UserPromptSubmit / PostToolUse / Stop)
    ▼
 worker-service.cjs hook kimi <event>     ← fails silently, never blocks your session
    ▼

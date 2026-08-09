@@ -20,7 +20,7 @@
     "mcp-search": {
       "command": "node",
       "args": [
-        "scripts/mcp-server.cjs"
+        "./scripts/mcp-server.cjs"
       ]
     }
   },
@@ -43,11 +43,6 @@
     {
       "event": "PostToolUse",
       "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi observation"
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": "Read",
-      "command": "node scripts/bun-runner.js scripts/worker-service.cjs hook kimi file-context"
     },
     {
       "event": "Stop",

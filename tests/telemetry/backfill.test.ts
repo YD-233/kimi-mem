@@ -161,8 +161,10 @@ beforeEach(() => {
   process.env.KIMI_MEM_DATA_DIR = tempDir;
   process.env.KIMI_MEM_TELEMETRY = '1';
   delete process.env.KIMI_MEM_TELEMETRY_DEBUG;
-  delete process.env.KIMI_MEM_TELEMETRY_KEY;
-  delete process.env.KIMI_MEM_TELEMETRY_HOST;
+  // The fork ships no built-in endpoint; captures are gated on
+  // hasTelemetryEndpoint(), so tests point the transport at a fake one.
+  process.env.KIMI_MEM_TELEMETRY_KEY = 'test-key';
+  process.env.KIMI_MEM_TELEMETRY_HOST = 'https://telemetry.test';
   delete process.env.DO_NOT_TRACK;
   postHogConstructorCalls.length = 0;
   postHogCaptureCalls.length = 0;

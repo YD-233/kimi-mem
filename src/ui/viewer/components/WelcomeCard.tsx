@@ -6,7 +6,7 @@ interface WelcomeCardProps {
 
 const STORAGE_KEY = 'kimi-mem-welcome-dismissed-v3';
 const EXPLAINER_URL = '/api/onboarding/explainer';
-const DOCS_URL = 'https://docs.kimi-mem.ai';
+const DOCS_URL = 'https://github.com/YD-233/kimi-mem';
 
 export function getStoredWelcomeDismissed(): boolean {
   try {

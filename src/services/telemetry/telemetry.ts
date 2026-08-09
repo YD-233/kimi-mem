@@ -13,7 +13,7 @@ import {
   redactHomeDir,
   redactAbsolutePaths,
 } from './error-scrub.js';
-import { getTelemetryApiKey, getTelemetryHost, buildBaseProperties, buildPersonSet } from './common.js';
+import { getTelemetryApiKey, getTelemetryHost, hasTelemetryEndpoint, buildBaseProperties, buildPersonSet } from './common.js';
 import { telemetryBuffer } from './buffer.js';
 // logger.warn ONLY in this module — logger.error routes through the error sink
 // back into captureException (logger.ts setErrorSink), which would recurse.
@@ -412,7 +412,7 @@ function captureExceptionInner(
   err: unknown,
   ctx?: Record<string, unknown>
 ): void {
-  if (isShutdown || !hasConsent() || !isErrorTelemetryEnabled(process.env)) {
+  if (isShutdown || !hasConsent() || !isErrorTelemetryEnabled(process.env) || !hasTelemetryEndpoint()) {
     return;
   }
 
@@ -471,8 +471,9 @@ function captureExceptionInner(
  * Capture a telemetry event. Fire-and-forget, synchronous, never throws,
  * never blocks. Ordering is deliberate:
  *
- *   1. Consent gate (DO_NOT_TRACK > env > telemetry.json > default ON) —
- *      without consent NOTHING happens, including debug printing.
+ *   1. Consent gate (DO_NOT_TRACK > env > telemetry.json > default OFF) plus
+ *      the endpoint gate (hasTelemetryEndpoint) — without consent or a
+ *      configured endpoint NOTHING happens, including debug printing.
  *   2. Whitelist scrub — only allowed primitive properties survive.
  *   3. Debug mode (KIMI_MEM_TELEMETRY_DEBUG=1) — print payload to stderr,
  *      send nothing.
@@ -511,8 +512,9 @@ function captureEventInner(
 ): void {
   // Once shutdown has flushed the client, late events (e.g. a request that
   // raced graceful stop) are dropped rather than queued in a new client
-  // that would never be flushed.
-  if (isShutdown || !hasConsent()) {
+  // that would never be flushed. No configured endpoint (this fork ships
+  // none) also drops: consent without a destination is a clean no-op.
+  if (isShutdown || !hasConsent() || !hasTelemetryEndpoint()) {
     return;
   }
 

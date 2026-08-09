@@ -15,10 +15,16 @@ const packageVersion =
  * Publishable PostHog project token (phc_...). Publishable tokens are safe to
  * embed: the capture endpoints are public POST-only ingestion.
  * `KIMI_MEM_TELEMETRY_KEY` always overrides this constant.
+ *
+ * This fork ships NO endpoint: the upstream claude-mem key/host were removed
+ * (a fork must not phone the upstream author's analytics). Both constants are
+ * empty, every transport no-ops (hasTelemetryEndpoint() === false), and an
+ * operator can still point the transport at their own PostHog via the env
+ * overrides.
  */
-export const TELEMETRY_PUBLIC_KEY = 'phc_BKJAeNbpj932N9qEiU6qhutZEiu6LLfRpXfTbLM9MLaG';
+export const TELEMETRY_PUBLIC_KEY = '';
 
-export const DEFAULT_TELEMETRY_HOST = 'https://us.i.posthog.com';
+export const DEFAULT_TELEMETRY_HOST = '';
 
 export function getTelemetryApiKey(): string {
   return process.env.KIMI_MEM_TELEMETRY_KEY || TELEMETRY_PUBLIC_KEY;
@@ -26,6 +32,11 @@ export function getTelemetryApiKey(): string {
 
 export function getTelemetryHost(): string {
   return process.env.KIMI_MEM_TELEMETRY_HOST || DEFAULT_TELEMETRY_HOST;
+}
+
+/** True only when an actual capture endpoint is configured (key AND host). */
+export function hasTelemetryEndpoint(): boolean {
+  return Boolean(getTelemetryApiKey() && getTelemetryHost());
 }
 
 /**

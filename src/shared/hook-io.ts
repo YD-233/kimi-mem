@@ -142,6 +142,11 @@ export interface ExitOptions {
  * operator/model), write `msg` to real stderr, then exit 2 so the model
  * receives it per Claude Code's hook contract. `skipExit` is the test seam
  * that mirrors HookCommandOptions.skipExit.
+ *
+ * Never reached on the kimi platform: Kimi Code treats a hook exit 2 as a
+ * hard block (UserPromptSubmit blocks the model call, PreToolUse blocks the
+ * tool, Stop forces continuation), so kimi call sites in hook-command.ts /
+ * worker-utils.ts downgrade to emitDiagnostic + exit 0 instead.
  */
 export function emitBlockingError(msg: string, options: ExitOptions = {}): void {
   if (bufferedChunks && bufferedChunks.length > 0) {

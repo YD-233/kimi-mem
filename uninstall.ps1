@@ -25,6 +25,21 @@ $KimiHome = if ($env:KIMI_CODE_HOME)     { $env:KIMI_CODE_HOME }     else { Join
 
 function Say($msg) { Write-Host "[kimi-mem] $msg" }
 
+# Safety: never Remove-Item a directory whose basename doesn't match the shape
+# we expect — a stray KIMI_MEM_DATA_DIR=$HOME (or a drive root) with -Purge
+# would otherwise delete the user's home directory.
+$script:Refused = $false
+function Guard-Basename($Path, $Expected, $Label) {
+  $trimmed = "$Path".TrimEnd('\', '/')
+  $base = if ($trimmed) { Split-Path $trimmed -Leaf } else { '' }
+  if ($base -ne $Expected) {
+    Say "REFUSING to remove ${Label}: '$Path' is not a '$Expected' directory. Fix the env override and re-run."
+    $script:Refused = $true
+    return $false
+  }
+  return $true
+}
+
 # Locate a worker-service.cjs we can run: prefer the repo checkout, fall back
 # to the managed plugin copy inside Kimi Code.
 $Ws = $null
@@ -50,22 +65,29 @@ if (-not $Ws) {
 # Belt and braces: the managed copy should be gone already; make sure.
 $managed = Join-Path $KimiHome 'plugins\managed\kimi-mem'
 if (Test-Path $managed) {
-  Remove-Item -Recurse -Force $managed
-  Say 'Removed leftover managed plugin copy.'
+  if (Guard-Basename $managed 'kimi-mem' 'managed plugin copy') {
+    Remove-Item -Recurse -Force $managed
+    Say 'Removed leftover managed plugin copy.'
+  }
 }
 
 if (Test-Path $RepoDir) {
-  Remove-Item -Recurse -Force $RepoDir
-  Say "Removed repo checkout $RepoDir."
+  if (Guard-Basename $RepoDir 'repo' 'repo checkout') {
+    Remove-Item -Recurse -Force $RepoDir
+    Say "Removed repo checkout $RepoDir."
+  }
 }
 
 if ($Purge) {
   if (Test-Path $DataDir) {
-    Remove-Item -Recurse -Force $DataDir
-    Say "Purged data directory $DataDir."
+    if (Guard-Basename $DataDir '.kimi-mem' 'data directory') {
+      Remove-Item -Recurse -Force $DataDir
+      Say "Purged data directory $DataDir."
+    }
   }
 } elseif (Test-Path $DataDir) {
   Say "Kept data directory $DataDir (memory database + settings). Re-run with -Purge to delete it."
 }
 
 Say 'Done. Restart Kimi Code (or run /reload) to unload the plugin.'
+if ($script:Refused) { exit 1 }

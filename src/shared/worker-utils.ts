@@ -7,7 +7,7 @@ import { SettingsDefaultsManager, type SettingsDefaults } from "./SettingsDefaul
 import { MARKETPLACE_ROOT, DATA_DIR } from "./paths.js";
 import { loadFromFileOnce } from "./hook-settings.js";
 import { validateWorkerPidFile, readOwnedWorkerPidInfo } from "../supervisor/index.js";
-import { emitBlockingError } from "./hook-io.js";
+import { emitBlockingError, emitDiagnostic } from "./hook-io.js";
 import { captureCliEvent } from "../services/telemetry/cli-telemetry.js";
 import { checkVersionMatch } from "../services/infrastructure/index.js";
 // Imported from ProcessManager.js directly (not the infrastructure barrel):
@@ -716,6 +716,24 @@ export function getActiveHookType(): TelemetryHookType | null {
   return activeHookType;
 }
 
+let activePlatform: string | null = null;
+
+/**
+ * Record which platform this short-lived hook process serves, so blocking
+ * paths can downgrade themselves on platforms whose exit-2 semantics are
+ * destructive. Kimi Code treats a hook exit 2 as a hard block (UserPromptSubmit
+ * blocks the model call, PreToolUse blocks the tool, Stop forces continuation),
+ * so on `kimi` the fail-loud path must degrade to a diagnostic + exit 0.
+ * Called once at hookCommand entry alongside setActiveHookType.
+ */
+export function setActivePlatform(platform: string): void {
+  activePlatform = platform;
+}
+
+export function getActivePlatform(): string | null {
+  return activePlatform;
+}
+
 export async function recordWorkerUnreachable(): Promise<number> {
   const state = readHookFailureState();
   const next: HookFailureState = {
@@ -747,9 +765,20 @@ export async function recordWorkerUnreachable(): Promise<number> {
     // stderr buffer (so preceding logger.warn lines also surface) and writes
     // via the bypass channel + exits 2. Previously this raw process.stderr.write
     // was swallowed by hookCommand's blanket no-op, so the user/model never saw it.
-    emitBlockingError(
-      `kimi-mem worker unreachable for ${next.consecutiveFailures} consecutive hooks.`
-    );
+    //
+    // Kimi Code exception: exit 2 blocks the model call (UserPromptSubmit),
+    // the tool (PreToolUse) or forces continuation (Stop) — a dead worker must
+    // never jam the user's session, so degrade to a diagnostic and let the
+    // hook exit 0.
+    if (activePlatform === 'kimi') {
+      emitDiagnostic(
+        `kimi-mem worker unreachable for ${next.consecutiveFailures} consecutive hooks (non-blocking on kimi).\n`
+      );
+    } else {
+      emitBlockingError(
+        `kimi-mem worker unreachable for ${next.consecutiveFailures} consecutive hooks.`
+      );
+    }
   }
   return next.consecutiveFailures;
 }

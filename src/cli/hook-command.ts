@@ -8,12 +8,14 @@ import {
   installHookStderrBuffer,
   emitModelContext,
   emitBlockingError,
+  emitDiagnostic,
   exitGraceful,
   resetHookIoState,
 } from '../shared/hook-io.js';
 import {
   recordWorkerUnreachable,
   setActiveHookType,
+  setActivePlatform,
   getActiveHookType,
 } from '../shared/worker-utils.js';
 import { captureCliEvent } from '../services/telemetry/cli-telemetry.js';
@@ -105,6 +107,10 @@ export async function hookCommand(platform: string, event: string, options: Hook
   // Register the hook event for the threshold-gated hook_failed telemetry
   // (closed enum enforced inside; non-enum events just omit hook_type).
   setActiveHookType(event);
+  // Register the platform so the fail-loud paths can downgrade exit 2 to a
+  // diagnostic on kimi (an exit 2 there blocks the model call / tool / forces
+  // continuation — a kill switch, not feedback).
+  setActivePlatform(platform);
 
   // Hook IO Discipline (issue #2292):
   // We BUFFER stderr during handler execution so that unsolicited writes from
@@ -161,6 +167,18 @@ export async function hookCommand(platform: string, event: string, options: Hook
         error_mode: 'blocking_error',
         threshold_tripped: false,
       });
+    }
+    // Kimi Code: a hook exit 2 is a kill switch (blocks the model call on
+    // UserPromptSubmit, the tool on PreToolUse, forces continuation on Stop),
+    // so generic hook errors must degrade to a diagnostic + clean exit 0
+    // instead of BLOCKING_FEEDBACK. The logger.error line above stays in the
+    // dropped buffer; re-surface the message through the bypass channel.
+    if (platform === 'kimi') {
+      emitDiagnostic(
+        `[kimi-mem] Hook error (non-blocking on kimi): ${error instanceof Error ? error.message : String(error)}\n`
+      );
+      exitGraceful(options);
+      return HOOK_EXIT_CODES.SUCCESS;
     }
     // BLOCKING_FEEDBACK: flush the buffered logger.error line to stderr and
     // exit 2 so the model receives it per Claude Code's hook contract.

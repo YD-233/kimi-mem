@@ -494,7 +494,7 @@ Examples:
   kimi-mem antigravity-cli status      # Check if installed
   kimi-mem antigravity-cli uninstall   # Remove hooks + MCP
 
-For more info: https://docs.kimi-mem.ai/antigravity-cli/setup
+For more info: https://github.com/YD-233/kimi-mem
       `);
       return 0;
   }

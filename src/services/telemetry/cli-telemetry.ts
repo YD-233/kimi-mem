@@ -10,7 +10,7 @@
 
 import { resolveTelemetryConsent, loadTelemetryConfig, getOrCreateInstallId } from './consent.js';
 import { scrubProperties } from './scrub.js';
-import { getTelemetryApiKey, getTelemetryHost, buildBaseProperties, buildPersonSet } from './common.js';
+import { getTelemetryApiKey, getTelemetryHost, hasTelemetryEndpoint, buildBaseProperties, buildPersonSet } from './common.js';
 
 const CAPTURE_TIMEOUT_MS = 2000;
 
@@ -47,6 +47,11 @@ export async function captureCliEvent(
     }
 
     const apiKey = getTelemetryApiKey();
+    if (!hasTelemetryEndpoint()) {
+      // The fork ships no telemetry endpoint — even an explicit opt-in is a
+      // clean no-op until KIMI_MEM_TELEMETRY_KEY/HOST are both set.
+      return;
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), CAPTURE_TIMEOUT_MS);
     try {

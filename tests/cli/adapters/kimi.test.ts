@@ -68,6 +68,37 @@ describe('kimiAdapter.normalizeInput', () => {
   it('rejects an invalid cwd', () => {
     expect(() => kimiAdapter.normalizeInput({ session_id: 's', cwd: '' })).toThrow(AdapterRejectedInput);
   });
+
+  it('coerces a ContentPart-array prompt into joined text instead of crashing', () => {
+    const normalized = kimiAdapter.normalizeInput({
+      hook_event_name: 'UserPromptSubmit',
+      session_id: 'session_abc',
+      cwd: '/tmp/project',
+      prompt: [
+        { type: 'text', text: 'first part' },
+        { type: 'image', url: 'https://example.invalid/x.png' },
+        { type: 'text', text: 'second part' },
+      ],
+    });
+    expect(normalized.prompt).toBe('first part\nsecond part');
+  });
+
+  it('drops a non-string prompt with no text parts instead of crashing', () => {
+    const normalized = kimiAdapter.normalizeInput({
+      hook_event_name: 'UserPromptSubmit',
+      session_id: 'session_abc',
+      cwd: '/tmp/project',
+      prompt: [{ type: 'image', url: 'https://example.invalid/x.png' }],
+    });
+    expect(normalized.prompt).toBeUndefined();
+
+    expect(kimiAdapter.normalizeInput({
+      hook_event_name: 'UserPromptSubmit',
+      session_id: 'session_abc',
+      cwd: '/tmp/project',
+      prompt: 42,
+    }).prompt).toBeUndefined();
+  });
 });
 
 describe('kimiAdapter.formatOutput', () => {

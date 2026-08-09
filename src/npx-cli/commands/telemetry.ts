@@ -1,10 +1,11 @@
 /**
  * `npx kimi-mem telemetry [status|enable|disable]` — manage anonymous usage
- * analytics. Telemetry is ON by default (opt-out): anonymous events only,
- * identified by a random install UUID. Turn it off anytime with
- * `telemetry disable`, KIMI_MEM_TELEMETRY=0, or DO_NOT_TRACK=1.
+ * analytics. Telemetry is OFF by default (opt-in): anonymous events only,
+ * identified by a random install UUID. Turn it on anytime with
+ * `telemetry enable`; turn it off with `telemetry disable`,
+ * KIMI_MEM_TELEMETRY=0, or DO_NOT_TRACK=1.
  *
- * Full privacy documentation: https://docs.kimi-mem.ai/telemetry
+ * Full privacy documentation: https://github.com/YD-233/kimi-mem
  */
 
 import * as p from '@clack/prompts';
@@ -17,8 +18,9 @@ import {
   getTelemetryConfigPath,
   type TelemetryConsentSource,
 } from '../../services/telemetry/consent.js';
+import { hasTelemetryEndpoint } from '../../services/telemetry/common.js';
 
-const DOCS_URL = 'https://docs.kimi-mem.ai/telemetry';
+const DOCS_URL = 'https://github.com/YD-233/kimi-mem';
 
 const COLLECTED_FIELDS = [
   'version          kimi-mem version (e.g. 13.4.2)',
@@ -98,7 +100,7 @@ const SOURCE_LABELS: Record<TelemetryConsentSource, string> = {
   DO_NOT_TRACK: 'DO_NOT_TRACK environment variable',
   env: 'KIMI_MEM_TELEMETRY environment variable',
   config: 'telemetry.json config file',
-  default: 'default (on — no opt-out recorded)',
+  default: 'default (off — no opt-in recorded)',
 };
 
 function printTelemetryUsage(): void {
@@ -161,6 +163,12 @@ async function runTelemetryEnable(): Promise<void> {
   if (process.env.DO_NOT_TRACK && process.env.DO_NOT_TRACK !== '0' && process.env.DO_NOT_TRACK !== 'false') {
     p.log.warn(
       'DO_NOT_TRACK is set in your environment. It overrides everything: telemetry will remain OFF even after enabling here.'
+    );
+  }
+
+  if (!hasTelemetryEndpoint()) {
+    p.log.warn(
+      'This fork ships no telemetry endpoint — enabling records your choice but sends nothing unless KIMI_MEM_TELEMETRY_KEY and KIMI_MEM_TELEMETRY_HOST are set.'
     );
   }
 

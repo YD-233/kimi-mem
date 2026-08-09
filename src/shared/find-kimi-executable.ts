@@ -5,20 +5,24 @@
  *
  * Simpler than the Claude resolver: kimi-mem passes only stable flags
  * (`-p`, `--output-format`, `-m`), so a plain `--version` probe is enough —
- * there is no capability probe. When several candidates are installed, the
- * NEWEST responding version wins; PATH order is only a tie-breaker.
+ * there is no capability probe. Candidates are tried in a fixed TRUST ORDER
+ * (known install locations first, then PATH order) and the first runnable one
+ * wins — a "highest version wins" contest would let a planted binary rig the
+ * outcome by printing a bigger number.
  *
- * Windows note: Kimi Code's native installer drops `kimi.exe` under
+ * Windows notes: Kimi Code's native installer drops `kimi.exe` under
  * ~/.kimi-code/bin; npm-style installs may only provide a `kimi.cmd` shim.
  * Node cannot execFile a .cmd directly (CVE-2024-27980), so .cmd candidates
- * fail the probe and lose to any real .exe — the provider's spawn path still
- * supports a resolved .cmd via the cmd.exe wrapper (see KimiProvider).
+ * always fail the probe and are never returned. And because `where` searches
+ * the CURRENT directory before PATH, any `where`/`which` hit that resolves
+ * inside the process cwd is excluded — a planted `kimi.exe` in a malicious
+ * repo must never be spawned.
  */
 
 import { execSync, execFileSync } from 'child_process';
 import { existsSync } from 'fs';
 import { homedir } from 'os';
-import { join } from 'path';
+import { isAbsolute, join, relative, resolve } from 'path';
 import { SettingsDefaultsManager } from './SettingsDefaultsManager.js';
 import { USER_SETTINGS_PATH, expandTilde } from './paths.js';
 import { logger, type Component } from '../utils/logger.js';
@@ -56,6 +60,7 @@ export const _internals = {
   existsSync,
   homedir,
   platform: (): NodeJS.Platform => process.platform,
+  cwd: (): string => process.cwd(),
   loadSettings: () => SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH),
 };
 
@@ -90,27 +95,37 @@ function probeCandidate(candidate: string): ProbeResult {
   }
 }
 
-/** Parse "0.34.0" → [0, 34, 0]; unparseable sorts lowest. */
-function parseVersionKey(version: string): [number, number, number] {
-  const match = version.match(/(\d+)\.(\d+)\.(\d+)/);
-  if (!match) return [0, 0, 0];
-  return [Number(match[1]), Number(match[2]), Number(match[3])];
-}
-
-function compareVersionKeysDesc(a: [number, number, number], b: [number, number, number]): number {
-  return b[0] - a[0] || b[1] - a[1] || b[2] - a[2];
+/**
+ * True when `candidate` resolves inside the process cwd. `where` (Windows)
+ * searches the current directory before PATH, and `which -a` finds cwd
+ * entries when PATH contains `.` — both let a planted binary in a malicious
+ * repo win discovery, so such hits are dropped before probing.
+ */
+function isInsideCwd(candidate: string): boolean {
+  let base = resolve(_internals.cwd());
+  let target = resolve(candidate);
+  if (_internals.platform() === 'win32') {
+    base = base.toLowerCase();
+    target = target.toLowerCase();
+  }
+  const rel = relative(base, target);
+  return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
 }
 
 /**
- * All places a Kimi CLI might live, best-effort and deduplicated:
- *   - every PATH match (`which -a` / `where`), not just the first
- *   - the native installer's bin dir (~/.kimi-code/bin), which may not be on
- *     the worker's PATH depending on how the daemon was spawned
+ * All places a Kimi CLI might live, best-effort and deduplicated, in fixed
+ * trust order:
+ *   1. the native installer's bin dir (~/.kimi-code/bin) — may not be on the
+ *      worker's PATH depending on how the daemon was spawned
+ *   2. PATH matches (`which -a` / `where`), in reported order, excluding any
+ *      hit that resolves inside the current directory
+ *   3. other known install locations (~/.local/bin)
  */
 function discoverCandidates(): string[] {
   const candidates: string[] = [];
 
   if (_internals.platform() === 'win32') {
+    candidates.push(join(_internals.homedir(), '.kimi-code', 'bin', 'kimi.exe'));
     // kimi.exe first: a native binary spawns without the cmd.exe wrapper (and
     // without its 8191-char command-line limit); .cmd shims also fail the
     // execFile probe, so listing them first would just waste a spawn.
@@ -121,24 +136,29 @@ function discoverCandidates(): string[] {
           windowsHide: true,
           stdio: ['ignore', 'pipe', 'ignore'],
         });
-        candidates.push(...output.split('\n').map((line) => line.trim()).filter(Boolean));
+        for (const line of output.split('\n').map((l) => l.trim()).filter(Boolean)) {
+          if (isInsideCwd(line)) continue; // cwd-resident hit — not from PATH
+          candidates.push(line);
+        }
       } catch {
         // Not found via this lookup — try the next discovery source.
       }
     }
-    candidates.push(join(_internals.homedir(), '.kimi-code', 'bin', 'kimi.exe'));
   } else {
+    candidates.push(join(_internals.homedir(), '.kimi-code', 'bin', 'kimi'));
     try {
       const output = _internals.execSync('which -a kimi', {
         encoding: 'utf8',
         windowsHide: true,
         stdio: ['ignore', 'pipe', 'ignore'],
       });
-      candidates.push(...output.split('\n').map((line) => line.trim()).filter(Boolean));
+      for (const line of output.split('\n').map((l) => l.trim()).filter(Boolean)) {
+        if (isInsideCwd(line)) continue; // cwd-resident hit — not from PATH
+        candidates.push(line);
+      }
     } catch {
       // which -a found nothing — known install locations below still apply.
     }
-    candidates.push(join(_internals.homedir(), '.kimi-code', 'bin', 'kimi'));
     candidates.push(join(_internals.homedir(), '.local', 'bin', 'kimi'));
   }
 
@@ -159,8 +179,9 @@ function discoverCandidates(): string[] {
  * Discovery order:
  *   1. `KIMI_CLI_PATH` from settings.json (explicit user override — wins,
  *      but fails loud if it cannot run rather than dying silently at spawn)
- *   2. Every `kimi` on PATH plus known install locations, probed with
- *      `--version`; the newest responding version is returned
+ *   2. Candidates in trust order (~/.kimi-code/bin, then PATH matches with
+ *      cwd-resident hits excluded, then other known locations), each probed
+ *      with `--version`; the FIRST runnable candidate wins
  *
  * @param logComponent  Logger {@link Component} tag (e.g. 'SDK', 'WORKER')
  * @throws {Error} when no runnable Kimi CLI can be found
@@ -201,33 +222,27 @@ export function findKimiExecutable(logComponent: Component = 'SDK'): string {
   }
 
   // --- 2. Probe every discovered candidate ---------------------------------
-  const capable: Array<{ path: string; version: string; key: [number, number, number]; order: number }> = [];
-
   const candidates = discoverCandidates();
-  for (let order = 0; order < candidates.length; order++) {
-    const candidate = candidates[order];
+  // Trust order, first runnable candidate wins — no version comparison:
+  // "highest --version wins" lets a planted binary rig the contest by
+  // printing a bigger number.
+  for (const candidate of candidates) {
     if (!_internals.existsSync(candidate)) continue;
     const probe = probeCandidate(candidate);
 
     if (probe.kind === 'ok') {
-      capable.push({ path: candidate, version: probe.version, key: parseVersionKey(probe.version), order });
+      logger.info(logComponent, `Using Kimi CLI v${probe.version} at ${candidate}`, {
+        candidatesProbed: candidates.length,
+      });
+      cachedResolution = {
+        path: candidate,
+        version: probe.version,
+        expiresAtMs: Date.now() + RESOLUTION_CACHE_TTL_MS,
+      };
+      return candidate;
     } else {
       logger.debug(logComponent, `Skipping "${candidate}" — failed --version check (${probe.detail})`);
     }
-  }
-
-  if (capable.length > 0) {
-    capable.sort((a, b) => compareVersionKeysDesc(a.key, b.key) || a.order - b.order);
-    const winner = capable[0];
-    logger.info(logComponent, `Using Kimi CLI v${winner.version} at ${winner.path}`, {
-      candidatesProbed: candidates.length,
-    });
-    cachedResolution = {
-      path: winner.path,
-      version: winner.version,
-      expiresAtMs: Date.now() + RESOLUTION_CACHE_TTL_MS,
-    };
-    return winner.path;
   }
 
   throw new Error(

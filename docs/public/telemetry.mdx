@@ -1,19 +1,19 @@
 ---
 title: "Telemetry"
-description: "Anonymous usage analytics — on by default, fully documented, one command to opt out"
+description: "Anonymous usage analytics — off by default (opt-in), fully documented, one command to enable"
 ---
 
 # Telemetry
 
 Kimi-Mem includes anonymous usage analytics (via PostHog) to help prioritize fixes and features.
 
-**It is on by default (opt-out).** Events are anonymous, identified only by a random install UUID, and every analytics property passes a strict whitelist — see [What is collected](#what-is-collected) and [What is NEVER collected](#what-is-never-collected) below. Turning it off is one command:
+**It is off by default (opt-in).** This fork ships no telemetry endpoint, so nothing is sent unless you set `KIMI_MEM_TELEMETRY_KEY` and `KIMI_MEM_TELEMETRY_HOST` yourself. Events are anonymous, identified only by a random install UUID, and every analytics property passes a strict whitelist — see [What is collected](#what-is-collected) and [What is NEVER collected](#what-is-never-collected) below. Turning it on is one command:
 
 ```bash
-npx kimi-mem telemetry disable
+npx kimi-mem telemetry enable
 ```
 
-The standard [`DO_NOT_TRACK`](https://consoledonottrack.com) environment variable is also honored and overrides everything. The installer asks once at the end of `npx kimi-mem install` so the default is never silent for new installs — your answer (either way) is remembered and never re-asked, and the prompt is skipped entirely when `DO_NOT_TRACK` is set or in CI/non-interactive installs.
+The standard [`DO_NOT_TRACK`](https://consoledonottrack.com) environment variable is also honored and overrides everything.
 
 ## How instrumentation works
 
@@ -247,4 +247,4 @@ Consent and the anonymous install ID are stored in `telemetry.json` inside the k
 }
 ```
 
-The `enabled` field is only present once you've made an explicit choice (installer prompt, `telemetry enable`, or `telemetry disable`). A file with just an `installId` means no decision was recorded and the default (on) applies. Delete the file to reset completely — a fresh install ID is generated on next use.
+The `enabled` field is only present once you've made an explicit choice (`telemetry enable` or `telemetry disable`). A file with just an `installId` means no decision was recorded and the default (off) applies. Delete the file to reset completely — a fresh install ID is generated on next use.

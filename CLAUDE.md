@@ -1,6 +1,6 @@
 # Kimi-Mem: AI Development Instructions
 
-Kimi-Mem is a Claude Code plugin providing persistent memory across sessions. It captures tool usage, compresses observations using the Claude Agent SDK, and injects relevant context into future sessions.
+Kimi-Mem is a Kimi Code plugin providing persistent memory across sessions. It captures tool usage, compresses observations using the Kimi Code CLI (or an OpenAI-compatible API), and injects relevant context into future sessions.
 
 ## Build
 
@@ -12,7 +12,7 @@ npm run build-and-sync        # Build, sync to marketplace, restart worker
 
 - **Source**: `<project-root>/src/`
 - **Built Plugin**: `<project-root>/plugin/`
-- **Installed Plugin**: `~/.claude/plugins/marketplaces/YD-233/`
+- **Installed Plugin**: `$KIMI_CODE_HOME/plugins/managed/kimi-mem/`
 - **Database**: `~/.kimi-mem/kimi-mem.db`
 - **Chroma**: `~/.kimi-mem/chroma/`
 
@@ -24,9 +24,8 @@ npm run build-and-sync        # Build, sync to marketplace, restart worker
 
 ## Documentation
 
-**Public Docs**: https://docs.kimi-mem.ai (Mintlify)
-**Source**: `docs/public/` - MDX files, edit `docs.json` for navigation
-**Deploy**: Auto-deploys from GitHub on push to main
+**Docs**: This fork does not deploy the docs site — see the GitHub repo: https://github.com/YD-233/kimi-mem
+**Source**: `docs/public/` - upstream MDX files, kept for reference (not deployed)
 
 ## Important
 

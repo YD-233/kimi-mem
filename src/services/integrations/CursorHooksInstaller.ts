@@ -469,7 +469,7 @@ Examples:
   kimi-mem cursor uninstall            # Remove from current project
   kimi-mem cursor status               # Check if hooks are installed
 
-For more info: https://docs.kimi-mem.ai/cursor
+For more info: https://github.com/YD-233/kimi-mem
       `);
       return 0;
     }

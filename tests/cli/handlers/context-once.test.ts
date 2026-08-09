@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { contextOnceHandler } from '../../../src/cli/handlers/context-once.js';
+import { contextOnceHandler, sweepStaleMarkers } from '../../../src/cli/handlers/context-once.js';
 import { DATA_DIR } from '../../../src/shared/paths.js';
 
 const SESSION = 'context-once-test-session';
@@ -71,5 +71,38 @@ describe('contextOnceHandler', () => {
       else process.env.KIMI_MEM_INTERNAL = prev;
     }
     expect(existsSync(join(stateDir, 'kimi-context-../../etc/evil'))).toBe(false);
+  });
+});
+
+describe('sweepStaleMarkers', () => {
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  const sweepDir = join(DATA_DIR, 'state-sweep-test');
+  const staleMarker = join(sweepDir, 'kimi-context-stale-session');
+  const freshMarker = join(sweepDir, 'kimi-context-fresh-session');
+  const unrelatedFile = join(sweepDir, 'hook-failures.json');
+
+  beforeEach(() => {
+    mkdirSync(sweepDir, { recursive: true });
+    writeFileSync(staleMarker, '');
+    writeFileSync(freshMarker, '');
+    writeFileSync(unrelatedFile, '{}');
+    // Backdate the stale marker beyond the 7-day horizon.
+    const stale = new Date(Date.now() - SEVEN_DAYS_MS - 60_000);
+    utimesSync(staleMarker, stale, stale);
+  });
+
+  afterEach(() => {
+    rmSync(sweepDir, { recursive: true, force: true });
+  });
+
+  it('removes kimi-context markers older than 7 days, keeps fresh ones and other files', () => {
+    sweepStaleMarkers(sweepDir);
+    expect(existsSync(staleMarker)).toBe(false);
+    expect(existsSync(freshMarker)).toBe(true);
+    expect(existsSync(unrelatedFile)).toBe(true);
+  });
+
+  it('is a no-op for a missing directory', () => {
+    expect(() => sweepStaleMarkers(join(sweepDir, 'does-not-exist'))).not.toThrow();
   });
 });

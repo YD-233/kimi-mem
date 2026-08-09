@@ -19,9 +19,10 @@ let fakeClis: Map<string, string>;
 let whichOutput: string | null;
 let whereOutputs: Record<string, string>;
 
-function installFakes(options: { settingsPath?: string; platform?: NodeJS.Platform } = {}): void {
+function installFakes(options: { settingsPath?: string; platform?: NodeJS.Platform; cwd?: string } = {}): void {
   _internals.platform = () => options.platform ?? 'linux';
   _internals.homedir = () => '/home/tester';
+  _internals.cwd = () => options.cwd ?? '/home/tester';
   _internals.loadSettings = () => ({ KIMI_CLI_PATH: options.settingsPath ?? '' }) as ReturnType<typeof ORIGINALS.loadSettings>;
   _internals.existsSync = (path) => fakeClis.has(String(path));
 
@@ -71,12 +72,33 @@ describe('findKimiExecutable', () => {
     expect(() => findKimiExecutable()).toThrow('failed the --version check');
   });
 
-  it('discovers via which -a and prefers the newest version', () => {
+  it('discovers via which -a and takes the first PATH match (no version contest)', () => {
     fakeClis.set('/usr/bin/kimi', '0.30.0');
     fakeClis.set('/usr/local/bin/kimi', '0.34.0');
     whichOutput = '/usr/bin/kimi\n/usr/local/bin/kimi';
     installFakes();
-    expect(findKimiExecutable()).toBe('/usr/local/bin/kimi');
+    // Trust order is fixed (known locations, then PATH order) — a later,
+    // newer PATH entry must NOT beat the first one, so a planted binary
+    // cannot win by printing a higher --version.
+    expect(findKimiExecutable()).toBe('/usr/bin/kimi');
+  });
+
+  it('prefers the native installer location over a newer PATH version', () => {
+    const nativePath = join('/home/tester', '.kimi-code', 'bin', 'kimi');
+    fakeClis.set(nativePath, '0.20.0');
+    fakeClis.set('/usr/local/bin/kimi', '0.99.0');
+    whichOutput = '/usr/local/bin/kimi';
+    installFakes();
+    expect(findKimiExecutable()).toBe(nativePath);
+  });
+
+  it('excludes which -a hits that resolve inside the current directory', () => {
+    const inRepo = join('/repo/evil', 'kimi');
+    fakeClis.set(inRepo, '9.99.0');
+    fakeClis.set('/usr/bin/kimi', '0.30.0');
+    whichOutput = `${inRepo}\n/usr/bin/kimi`;
+    installFakes({ cwd: '/repo/evil' });
+    expect(findKimiExecutable()).toBe('/usr/bin/kimi');
   });
 
   it('falls back to the native installer location under ~/.kimi-code/bin', () => {
@@ -98,5 +120,13 @@ describe('findKimiExecutable', () => {
     whereOutputs = { 'where kimi.exe': 'C:\\Users\\tester\\.kimi-code\\bin\\kimi.exe' };
     installFakes({ platform: 'win32' });
     expect(findKimiExecutable()).toBe('C:\\Users\\tester\\.kimi-code\\bin\\kimi.exe');
+  });
+
+  it('on Windows excludes where hits inside the cwd (planted kimi.exe in a repo)', () => {
+    fakeClis.set('C:\\repo\\evil\\kimi.exe', '9.99.0');
+    fakeClis.set('C:\\tools\\kimi.exe', '0.34.0');
+    whereOutputs = { 'where kimi.exe': 'C:\\repo\\evil\\kimi.exe\r\nC:\\tools\\kimi.exe' };
+    installFakes({ platform: 'win32', cwd: 'C:\\repo\\evil' });
+    expect(findKimiExecutable()).toBe('C:\\tools\\kimi.exe');
   });
 });

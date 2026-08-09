@@ -88,14 +88,13 @@ curl -fsSL https://raw.githubusercontent.com/YD-233/kimi-mem/main/uninstall.sh |
 bun plugin/scripts/worker-service.cjs kimi status      # 插件 + worker 状态
 bun plugin/scripts/worker-service.cjs kimi uninstall   # 卸载插件（保留数据）
 bun plugin/scripts/worker-service.cjs start|stop|restart|status   # worker 管理
-bun plugin/scripts/worker-service.cjs search "<关键词>"            # 命令行搜索记忆
 ```
 
 ## 工作原理
 
 ```
 Kimi Code 会话
-   │  hooks（插件声明：SessionStart / UserPromptSubmit / PostToolUse / PreToolUse(Read) / Stop）
+   │  hooks（插件声明：SessionStart / UserPromptSubmit / PostToolUse / Stop）
    ▼
 worker-service.cjs hook kimi <事件>     ← 进程失败静默退出，绝不阻塞你的会话
    ▼
@@ -149,7 +148,7 @@ SQLite（~/.kimi-mem/kimi-mem.db）+ Chroma 向量库
 
 ## 其他宿主
 
-本 fork 保留了上游对 Claude Code、Codex、Cursor、Windsurf、OpenCode 等宿主的支持（见 `npx kimi-mem install --ide <名称>`，npm 包发布后可⽤），但主要维护和测试目标是 Kimi Code。
+本 fork 保留了上游对 Claude Code、Codex、Cursor、Windsurf、OpenCode 等宿主的支持（见 `npx kimi-mem install --ide <名称>`，npm 包发布后可用），但主要维护和测试目标是 Kimi Code。
 
 ## 开发
 

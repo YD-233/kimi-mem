@@ -30,7 +30,6 @@
  */
 
 import { spawn, type ChildProcess } from 'node:child_process';
-import { extname } from 'node:path';
 import { DatabaseManager } from './DatabaseManager.js';
 import { SessionManager } from './SessionManager.js';
 import { logger } from '../../utils/logger.js';
@@ -40,7 +39,6 @@ import { estimateTokens } from '../../shared/timeline-formatting.js';
 import { buildIsolatedEnv } from '../../shared/EnvManager.js';
 import { sanitizeEnv } from '../../supervisor/env-sanitizer.js';
 import { findKimiExecutable } from '../../shared/find-kimi-executable.js';
-import { quoteWindowsCmdArgument, WINDOWS_CMD_EXTENSIONS } from '../../shared/spawn.js';
 import { clearDependencyStatus, recordKimiCliSetupRequired } from '../../shared/dependency-health.js';
 import type { ActiveSession, ConversationMessage } from '../worker-types.js';
 import { ClassifiedProviderError } from './provider-errors.js';
@@ -56,15 +54,17 @@ import { resolveTierAlias } from './model-aliases.js';
 const KIMI_CLI_PER_ATTEMPT_TIMEOUT_MS = 180_000;
 
 /**
- * Budget for the flattened prompt. Windows caps a CreateProcess command line
- * at 32767 chars, so the worker's platform decides: 24k there (headroom for
- * the executable path, flags and cmd.exe wrapper quoting), generous
- * elsewhere (POSIX ARG_MAX is ~2MB). The newest turn is never truncated —
+ * Budget for the flattened prompt. The two platforms measure DIFFERENTLY:
+ * Windows caps a CreateProcess command line at 32767 UTF-16 code units, so
+ * there the budget is 24k chars (headroom for the executable path and
+ * flags); POSIX MAX_ARG_STRLEN is a per-arg BYTE limit (128KB), so the budget
+ * is ~100KB measured with Buffer.byteLength — 120k CJK chars are ~360KB of
+ * UTF-8 and would E2BIG every spawn. The newest turn is never truncated —
  * when even it exceeds the budget it is sent whole and any OS-level failure
  * surfaces as a classified spawn error.
  */
 const FLATTENED_PROMPT_MAX_CHARS_WIN32 = 24_000;
-const FLATTENED_PROMPT_MAX_CHARS_POSIX = 120_000;
+const FLATTENED_PROMPT_MAX_BYTES_POSIX = 100_000;
 
 /** Claude-ish model values that mean "no override" for the kimi CLI. */
 const CLAUDE_TIER_ALIASES = new Set(['haiku', 'sonnet', 'opus']);
@@ -88,28 +88,36 @@ export function resolveKimiModelArg(model: string | null | undefined): string | 
  * Flatten the multi-turn conversation history into one prompt for the
  * stateless CLI call. Roles are labeled ("User:"/"Assistant:") so the model
  * can tell instructions from its own earlier replies. When the total exceeds
- * maxChars, oldest turns are elided (newest-first fill) with a marker — the
- * newest turn is the live instruction and is always kept whole.
+ * the budget, oldest turns are elided (newest-first fill) with a marker —
+ * the newest turn is the live instruction and is always kept whole.
+ *
+ * The budget unit is explicit: Windows command lines are char-capped, POSIX
+ * MAX_ARG_STRLEN is byte-capped, so POSIX callers pass 'bytes' and the turn
+ * cost is measured with Buffer.byteLength (CJK text is 3 bytes/char).
  */
 export function flattenHistoryForPrompt(
   history: ConversationMessage[],
-  maxChars: number,
+  maxSize: number,
+  unit: 'chars' | 'bytes' = 'chars',
 ): string {
+  const measure = (text: string): number =>
+    unit === 'bytes' ? Buffer.byteLength(text, 'utf8') : text.length;
+
   const turns = history
     .filter(message => message.content.trim().length > 0)
     .map(message => `${message.role === 'assistant' ? 'Assistant' : 'User'}:\n${message.content.trim()}`);
 
   const joined = turns.join('\n\n');
-  if (joined.length <= maxChars) return joined;
+  if (measure(joined) <= maxSize) return joined;
 
   const kept: string[] = [];
   let used = 0;
   for (let i = turns.length - 1; i >= 0; i--) {
-    const cost = turns[i].length + 2; // '\n\n' separator
-    if (kept.length > 0 && used + cost > maxChars) break;
+    const cost = measure(turns[i]) + 2; // '\n\n' separator (2 chars = 2 bytes)
+    if (kept.length > 0 && used + cost > maxSize) break;
     kept.unshift(turns[i]);
     used += cost;
-    if (used > maxChars) break; // newest turn alone over budget — kept whole
+    if (used > maxSize) break; // newest turn alone over budget — kept whole
   }
 
   const elided = turns.length - kept.length;
@@ -180,9 +188,12 @@ export function classifyKimiError(input: {
     return new ClassifiedProviderError(causeMessage, { kind: 'setup_required', cause: input.cause });
   }
 
-  // Auth — the CLI manages login itself; a 401 means re-login is required.
+  // Auth — the CLI manages login itself; a 401/403 means re-login is required.
+  // Status codes match on word boundaries only: substring matching would
+  // misclassify payloads like "1401 bytes written" or "4039 retries" as
+  // non-retryable auth failures.
   if (
-    lower.includes('401') || lower.includes('403') ||
+    /\b40[13]\b/.test(lower) ||
     lower.includes('unauthorized') || lower.includes('authentication') ||
     lower.includes('not logged in') || lower.includes('login required')
   ) {
@@ -192,14 +203,16 @@ export function classifyKimiError(input: {
     );
   }
 
-  if (lower.includes('quota') || lower.includes('insufficient')) {
+  // Quota — anchored forms so "insufficient memory" and friends stay
+  // transient/retryable instead of being parked as quota_exhausted.
+  if (/\bquota\b/.test(lower) || /insufficient\s+(balance|funds|credits)/.test(lower)) {
     return new ClassifiedProviderError(
       `kimi CLI quota exhausted (${summary})`,
       { kind: 'quota_exhausted', cause: input.cause },
     );
   }
 
-  if (lower.includes('rate limit') || lower.includes('429') || lower.includes('too many requests')) {
+  if (lower.includes('rate limit') || /\b429\b/.test(lower) || lower.includes('too many requests')) {
     return new ClassifiedProviderError(
       `kimi CLI rate limit (${summary})`,
       { kind: 'rate_limit', cause: input.cause },
@@ -255,6 +268,7 @@ interface KimiCliRunResult {
  */
 export const _internals = {
   spawnProcess: spawn,
+  processKill: (pid: number, signal: NodeJS.Signals): void => { process.kill(pid, signal); },
   findKimiCli: findKimiExecutable,
   buildChildEnv: (): Record<string, string> => {
     // buildIsolatedEnv(false): sanitized parent env minus credential injection,
@@ -263,17 +277,60 @@ export const _internals = {
     return sanitizeEnv(buildIsolatedEnv(false)) as Record<string, string>;
   },
   platform: (): NodeJS.Platform => process.platform,
-  comSpec: (): string => process.env.ComSpec ?? 'cmd.exe',
   perAttemptTimeoutMs: KIMI_CLI_PER_ATTEMPT_TIMEOUT_MS,
-  flattenedPromptMaxChars: (): number =>
-    (process.platform === 'win32' ? FLATTENED_PROMPT_MAX_CHARS_WIN32 : FLATTENED_PROMPT_MAX_CHARS_POSIX),
+  flattenedPromptBudget: (): { maxSize: number; unit: 'chars' | 'bytes' } =>
+    (process.platform === 'win32'
+      ? { maxSize: FLATTENED_PROMPT_MAX_CHARS_WIN32, unit: 'chars' }
+      : { maxSize: FLATTENED_PROMPT_MAX_BYTES_POSIX, unit: 'bytes' }),
 };
 
+/** Grace period before a POSIX group SIGTERM escalates to SIGKILL. */
+const TREE_KILL_GRACE_MS = 2_000;
+
 /**
- * Spawn the CLI with an argument vector. Node cannot spawn a .cmd shim
- * directly on Windows (CVE-2024-27980), so those go through the cmd.exe
- * wrapper with per-arg quoting — mirrors buildSpawnSyncInvocation in
- * src/shared/spawn.ts (which is sync-only).
+ * Cap on collected stdout/stderr per attempt (~10MB). A misbehaving binary
+ * writing an endless stream would otherwise grow these strings until the
+ * worker OOMs.
+ */
+const MAX_COLLECTED_OUTPUT_BYTES = 10 * 1024 * 1024;
+
+/**
+ * Kill the CLI's whole process tree, not just the direct child: `kimi -p`
+ * may spawn its own helpers, and a bare child.kill() would orphan them
+ * holding the stdio pipes open. Windows uses `taskkill /T /F`; POSIX signals
+ * the child's process group (the spawn is detached, so the child leads its
+ * own group) with a SIGKILL escalation after a short grace.
+ */
+function killProcessTree(child: ChildProcess): void {
+  const pid = child.pid;
+  if (pid === undefined) {
+    try { child.kill('SIGKILL'); } catch { /* best-effort */ }
+    return;
+  }
+  if (_internals.platform() === 'win32') {
+    try {
+      const taskkill = _internals.spawnProcess('taskkill', ['/PID', String(pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      taskkill.unref();
+    } catch { /* best-effort */ }
+    return;
+  }
+  try { _internals.processKill(-pid, 'SIGTERM'); } catch { try { child.kill('SIGTERM'); } catch { /* best-effort */ } }
+  const escalation = setTimeout(() => {
+    try { _internals.processKill(-pid, 'SIGKILL'); } catch { try { child.kill('SIGKILL'); } catch { /* best-effort */ } }
+  }, TREE_KILL_GRACE_MS);
+  escalation.unref();
+}
+
+/**
+ * Spawn the CLI with an argument vector. The resolved path is always a real
+ * binary — .cmd shims can never win discovery because the --version probe
+ * (execFile, no shell) cannot run them — so there is deliberately no cmd.exe
+ * wrapper branch. POSIX spawns are detached so the child leads its own
+ * process group and the timeout path can kill the whole tree with a
+ * negative-pid group signal (see killProcessTree).
  */
 function spawnKimiCli(cliPath: string, args: string[], env: Record<string, string>): ChildProcess {
   // Run the nested session from the observer-sessions dir, not the worker's
@@ -284,21 +341,11 @@ function spawnKimiCli(cliPath: string, args: string[], env: Record<string, strin
   ensureDir(OBSERVER_SESSIONS_DIR);
   const cwd = OBSERVER_SESSIONS_DIR;
 
-  if (_internals.platform() === 'win32' && WINDOWS_CMD_EXTENSIONS.has(extname(cliPath).toLowerCase())) {
-    const commandLine = [cliPath, ...args].map(quoteWindowsCmdArgument).join(' ');
-    return _internals.spawnProcess(_internals.comSpec(), ['/d', '/s', '/c', `"${commandLine}"`], {
-      env,
-      cwd,
-      windowsHide: true,
-      windowsVerbatimArguments: true,
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-  }
-
   return _internals.spawnProcess(cliPath, args, {
     env,
     cwd,
     windowsHide: true,
+    detached: _internals.platform() !== 'win32',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 }
@@ -316,12 +363,31 @@ function runKimiCliOnce(cliPath: string, args: string[], attemptSignal: AbortSig
 
     let stdout = '';
     let stderr = '';
+    let stdoutBytes = 0;
+    let stderrBytes = 0;
+    let outputCapped = false;
     let settled = false;
+
+    // Capped collection: after MAX_COLLECTED_OUTPUT_BYTES the chunk is
+    // truncated (byte slice — a split multibyte char at the boundary degrades
+    // to U+FFFD, harmless for a truncated stream) and later chunks dropped.
+    // The handler stays attached so the child never blocks on a full pipe.
+    const collect = (current: string, bytesUsed: number, chunk: Buffer | string): { text: string; bytes: number } => {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      const remaining = MAX_COLLECTED_OUTPUT_BYTES - bytesUsed;
+      if (remaining <= 0) {
+        outputCapped = true;
+        return { text: current, bytes: bytesUsed };
+      }
+      if (buf.length > remaining) outputCapped = true;
+      const taken = buf.subarray(0, Math.min(buf.length, remaining));
+      return { text: current + taken.toString(), bytes: bytesUsed + taken.length };
+    };
 
     const onAbort = () => {
       if (settled) return;
       settled = true;
-      try { child.kill('SIGTERM'); } catch { /* best-effort */ }
+      killProcessTree(child);
       reject(new Error(`kimi CLI attempt aborted (timeout or shutdown)`));
     };
 
@@ -331,8 +397,16 @@ function runKimiCliOnce(cliPath: string, args: string[], attemptSignal: AbortSig
     }
     attemptSignal.addEventListener('abort', onAbort, { once: true });
 
-    child.stdout?.on('data', (chunk: Buffer | string) => { stdout += chunk.toString(); });
-    child.stderr?.on('data', (chunk: Buffer | string) => { stderr += chunk.toString(); });
+    child.stdout?.on('data', (chunk: Buffer | string) => {
+      const next = collect(stdout, stdoutBytes, chunk);
+      stdout = next.text;
+      stdoutBytes = next.bytes;
+    });
+    child.stderr?.on('data', (chunk: Buffer | string) => {
+      const next = collect(stderr, stderrBytes, chunk);
+      stderr = next.text;
+      stderrBytes = next.bytes;
+    });
     child.on('error', (error) => {
       if (settled) return;
       settled = true;
@@ -343,6 +417,9 @@ function runKimiCliOnce(cliPath: string, args: string[], attemptSignal: AbortSig
       if (settled) return;
       settled = true;
       attemptSignal.removeEventListener('abort', onAbort);
+      if (outputCapped) {
+        stderr += '\n[kimi-mem] CLI output collection capped at 10MB (truncated)';
+      }
       resolve({ exitCode, signal, stdout, stderr });
     });
   });
@@ -408,7 +485,8 @@ export class KimiProvider extends OpenAICompatibleProvider<KimiConfig> {
   }
 
   protected async query(history: ConversationMessage[], config: KimiConfig): Promise<ProviderQueryResult> {
-    const prompt = flattenHistoryForPrompt(history, _internals.flattenedPromptMaxChars());
+    const budget = _internals.flattenedPromptBudget();
+    const prompt = flattenHistoryForPrompt(history, budget.maxSize, budget.unit);
     const modelArg = resolveKimiModelArg(config.model);
 
     const args = ['-p', prompt, '--output-format', 'stream-json'];
@@ -419,6 +497,7 @@ export class KimiProvider extends OpenAICompatibleProvider<KimiConfig> {
     logger.debug('SDK', `Querying kimi CLI (${modelArg ?? 'default_model'})`, {
       turns: history.length,
       promptChars: prompt.length,
+      promptBytes: Buffer.byteLength(prompt, 'utf8'),
       estimatedTokens: this.estimateTokens(prompt),
     });
 
